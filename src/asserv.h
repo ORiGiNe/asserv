@@ -8,15 +8,14 @@ extern "C"
 
 #include "main.h"
 
+#define OK			0x0000
 
-#define ERR_TIMER_QUEUE_FULL 0x1010
-#define ERR_ASSERV_ALREADY_RUNNING 0x1011
-#define ERR_MOVE_NOT_FINISHED 0x1012
+#define ERR_SEM_NOT_DEF		0x1000 // 0x10XX -> sémaphores
+#define ERR_SEM_TAKEN		0x1001
+#define ERR_SEM_EPIC_FAIL	0x10FF
 
-#define ASSERV_OK		0x0000
-#define ASSERV_SEM_NOT_DEF	0x1011 // 0x1X -> problème de sémaphore
-#define ASSERV_SEM_TAKEN	0x1012
-#define ASSERV_EPIC_FAIL	0x10FF
+#define ERR_ASSERV_LAUNCHED	0x5000 // 0x50XX -> Asserv
+#define ERR_ASSERV_EPIC_FAIL	0x50FF
 
 #define NB_ASSERV_MAX 5
 
@@ -25,14 +24,16 @@ extern "C"
 
 typedef uint16_t	 ErrorCode;
 typedef uint8_t		 OriginBool;
+typedef uint8_t		 OriginByte;
+typedef uint16_t	 OriginWord;
 
-typedef uint16_t	 AsservValue;
+typedef OriginWord	 AsservValue;
 
 typedef AsservValue	 Command; // PID.pid
 typedef AsservValue	 EncoderValue;
-typedef uint16_t	 Frequency;
-typedef uint16_t	 Coef;
-typedef uint16_t	 ErrorValue;
+typedef OriginWord	 Frequency;
+typedef OriginWord	 Coef;
+typedef OriginWord	 ErrorValue;
 
 typedef struct order	 Order;
 typedef struct timer	 Timer;
@@ -78,7 +79,7 @@ struct asserv
 };
 
 /* Creer un nouvel asservissement */
-Asserv* createNewAsserv(uint8_t kp, uint8_t kd, uint8_t ki, Frequency asservFrequency,
+Asserv* createNewAsserv(Coef kp, Coef kd, Coef ki, Frequency asservFrequency,
                          EncoderValue (*getEncoderValue) (void),
                          ErrorCode (*sendNewCmdToMotor) (Command));
 ErrorCode launchAsserv(Asserv*, Order);

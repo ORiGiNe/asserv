@@ -6,13 +6,13 @@ static Asserv* tbAsserv[NB_ASSERV_MAX];
 /* Permet de compter le nombre d'asservissements dans
  * le but d'éviter de prendre trop de mémoire
  */
-static uint8_t nbAsserv = 0;
+static OriginByte nbAsserv = 0;
 
 /* 
  */
 
 Asserv *createNewAsserv (Coef kp, Coef kd, Coef ki, Frequency asservRefreshFreq,
-                         uint8_t (*getEncoderValue) (void),
+                         EncoderValue (*getEncoderValue) (void),
                          ErrorCode (*sendNewCmdToMotor) (Command))
 {
   unsigned char timerName[4];
@@ -90,13 +90,13 @@ ErrorCode updateAsserv(Asserv* asserv)
   /* On regarde si un calcul d'asserv n'est pas déjà en cours */
   if( asserv->sem == NULL )
   {
-    return ASSERV_SEM_NOT_DEF; // La sémaphore n'a pas été initialisée
+    return ERR_SEM_NOT_DEF; // La sémaphore n'a pas été initialisée
   }
 
   /* On tente de prendre la semaphore */
   if( xSemaphoreTake( asserv->sem, (portTickType)0) )
   {
-    return ASSERV_SEM_TAKEN; // La sémaphore est déjà prise
+    return ERR_SEM_TAKEN; // La sémaphore est déjà prise
   }
 
   /*************************************
@@ -130,10 +130,10 @@ ErrorCode updateAsserv(Asserv* asserv)
   /* On tente de rendre la sémaphore */
   if(xSemaphoreGive( asserv->sem ) != pdTRUE )
   {
-    return ASSERV_SEM_ERROR// on a pas rendu la semaphore, pas sensé arriver
+    return ERR_SEM_EPIC_FAIL // on a pas rendu la semaphore, pas sensé arriver
   }
 
-  return ASSERV_OK;
+  return OK;
 
 }
 
@@ -143,7 +143,7 @@ ErrorCode launchAsserv(Asserv* asserv, Order order) //uint16_t moveAccel, uint16
   // On verifie qu'elle n'est pas déjà lancée
   if (asserv->timer.isTimerActive != false)
   {
-    return ASSERV_ALREADY_LAUNCH;
+    return ERR_ASSERV_LAUNCHED;
   }
   asserv->timer.isTimerActive = true;
 
@@ -154,10 +154,10 @@ ErrorCode launchAsserv(Asserv* asserv, Order order) //uint16_t moveAccel, uint16
   if (xTimerReset (asserv->timer.timerHandle, 10 MS) != pdPASS)
   {
     asserv->timer.isTimerActive = false;
-    return ASSERV_EPIC_FAIL;
+    return ERR_ASSERV_EPIC_FAIL;
   }
 
-  return ASSERV_OK;
+  return OK;
 }
 
 /* TODO : à faire un peu plus proprement
@@ -169,7 +169,7 @@ ErrorCode tryToStopAsserv (Asserv* asserv, portTickType xBlockTime)
   // On attend que l'asserv soit fini.
   if (xSemaphoreTake (asserv->sem, xBlockTime) != pdPASS)
   {
-    return ASSERV_SEM_TAKEN;
+    return ERR_SEM_TAKEN;
   }
-  return ASSERV_OK;
+  return OK;
 }
