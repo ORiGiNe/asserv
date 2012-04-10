@@ -13,10 +13,10 @@ extern "C"
 #define ERR_ASSERV_ALREADY_RUNNING 0x1011
 #define ERR_MOVE_NOT_FINISHED 0x1012
 
-#define ASSERV_OK		0x00
-#define ASSERV_SEM_NOT_DEF	0x11 // 0x1X -> problème de sémaphore
-#define ASSERV_SEM_TAKEN	0x12
-#define ASSERV_EPIC_FAIL	0xFF
+#define ASSERV_OK		0x0000
+#define ASSERV_SEM_NOT_DEF	0x1011 // 0x1X -> problème de sémaphore
+#define ASSERV_SEM_TAKEN	0x1012
+#define ASSERV_EPIC_FAIL	0x10FF
 
 #define NB_ASSERV_MAX 5
 
@@ -24,12 +24,14 @@ extern "C"
 
 
 typedef uint16_t	 ErrorCode;
+typedef uint8_t		 OriginBool;
 
-typedef uint16_t	 Command; // PID.pid
-typedef Command		 EncoderValue;
+typedef uint16_t	 AsservValue;
+
+typedef AsservValue	 Command; // PID.pid
+typedef AsservValue	 EncoderValue;
 typedef uint16_t	 Frequency;
-typedef uint8_t		 Coef;
-typedef uint8_t		 AsservError;
+typedef uint16_t	 Coef;
 typedef uint16_t	 ErrorValue;
 
 typedef struct order	 Order;
@@ -39,14 +41,14 @@ typedef struct asserv	 Asserv;
 
 struct order
 {
-  uint16_t order; // Consigne utilisateur
-  uint16_t orderMaxDeriv; // Permet de connaitre les limites à ne pas dépasser
+  AsservValue order; // Consigne utilisateur
+  AsservValue orderMaxDeriv; // Permet de connaitre les limites à ne pas dépasser
 };
 
 struct timer
 {
   xTimerHandle timerHandle; // Permet de controler le timer
-  tEFBboolean isTimerActive; // Permet de savoir l'état du timer
+  OriginBool isTimerActive; // Permet de savoir l'état du timer
 //  xTimerHandle timerHandle;
 //  tEFBboolean isTimerActive;
 };
@@ -54,9 +56,9 @@ struct timer
 struct asserv
 {
 // Données du problème
-  uint16_t error; // Erreur 
-  uint16_t integral; // Permet de connaitre l'intégrale de l'erreur
-  uint16_t deriv; // Pas indispensable mais plus simple, dérivée de l'erreur
+  AsservValue error; // Erreur 
+  AsservValue integral; // Permet de connaitre l'intégrale de l'erreur
+  AsservValue deriv; // Pas indispensable mais plus simple, dérivée de l'erreur
   Order order; // Entrée voulu par l'utilisateur
 
 // Valeurs constantes
@@ -79,7 +81,7 @@ struct asserv
 Asserv* createNewAsserv(uint8_t kp, uint8_t kd, uint8_t ki, Frequency asservFrequency,
                          EncoderValue (*getEncoderValue) (void),
                          ErrorCode (*sendNewCmdToMotor) (Command));
-AsservError launchAsserv(Asserv*, Order);
+ErrorCode launchAsserv(Asserv*, Order);
 
 
 /*
@@ -92,7 +94,6 @@ AsservError launchAsserv(Asserv*, Order);
 
 //tEFBerrCode waitForMoveToFinish (Asserv* asserv, portTickType xBlockTime);
 
-void vCallbackAsserv (xTimerHandle pxTimer);
 
 
 #ifdef __cplusplus

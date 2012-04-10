@@ -13,7 +13,7 @@ static uint8_t nbAsserv = 0;
 
 Asserv *createNewAsserv (Coef kp, Coef kd, Coef ki, Frequency asservRefreshFreq,
                          uint8_t (*getEncoderValue) (void),
-                         AsservError (*sendNewCmdToMotor) (Command))
+                         ErrorCode (*sendNewCmdToMotor) (Command))
 {
   unsigned char timerName[4];
   
@@ -79,12 +79,12 @@ void vCallbackAsserv (xTimerHandle pxTimer)
 
 }
 
-AsservError updateAsserv(Asserv* asserv)
+ErrorCode updateAsserv(Asserv* asserv)
 {
   EncoderValue encoderValue;
   Command command;
 
-  ErrorValue newError;
+  AsservValue newError;
 
 
   /* On regarde si un calcul d'asserv n'est pas déjà en cours */
@@ -138,7 +138,7 @@ AsservError updateAsserv(Asserv* asserv)
 }
 
 // Anciennement moveMotor
-AsservError launchAsserv(Asserv* asserv, Order order) //uint16_t moveAccel, uint16_t moveSpeed, uint16_t moveDistance)
+ErrorCode launchAsserv(Asserv* asserv, Order order) //uint16_t moveAccel, uint16_t moveSpeed, uint16_t moveDistance)
 {
   // On verifie qu'elle n'est pas déjà lancée
   if (asserv->timer.isTimerActive != false)
@@ -164,7 +164,7 @@ AsservError launchAsserv(Asserv* asserv, Order order) //uint16_t moveAccel, uint
  * asserv : asservissement 
  *
  */
-AsservError tryToStopAsserv (Asserv* asserv, portTickType xBlockTime)
+ErrorCode tryToStopAsserv (Asserv* asserv, portTickType xBlockTime)
 {
   // On attend que l'asserv soit fini.
   if (xSemaphoreTake (asserv->sem, xBlockTime) != pdPASS)
