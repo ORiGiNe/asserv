@@ -1,0 +1,172 @@
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	portConfigure
+  18               	portConfigure:
+  19               	.LFB5:
+  20               	.LM1:
+  21               	/* prologue: function */
+  22               	/* frame size = 0 */
+  23               	.LM2:
+  24 0000 279A      		sbi 36-32,7
+  25               	/* epilogue start */
+  26               	.LM3:
+  27 0002 0895      		ret
+  28               	.LFE5:
+  30               		.data
+  31               	.LC0:
+  32 0000 4C45 4400 		.string	"LED"
+  33               		.text
+  34               	.global	main
+  36               	main:
+  37               	.LFB4:
+  38               	.LM4:
+  39 0004 AF92      		push r10
+  40 0006 BF92      		push r11
+  41 0008 CF92      		push r12
+  42 000a DF92      		push r13
+  43 000c EF92      		push r14
+  44 000e FF92      		push r15
+  45 0010 0F93      		push r16
+  46               	/* prologue: function */
+  47               	/* frame size = 0 */
+  48               	.LBB4:
+  49               	.LBB5:
+  50               	.LM5:
+  51 0012 279A      		sbi 36-32,7
+  52               	.LBE5:
+  53               	.LBE4:
+  54               	.LM6:
+  55 0014 2BE0      		ldi r18,lo8(11)
+  56 0016 88E1      		ldi r24,lo8(24)
+  57 0018 90E0      		ldi r25,hi8(24)
+  58               	/* #APP */
+  59               	 ;  52 "src/main.c" 1
+  60 001a 0FB6      		in __tmp_reg__,__SREG__
+  61 001c F894      		cli
+  62 001e A895      		wdr
+  63 0020 8093 6000 		sts 96,r24
+  64 0024 0FBE      		out __SREG__,__tmp_reg__
+  65 0026 2093 6000 		sts 96,r18
+  66               		
+  67               	 ;  0 "" 2
+  68               	.LM7:
+  69               	/* #NOAPP */
+  70 002a 0E94 0000 		call uartGaopInitialisation
+  71               	.LM8:
+  72 002e 60E8      		ldi r22,lo8(9600)
+  73 0030 75E2      		ldi r23,hi8(9600)
+  74 0032 80E0      		ldi r24,hlo8(9600)
+  75 0034 90E0      		ldi r25,hhi8(9600)
+  76 0036 40E0      		ldi r20,lo8(0)
+  77 0038 0E94 0000 		call DE0nanoUartInit
+  78               	.LM9:
+  79 003c 80E0      		ldi r24,lo8(gs(vTaskLED))
+  80 003e 90E0      		ldi r25,hi8(gs(vTaskLED))
+  81 0040 60E0      		ldi r22,lo8(.LC0)
+  82 0042 70E0      		ldi r23,hi8(.LC0)
+  83 0044 4EEB      		ldi r20,lo8(190)
+  84 0046 50E0      		ldi r21,hi8(190)
+  85 0048 20E0      		ldi r18,lo8(0)
+  86 004a 30E0      		ldi r19,hi8(0)
+  87 004c 01E0      		ldi r16,lo8(1)
+  88 004e E0E0      		ldi r30,lo8(xTaskLED)
+  89 0050 EE2E      		mov r14,r30
+  90 0052 E0E0      		ldi r30,hi8(xTaskLED)
+  91 0054 FE2E      		mov r15,r30
+  92 0056 CC24      		clr r12
+  93 0058 DD24      		clr r13
+  94 005a AA24      		clr r10
+  95 005c BB24      		clr r11
+  96 005e 0E94 0000 		call xTaskGenericCreate
+  97               	.LM10:
+  98 0062 0E94 0000 		call vTaskStartScheduler
+  99               	.LM11:
+ 100 0066 80E0      		ldi r24,lo8(0)
+ 101 0068 90E0      		ldi r25,hi8(0)
+ 102               	/* epilogue start */
+ 103 006a 0F91      		pop r16
+ 104 006c FF90      		pop r15
+ 105 006e EF90      		pop r14
+ 106 0070 DF90      		pop r13
+ 107 0072 CF90      		pop r12
+ 108 0074 BF90      		pop r11
+ 109 0076 AF90      		pop r10
+ 110 0078 0895      		ret
+ 111               	.LFE4:
+ 113               	.global	vTaskLED
+ 115               	vTaskLED:
+ 116               	.LFB3:
+ 117               	.LM12:
+ 118               	.LVL0:
+ 119 007a 0F93      		push r16
+ 120 007c 1F93      		push r17
+ 121 007e DF93      		push r29
+ 122 0080 CF93      		push r28
+ 123 0082 0F92      		push __tmp_reg__
+ 124 0084 0F92      		push __tmp_reg__
+ 125 0086 CDB7      		in r28,__SP_L__
+ 126 0088 DEB7      		in r29,__SP_H__
+ 127               	/* prologue: function */
+ 128               	/* frame size = 2 */
+ 129               	.LM13:
+ 130 008a 0E94 0000 		call xTaskGetTickCount
+ 131               	.LVL1:
+ 132 008e 9A83      		std Y+2,r25
+ 133 0090 8983      		std Y+1,r24
+ 134               	.LVL2:
+ 135               	.LM14:
+ 136 0092 8E01      		movw r16,r28
+ 137 0094 0F5F      		subi r16,lo8(-(1))
+ 138 0096 1F4F      		sbci r17,hi8(-(1))
+ 139               	.L6:
+ 140               	.LM15:
+ 141 0098 85B1      		in r24,37-32
+ 142               	.LVL3:
+ 143               	.LM16:
+ 144 009a 8058      		subi r24,lo8(-(-128))
+ 145               	.LM17:
+ 146 009c 85B9      		out 37-32,r24
+ 147               	.LM18:
+ 148               	/* #APP */
+ 149               	 ;  39 "src/main.c" 1
+ 150 009e 0000      		nop
+ 151               	 ;  0 "" 2
+ 152               	.LM19:
+ 153               	/* #NOAPP */
+ 154 00a0 C801      		movw r24,r16
+ 155               	.LVL4:
+ 156 00a2 64EF      		ldi r22,lo8(500)
+ 157 00a4 71E0      		ldi r23,hi8(500)
+ 158 00a6 0E94 0000 		call vTaskDelayUntil
+ 159 00aa 00C0      		rjmp .L6
+ 160               	.LFE3:
+ 162               		.comm xTaskLED,2,1
+ 203               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccXeOQqY.s:2      *ABS*:0000003f __SREG__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccXeOQqY.s:3      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccXeOQqY.s:4      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccXeOQqY.s:5      *ABS*:00000034 __CCP__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccXeOQqY.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccXeOQqY.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccXeOQqY.s:18     .text:00000000 portConfigure
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccXeOQqY.s:36     .text:00000004 main
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccXeOQqY.s:115    .text:0000007a vTaskLED
+                            *COM*:00000002 xTaskLED
+
+UNDEFINED SYMBOLS
+uartGaopInitialisation
+DE0nanoUartInit
+xTaskGenericCreate
+vTaskStartScheduler
+xTaskGetTickCount
+vTaskDelayUntil
+__do_copy_data
+__do_clear_bss

@@ -1,0 +1,514 @@
+   1               		.file	"DE0nanoUart.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	__vector_36
+  18               	__vector_36:
+  19               	.LFB9:
+  20               	.LM1:
+  21 0000 1F92      		push __zero_reg__
+  22 0002 0F92      		push r0
+  23 0004 0FB6      		in r0,__SREG__
+  24 0006 0F92      		push r0
+  25 0008 0BB6      		in r0,91-32
+  26 000a 0F92      		push r0
+  27 000c 1124      		clr __zero_reg__
+  28 000e 2F93      		push r18
+  29 0010 3F93      		push r19
+  30 0012 4F93      		push r20
+  31 0014 5F93      		push r21
+  32 0016 6F93      		push r22
+  33 0018 7F93      		push r23
+  34 001a 8F93      		push r24
+  35 001c 9F93      		push r25
+  36 001e AF93      		push r26
+  37 0020 BF93      		push r27
+  38 0022 EF93      		push r30
+  39 0024 FF93      		push r31
+  40 0026 DF93      		push r29
+  41 0028 CF93      		push r28
+  42 002a 0F92      		push __tmp_reg__
+  43 002c CDB7      		in r28,__SP_L__
+  44 002e DEB7      		in r29,__SP_H__
+  45               	/* prologue: Signal */
+  46               	/* frame size = 1 */
+  47               	.LM2:
+  48 0030 1982      		std Y+1,__zero_reg__
+  49               	.LVL0:
+  50               	.LM3:
+  51 0032 8091 C800 		lds r24,200
+  52               	.LVL1:
+  53               	.LM4:
+  54 0036 9091 CE00 		lds r25,206
+  55               	.LVL2:
+  56               	.LM5:
+  57 003a 8871      		andi r24,lo8(24)
+  58 003c 01F0      		breq .L2
+  59               	.LM6:
+  60 003e 82E0      		ldi r24,lo8(2)
+  61               	.LVL3:
+  62 0040 8093 0000 		sts gDe0NanoCommStep,r24
+  63               	.LM7:
+  64 0044 8091 0000 		lds r24,de0NanoCommSynchro
+  65 0048 9091 0000 		lds r25,(de0NanoCommSynchro)+1
+  66 004c 60E0      		ldi r22,lo8(0)
+  67 004e 70E0      		ldi r23,hi8(0)
+  68 0050 AE01      		movw r20,r28
+  69 0052 4F5F      		subi r20,lo8(-(1))
+  70 0054 5F4F      		sbci r21,hi8(-(1))
+  71 0056 20E0      		ldi r18,lo8(0)
+  72 0058 0E94 0000 		call xQueueGenericSendFromISR
+  73               	.LVL4:
+  74 005c 00C0      		rjmp .L3
+  75               	.LVL5:
+  76               	.L2:
+  77               	.LM8:
+  78 005e 8091 0000 		lds r24,gDe0NanoCommStep
+  79               	.LVL6:
+  80 0062 8823      		tst r24
+  81 0064 01F4      		brne .L4
+  82               	.LM9:
+  83 0066 9093 0000 		sts response,r25
+  84 006a 1092 0000 		sts response+1,__zero_reg__
+  85               	.LM10:
+  86 006e 81E0      		ldi r24,lo8(1)
+  87 0070 8093 0000 		sts gDe0NanoCommStep,r24
+  88               	.LM11:
+  89 0074 8091 0000 		lds r24,gflowControlNum
+  90 0078 8130      		cpi r24,lo8(1)
+  91 007a 01F4      		brne .L5
+  92               	.LM12:
+  93 007c 2E9A      		sbi 37-32,6
+  94               	.LBB54:
+  95               	.LBB55:
+  96               	.LBB56:
+  97               	.LBB57:
+  98               	.LM13:
+  99 007e 85E3      		ldi r24,lo8(53)
+ 100               	.LVL7:
+ 101               	/* #APP */
+ 102               	 ;  83 "C:\ApplsEFB\WinAVR/WinAVR-20100110/avr/include/util/delay_basic.h" 1
+ 103 0080 8A95      		1: dec r24
+ 104 0082 01F4      		brne 1b
+ 105               	 ;  0 "" 2
+ 106               	/* #NOAPP */
+ 107               	.LBE57:
+ 108               	.LBE56:
+ 109               	.LBE55:
+ 110               	.LBE54:
+ 111               	.LM14:
+ 112 0084 2E98      		cbi 37-32,6
+ 113 0086 00C0      		rjmp .L3
+ 114               	.LVL8:
+ 115               	.L5:
+ 116               	.LM15:
+ 117 0088 8230      		cpi r24,lo8(2)
+ 118 008a 01F4      		brne .L3
+ 119               	.LM16:
+ 120 008c 8091 0201 		lds r24,258
+ 121 0090 8064      		ori r24,lo8(64)
+ 122 0092 8093 0201 		sts 258,r24
+ 123               	.LBB58:
+ 124               	.LBB59:
+ 125               	.LBB60:
+ 126               	.LBB61:
+ 127               	.LM17:
+ 128 0096 85E3      		ldi r24,lo8(53)
+ 129               	.LVL9:
+ 130               	/* #APP */
+ 131               	 ;  83 "C:\ApplsEFB\WinAVR/WinAVR-20100110/avr/include/util/delay_basic.h" 1
+ 132 0098 8A95      		1: dec r24
+ 133 009a 01F4      		brne 1b
+ 134               	 ;  0 "" 2
+ 135               	/* #NOAPP */
+ 136               	.LBE61:
+ 137               	.LBE60:
+ 138               	.LBE59:
+ 139               	.LBE58:
+ 140               	.LM18:
+ 141 009c 8091 0201 		lds r24,258
+ 142               	.LVL10:
+ 143 00a0 8F7B      		andi r24,lo8(-65)
+ 144 00a2 8093 0201 		sts 258,r24
+ 145 00a6 00C0      		rjmp .L3
+ 146               	.L4:
+ 147               	.LM19:
+ 148 00a8 8130      		cpi r24,lo8(1)
+ 149 00aa 01F4      		brne .L3
+ 150               	.LM20:
+ 151 00ac 2FEF      		ldi r18,lo8(-1)
+ 152 00ae 929F      		mul r25,r18
+ 153 00b0 9001      		movw r18,r0
+ 154 00b2 1124      		clr r1
+ 155 00b4 8091 0000 		lds r24,response
+ 156 00b8 9091 0000 		lds r25,(response)+1
+ 157 00bc 820F      		add r24,r18
+ 158 00be 931F      		adc r25,r19
+ 159 00c0 9093 0000 		sts (response)+1,r25
+ 160 00c4 8093 0000 		sts response,r24
+ 161               	.LM21:
+ 162 00c8 83E0      		ldi r24,lo8(3)
+ 163 00ca 8093 0000 		sts gDe0NanoCommStep,r24
+ 164               	.LM22:
+ 165 00ce 8091 0000 		lds r24,de0NanoCommSynchro
+ 166 00d2 9091 0000 		lds r25,(de0NanoCommSynchro)+1
+ 167 00d6 60E0      		ldi r22,lo8(0)
+ 168 00d8 70E0      		ldi r23,hi8(0)
+ 169 00da AE01      		movw r20,r28
+ 170 00dc 4F5F      		subi r20,lo8(-(1))
+ 171 00de 5F4F      		sbci r21,hi8(-(1))
+ 172 00e0 20E0      		ldi r18,lo8(0)
+ 173 00e2 0E94 0000 		call xQueueGenericSendFromISR
+ 174               	.LVL11:
+ 175               	.LM23:
+ 176 00e6 8091 C900 		lds r24,201
+ 177 00ea 8F77      		andi r24,lo8(127)
+ 178 00ec 8093 C900 		sts 201,r24
+ 179               	.LVL12:
+ 180               	.L3:
+ 181               	.LM24:
+ 182 00f0 8981      		ldd r24,Y+1
+ 183               	.LVL13:
+ 184 00f2 8823      		tst r24
+ 185 00f4 01F0      		breq .L7
+ 186               	.LVL14:
+ 187               	.LM25:
+ 188 00f6 0E94 0000 		call vPortYield
+ 189               	.LVL15:
+ 190               	.L7:
+ 191               	/* epilogue start */
+ 192               	.LM26:
+ 193 00fa 0F90      		pop __tmp_reg__
+ 194 00fc CF91      		pop r28
+ 195 00fe DF91      		pop r29
+ 196 0100 FF91      		pop r31
+ 197 0102 EF91      		pop r30
+ 198 0104 BF91      		pop r27
+ 199 0106 AF91      		pop r26
+ 200 0108 9F91      		pop r25
+ 201               	.LVL16:
+ 202 010a 8F91      		pop r24
+ 203 010c 7F91      		pop r23
+ 204 010e 6F91      		pop r22
+ 205 0110 5F91      		pop r21
+ 206 0112 4F91      		pop r20
+ 207 0114 3F91      		pop r19
+ 208 0116 2F91      		pop r18
+ 209 0118 0F90      		pop r0
+ 210 011a 0BBE      		out 91-32,r0
+ 211 011c 0F90      		pop r0
+ 212 011e 0FBE      		out __SREG__,r0
+ 213 0120 0F90      		pop r0
+ 214 0122 1F90      		pop __zero_reg__
+ 215 0124 1895      		reti
+ 216               	.LFE9:
+ 218               	.global	getWordFromDE0nano
+ 220               	getWordFromDE0nano:
+ 221               	.LFB8:
+ 222               	.LM27:
+ 223               	.LVL17:
+ 224 0126 EF92      		push r14
+ 225 0128 FF92      		push r15
+ 226 012a 1F93      		push r17
+ 227 012c CF93      		push r28
+ 228 012e DF93      		push r29
+ 229               	/* prologue: function */
+ 230               	/* frame size = 0 */
+ 231 0130 182F      		mov r17,r24
+ 232 0132 7B01      		movw r14,r22
+ 233 0134 EA01      		movw r28,r20
+ 234               	.LM28:
+ 235 0136 6115      		cp r22,__zero_reg__
+ 236 0138 7105      		cpc r23,__zero_reg__
+ 237 013a 01F4      		brne .+2
+ 238 013c 00C0      		rjmp .L9
+ 239               	.LVL18:
+ 240 013e 4115      		cp r20,__zero_reg__
+ 241 0140 5105      		cpc r21,__zero_reg__
+ 242 0142 01F4      		brne .+2
+ 243 0144 00C0      		rjmp .L9
+ 244               	.LVL19:
+ 245               	.LM29:
+ 246 0146 8150      		subi r24,lo8(-(-1))
+ 247 0148 8230      		cpi r24,lo8(2)
+ 248 014a 00F0      		brlo .+2
+ 249 014c 00C0      		rjmp .L9
+ 250               	.LM30:
+ 251 014e 8091 0000 		lds r24,de0NanoCommMutex
+ 252 0152 9091 0000 		lds r25,(de0NanoCommMutex)+1
+ 253 0156 BA01      		movw r22,r20
+ 254               	.LVL20:
+ 255 0158 0E94 0000 		call EFBwrappedSemaphoreTake
+ 256               	.LVL21:
+ 257 015c 892B      		or r24,r25
+ 258 015e 01F0      		breq .L10
+ 259 0160 C7E8      		ldi r28,lo8(903)
+ 260 0162 D3E0      		ldi r29,hi8(903)
+ 261               	.LVL22:
+ 262 0164 00C0      		rjmp .L11
+ 263               	.LVL23:
+ 264               	.L10:
+ 265               	.LM31:
+ 266 0166 1092 0000 		sts gDe0NanoCommStep,__zero_reg__
+ 267               	.LM32:
+ 268 016a 1093 0000 		sts gflowControlNum,r17
+ 269               	.LM33:
+ 270 016e 1092 0000 		sts (response)+1,__zero_reg__
+ 271 0172 1092 0000 		sts response,__zero_reg__
+ 272               	.LM34:
+ 273 0176 8091 C900 		lds r24,201
+ 274 017a 8068      		ori r24,lo8(-128)
+ 275 017c 8093 C900 		sts 201,r24
+ 276               	.LM35:
+ 277 0180 1130      		cpi r17,lo8(1)
+ 278 0182 01F4      		brne .L12
+ 279               	.LM36:
+ 280 0184 2E9A      		sbi 37-32,6
+ 281               	.LBB62:
+ 282               	.LBB63:
+ 283               	.LBB64:
+ 284               	.LBB65:
+ 285               	.LM37:
+ 286 0186 85E3      		ldi r24,lo8(53)
+ 287               	.LVL24:
+ 288               	/* #APP */
+ 289               	 ;  83 "C:\ApplsEFB\WinAVR/WinAVR-20100110/avr/include/util/delay_basic.h" 1
+ 290 0188 8A95      		1: dec r24
+ 291 018a 01F4      		brne 1b
+ 292               	 ;  0 "" 2
+ 293               	/* #NOAPP */
+ 294               	.LBE65:
+ 295               	.LBE64:
+ 296               	.LBE63:
+ 297               	.LBE62:
+ 298               	.LM38:
+ 299 018c 2E98      		cbi 37-32,6
+ 300 018e 00C0      		rjmp .L13
+ 301               	.LVL25:
+ 302               	.L12:
+ 303               	.LM39:
+ 304 0190 1230      		cpi r17,lo8(2)
+ 305 0192 01F4      		brne .L13
+ 306               	.LM40:
+ 307 0194 8091 0201 		lds r24,258
+ 308 0198 8064      		ori r24,lo8(64)
+ 309 019a 8093 0201 		sts 258,r24
+ 310               	.LBB66:
+ 311               	.LBB67:
+ 312               	.LBB68:
+ 313               	.LBB69:
+ 314               	.LM41:
+ 315 019e 85E3      		ldi r24,lo8(53)
+ 316               	.LVL26:
+ 317               	/* #APP */
+ 318               	 ;  83 "C:\ApplsEFB\WinAVR/WinAVR-20100110/avr/include/util/delay_basic.h" 1
+ 319 01a0 8A95      		1: dec r24
+ 320 01a2 01F4      		brne 1b
+ 321               	 ;  0 "" 2
+ 322               	/* #NOAPP */
+ 323               	.LBE69:
+ 324               	.LBE68:
+ 325               	.LBE67:
+ 326               	.LBE66:
+ 327               	.LM42:
+ 328 01a4 8091 0201 		lds r24,258
+ 329               	.LVL27:
+ 330 01a8 8F7B      		andi r24,lo8(-65)
+ 331 01aa 8093 0201 		sts 258,r24
+ 332               	.LVL28:
+ 333               	.L13:
+ 334               	.LM43:
+ 335 01ae 8091 0000 		lds r24,de0NanoCommSynchro
+ 336 01b2 9091 0000 		lds r25,(de0NanoCommSynchro)+1
+ 337               	.LVL29:
+ 338 01b6 BE01      		movw r22,r28
+ 339 01b8 0E94 0000 		call EFBwrappedSemaphoreTake
+ 340 01bc EC01      		movw r28,r24
+ 341               	.LVL30:
+ 342 01be 0097      		sbiw r24,0
+ 343 01c0 01F4      		brne .L14
+ 344               	.LVL31:
+ 345               	.LM44:
+ 346 01c2 8091 0000 		lds r24,gDe0NanoCommStep
+ 347               	.LVL32:
+ 348 01c6 8330      		cpi r24,lo8(3)
+ 349 01c8 01F4      		brne .L15
+ 350               	.LM45:
+ 351 01ca 8091 0000 		lds r24,response
+ 352 01ce 9091 0000 		lds r25,(response)+1
+ 353 01d2 F701      		movw r30,r14
+ 354 01d4 9183      		std Z+1,r25
+ 355 01d6 8083      		st Z,r24
+ 356               	.L15:
+ 357               	.LM46:
+ 358 01d8 84E0      		ldi r24,lo8(4)
+ 359 01da 8093 0000 		sts gDe0NanoCommStep,r24
+ 360               	.LM47:
+ 361 01de 8091 0000 		lds r24,de0NanoCommMutex
+ 362 01e2 9091 0000 		lds r25,(de0NanoCommMutex)+1
+ 363 01e6 0E94 0000 		call EFBwrappedSemaphoreGive
+ 364 01ea 00C0      		rjmp .L11
+ 365               	.LVL33:
+ 366               	.L9:
+ 367 01ec CFE0      		ldi r28,lo8(15)
+ 368 01ee D0E0      		ldi r29,hi8(15)
+ 369               	.LVL34:
+ 370               	.L11:
+ 371               	.LM48:
+ 372 01f0 CE01      		movw r24,r28
+ 373               	.LVL35:
+ 374               	/* epilogue start */
+ 375 01f2 DF91      		pop r29
+ 376 01f4 CF91      		pop r28
+ 377 01f6 1F91      		pop r17
+ 378               	.LVL36:
+ 379 01f8 FF90      		pop r15
+ 380 01fa EF90      		pop r14
+ 381               	.LVL37:
+ 382 01fc 0895      		ret
+ 383               	.LVL38:
+ 384               	.L14:
+ 385               	.LM49:
+ 386 01fe 8091 0000 		lds r24,de0NanoCommMutex
+ 387 0202 9091 0000 		lds r25,(de0NanoCommMutex)+1
+ 388               	.LVL39:
+ 389 0206 0E94 0000 		call EFBwrappedSemaphoreGive
+ 390 020a CFE8      		ldi r28,lo8(911)
+ 391 020c D3E0      		ldi r29,hi8(911)
+ 392 020e 00C0      		rjmp .L11
+ 393               	.LFE8:
+ 395               	.global	DE0nanoUartInit
+ 397               	DE0nanoUartInit:
+ 398               	.LFB7:
+ 399               	.LM50:
+ 400               	.LVL40:
+ 401 0210 0F93      		push r16
+ 402 0212 1F93      		push r17
+ 403               	/* prologue: function */
+ 404               	/* frame size = 0 */
+ 405 0214 8B01      		movw r16,r22
+ 406 0216 9C01      		movw r18,r24
+ 407               	.LM51:
+ 408 0218 269A      		sbi 36-32,6
+ 409 021a 8091 0101 		lds r24,257
+ 410 021e 8064      		ori r24,lo8(64)
+ 411 0220 8093 0101 		sts 257,r24
+ 412 0224 2E98      		cbi 37-32,6
+ 413 0226 8091 0201 		lds r24,258
+ 414 022a 8F7B      		andi r24,lo8(-65)
+ 415 022c 8093 0201 		sts 258,r24
+ 416               	.LM52:
+ 417 0230 4423      		tst r20
+ 418 0232 01F0      		breq .L18
+ 419               	.LVL41:
+ 420               	.LM53:
+ 421 0234 82E0      		ldi r24,lo8(2)
+ 422 0236 8093 C800 		sts 200,r24
+ 423               	.LM54:
+ 424 023a 93E0      		ldi r25,3
+ 425 023c 000F      	1:	lsl r16
+ 426 023e 111F      		rol r17
+ 427 0240 221F      		rol r18
+ 428 0242 331F      		rol r19
+ 429 0244 9A95      		dec r25
+ 430 0246 01F4      		brne 1b
+ 431 0248 00C0      		rjmp .L22
+ 432               	.LVL42:
+ 433               	.L18:
+ 434               	.LM55:
+ 435 024a 84E0      		ldi r24,4
+ 436 024c 000F      	1:	lsl r16
+ 437 024e 111F      		rol r17
+ 438 0250 221F      		rol r18
+ 439 0252 331F      		rol r19
+ 440 0254 8A95      		dec r24
+ 441 0256 01F4      		brne 1b
+ 442               	.L22:
+ 443 0258 60E0      		ldi r22,lo8(16000000)
+ 444 025a 74E2      		ldi r23,hi8(16000000)
+ 445 025c 84EF      		ldi r24,hlo8(16000000)
+ 446 025e 90E0      		ldi r25,hhi8(16000000)
+ 447 0260 A901      		movw r20,r18
+ 448 0262 9801      		movw r18,r16
+ 449 0264 0E94 0000 		call __udivmodsi4
+ 450 0268 2150      		subi r18,lo8(-(-1))
+ 451 026a 2093 CC00 		sts 204,r18
+ 452               	.LM56:
+ 453 026e 80E1      		ldi r24,lo8(16)
+ 454 0270 8093 C900 		sts 201,r24
+ 455               	.LM57:
+ 456 0274 86E0      		ldi r24,lo8(6)
+ 457 0276 8093 CA00 		sts 202,r24
+ 458               	.LM58:
+ 459 027a 0E94 0000 		call xQueueCreateMutex
+ 460               	.LVL43:
+ 461 027e 9093 0000 		sts (de0NanoCommMutex)+1,r25
+ 462 0282 8093 0000 		sts de0NanoCommMutex,r24
+ 463               	.LM59:
+ 464 0286 81E0      		ldi r24,lo8(1)
+ 465 0288 60E0      		ldi r22,lo8(0)
+ 466 028a 0E94 0000 		call xQueueCreate
+ 467 028e 9093 0000 		sts (de0NanoCommSynchro)+1,r25
+ 468 0292 8093 0000 		sts de0NanoCommSynchro,r24
+ 469 0296 0097      		sbiw r24,0
+ 470 0298 01F0      		breq .L20
+ 471 029a 60E0      		ldi r22,lo8(0)
+ 472 029c 70E0      		ldi r23,hi8(0)
+ 473 029e 40E0      		ldi r20,lo8(0)
+ 474 02a0 50E0      		ldi r21,hi8(0)
+ 475 02a2 20E0      		ldi r18,lo8(0)
+ 476 02a4 0E94 0000 		call xQueueGenericSend
+ 477               	.L20:
+ 478               	.LM60:
+ 479 02a8 8091 0000 		lds r24,de0NanoCommSynchro
+ 480 02ac 9091 0000 		lds r25,(de0NanoCommSynchro)+1
+ 481 02b0 60E0      		ldi r22,lo8(0)
+ 482 02b2 70E0      		ldi r23,hi8(0)
+ 483 02b4 0E94 0000 		call EFBwrappedSemaphoreTake
+ 484               	/* epilogue start */
+ 485               	.LM61:
+ 486 02b8 1F91      		pop r17
+ 487 02ba 0F91      		pop r16
+ 488               	.LVL44:
+ 489 02bc 0895      		ret
+ 490               	.LFE7:
+ 492               		.data
+ 495               	gDe0NanoCommStep:
+ 496 0000 04        		.byte	4
+ 497               		.lcomm response,2
+ 498               		.lcomm gflowControlNum,1
+ 499               		.lcomm de0NanoCommMutex,2
+ 500               		.lcomm de0NanoCommSynchro,2
+ 541               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 DE0nanoUart.c
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:2      *ABS*:0000003f __SREG__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:3      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:4      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:5      *ABS*:00000034 __CCP__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:18     .text:00000000 __vector_36
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:495    .data:00000000 gDe0NanoCommStep
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:499    .bss:00000005 de0NanoCommSynchro
+                             .bss:00000000 response
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:497    .bss:00000002 gflowControlNum
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:220    .text:00000126 getWordFromDE0nano
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:498    .bss:00000003 de0NanoCommMutex
+C:\DOCUME~1\adrian\LOCALS~1\Temp/cc9ai8SC.s:397    .text:00000210 DE0nanoUartInit
+
+UNDEFINED SYMBOLS
+xQueueGenericSendFromISR
+vPortYield
+EFBwrappedSemaphoreTake
+EFBwrappedSemaphoreGive
+__udivmodsi4
+xQueueCreateMutex
+xQueueCreate
+xQueueGenericSend
+__do_copy_data
+__do_clear_bss

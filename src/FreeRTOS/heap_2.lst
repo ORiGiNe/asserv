@@ -1,0 +1,343 @@
+   1               		.file	"heap_2.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	xPortGetFreeHeapSize
+  18               	xPortGetFreeHeapSize:
+  19               	.LFB4:
+  20               	.LM1:
+  21               	/* prologue: function */
+  22               	/* frame size = 0 */
+  23               	.LM2:
+  24 0000 8091 0000 		lds r24,xFreeBytesRemaining
+  25 0004 9091 0000 		lds r25,xFreeBytesRemaining+1
+  26               	/* epilogue start */
+  27 0008 0895      		ret
+  28               	.LFE4:
+  30               	.global	vPortInitialiseBlocks
+  32               	vPortInitialiseBlocks:
+  33               	.LFB5:
+  34               	.LM3:
+  35               	/* prologue: function */
+  36               	/* frame size = 0 */
+  37               	/* epilogue start */
+  38               	.LM4:
+  39 000a 0895      		ret
+  40               	.LFE5:
+  42               	.global	vPortFree
+  44               	vPortFree:
+  45               	.LFB3:
+  46               	.LM5:
+  47               	.LVL0:
+  48 000c CF93      		push r28
+  49 000e DF93      		push r29
+  50               	/* prologue: function */
+  51               	/* frame size = 0 */
+  52               	.LM6:
+  53 0010 0097      		sbiw r24,0
+  54 0012 01F0      		breq .L8
+  55               	.LM7:
+  56 0014 EC01      		movw r28,r24
+  57               	.LVL1:
+  58 0016 2597      		sbiw r28,5
+  59               	.LM8:
+  60 0018 0E94 0000 		call vTaskSuspendAll
+  61               	.LVL2:
+  62               	.LBB2:
+  63               	.LM9:
+  64 001c 4A81      		ldd r20,Y+2
+  65 001e 5B81      		ldd r21,Y+3
+  66               	.LVL3:
+  67 0020 A0E0      		ldi r26,lo8(xStart)
+  68 0022 B0E0      		ldi r27,hi8(xStart)
+  69               	.LVL4:
+  70               	.L7:
+  71 0024 2C91      		ld r18,X
+  72               	.LVL5:
+  73 0026 1196      		adiw r26,1
+  74 0028 3C91      		ld r19,X
+  75 002a 1197      		sbiw r26,1
+  76               	.LVL6:
+  77 002c BD01      		movw r22,r26
+  78 002e C901      		movw r24,r18
+  79               	.LVL7:
+  80 0030 DC01      		movw r26,r24
+  81               	.LVL8:
+  82 0032 1296      		adiw r26,2
+  83 0034 8D91      		ld r24,X+
+  84 0036 9C91      		ld r25,X
+  85 0038 1397      		sbiw r26,2+1
+  86               	.LVL9:
+  87 003a 8417      		cp r24,r20
+  88 003c 9507      		cpc r25,r21
+  89 003e 00F0      		brlo .L7
+  90 0040 FB01      		movw r30,r22
+  91 0042 B983      		std Y+1,r27
+  92 0044 A883      		st Y,r26
+  93 0046 D183      		std Z+1,r29
+  94 0048 C083      		st Z,r28
+  95               	.LBE2:
+  96               	.LM10:
+  97 004a 8091 0000 		lds r24,xFreeBytesRemaining
+  98 004e 9091 0000 		lds r25,(xFreeBytesRemaining)+1
+  99 0052 2A81      		ldd r18,Y+2
+ 100 0054 3B81      		ldd r19,Y+3
+ 101 0056 820F      		add r24,r18
+ 102 0058 931F      		adc r25,r19
+ 103 005a 9093 0000 		sts (xFreeBytesRemaining)+1,r25
+ 104 005e 8093 0000 		sts xFreeBytesRemaining,r24
+ 105               	.LM11:
+ 106 0062 0E94 0000 		call xTaskResumeAll
+ 107               	.LVL10:
+ 108               	.L8:
+ 109               	/* epilogue start */
+ 110               	.LM12:
+ 111 0066 DF91      		pop r29
+ 112 0068 CF91      		pop r28
+ 113               	.LVL11:
+ 114 006a 0895      		ret
+ 115               	.LFE3:
+ 117               	.global	pvPortMalloc
+ 119               	pvPortMalloc:
+ 120               	.LFB2:
+ 121               	.LM13:
+ 122               	.LVL12:
+ 123 006c EF92      		push r14
+ 124 006e FF92      		push r15
+ 125 0070 0F93      		push r16
+ 126 0072 1F93      		push r17
+ 127 0074 CF93      		push r28
+ 128 0076 DF93      		push r29
+ 129               	/* prologue: function */
+ 130               	/* frame size = 0 */
+ 131 0078 EC01      		movw r28,r24
+ 132               	.LM14:
+ 133 007a 0E94 0000 		call vTaskSuspendAll
+ 134               	.LVL13:
+ 135               	.LM15:
+ 136 007e 8091 0000 		lds r24,xHeapHasBeenInitialised.1500
+ 137 0082 8823      		tst r24
+ 138 0084 01F4      		brne .L11
+ 139               	.LBB3:
+ 140               	.LM16:
+ 141 0086 80E0      		ldi r24,lo8(xHeap)
+ 142 0088 90E0      		ldi r25,hi8(xHeap)
+ 143               	.LVL14:
+ 144 008a 9093 0000 		sts (xStart)+1,r25
+ 145 008e 8093 0000 		sts xStart,r24
+ 146 0092 1092 0000 		sts (xStart+2)+1,__zero_reg__
+ 147 0096 1092 0000 		sts xStart+2,__zero_reg__
+ 148 009a 88EB      		ldi r24,lo8(3000)
+ 149 009c 9BE0      		ldi r25,hi8(3000)
+ 150               	.LVL15:
+ 151 009e 9093 0000 		sts (xEnd+2)+1,r25
+ 152 00a2 8093 0000 		sts xEnd+2,r24
+ 153 00a6 1092 0000 		sts (xEnd)+1,__zero_reg__
+ 154 00aa 1092 0000 		sts xEnd,__zero_reg__
+ 155 00ae 9093 0000 		sts (xHeap+2)+1,r25
+ 156 00b2 8093 0000 		sts xHeap+2,r24
+ 157 00b6 80E0      		ldi r24,lo8(xEnd)
+ 158 00b8 90E0      		ldi r25,hi8(xEnd)
+ 159 00ba 9093 0000 		sts (xHeap)+1,r25
+ 160 00be 8093 0000 		sts xHeap,r24
+ 161               	.LBE3:
+ 162               	.LM17:
+ 163 00c2 81E0      		ldi r24,lo8(1)
+ 164 00c4 8093 0000 		sts xHeapHasBeenInitialised.1500,r24
+ 165               	.L11:
+ 166               	.LM18:
+ 167 00c8 2097      		sbiw r28,0
+ 168 00ca 01F0      		breq .L12
+ 169               	.LM19:
+ 170 00cc 2596      		adiw r28,5
+ 171               	.L12:
+ 172               	.LM20:
+ 173 00ce CE01      		movw r24,r28
+ 174 00d0 0197      		sbiw r24,1
+ 175 00d2 875B      		subi r24,lo8(2999)
+ 176 00d4 9B40      		sbci r25,hi8(2999)
+ 177 00d6 00F0      		brlo .+2
+ 178 00d8 00C0      		rjmp .L13
+ 179               	.LM21:
+ 180 00da 4091 0000 		lds r20,xStart
+ 181 00de 5091 0000 		lds r21,(xStart)+1
+ 182               	.LVL16:
+ 183 00e2 E0E0      		ldi r30,lo8(xStart)
+ 184 00e4 F0E0      		ldi r31,hi8(xStart)
+ 185               	.LVL17:
+ 186               	.L15:
+ 187               	.LM22:
+ 188 00e6 DA01      		movw r26,r20
+ 189 00e8 1296      		adiw r26,2
+ 190 00ea 8D91      		ld r24,X+
+ 191 00ec 9C91      		ld r25,X
+ 192 00ee 1397      		sbiw r26,2+1
+ 193 00f0 8C17      		cp r24,r28
+ 194 00f2 9D07      		cpc r25,r29
+ 195 00f4 00F4      		brsh .L14
+ 196 00f6 8D91      		ld r24,X+
+ 197 00f8 9C91      		ld r25,X
+ 198               	.LVL18:
+ 199 00fa 0097      		sbiw r24,0
+ 200 00fc 01F0      		breq .L14
+ 201 00fe AC01      		movw r20,r24
+ 202 0100 FD01      		movw r30,r26
+ 203 0102 00C0      		rjmp .L15
+ 204               	.LVL19:
+ 205               	.L14:
+ 206               	.LM23:
+ 207 0104 B0E0      		ldi r27,hi8(xEnd)
+ 208 0106 4030      		cpi r20,lo8(xEnd)
+ 209 0108 5B07      		cpc r21,r27
+ 210 010a 01F4      		brne .+2
+ 211 010c 00C0      		rjmp .L13
+ 212               	.LM24:
+ 213 010e E080      		ld r14,Z
+ 214 0110 F180      		ldd r15,Z+1
+ 215               	.LM25:
+ 216 0112 DA01      		movw r26,r20
+ 217 0114 8D91      		ld r24,X+
+ 218 0116 9C91      		ld r25,X
+ 219 0118 1197      		sbiw r26,1
+ 220 011a 9183      		std Z+1,r25
+ 221 011c 8083      		st Z,r24
+ 222               	.LM26:
+ 223 011e 1296      		adiw r26,2
+ 224 0120 8D91      		ld r24,X+
+ 225 0122 9C91      		ld r25,X
+ 226 0124 1397      		sbiw r26,2+1
+ 227 0126 8C1B      		sub r24,r28
+ 228 0128 9D0B      		sbc r25,r29
+ 229 012a 8B30      		cpi r24,11
+ 230 012c 9105      		cpc r25,__zero_reg__
+ 231 012e 00F0      		brlo .L16
+ 232               	.LM27:
+ 233 0130 BA01      		movw r22,r20
+ 234               	.LVL20:
+ 235 0132 6C0F      		add r22,r28
+ 236 0134 7D1F      		adc r23,r29
+ 237               	.LM28:
+ 238 0136 FB01      		movw r30,r22
+ 239               	.LVL21:
+ 240 0138 9383      		std Z+3,r25
+ 241 013a 8283      		std Z+2,r24
+ 242               	.LM29:
+ 243 013c 1396      		adiw r26,2+1
+ 244 013e DC93      		st X,r29
+ 245 0140 CE93      		st -X,r28
+ 246 0142 1297      		sbiw r26,2
+ 247               	.LBB4:
+ 248               	.LM30:
+ 249 0144 0280      		ldd __tmp_reg__,Z+2
+ 250 0146 F381      		ldd r31,Z+3
+ 251 0148 E02D      		mov r30,__tmp_reg__
+ 252               	.LVL22:
+ 253 014a A0E0      		ldi r26,lo8(xStart)
+ 254 014c B0E0      		ldi r27,hi8(xStart)
+ 255               	.LVL23:
+ 256               	.L17:
+ 257 014e 2C91      		ld r18,X
+ 258               	.LVL24:
+ 259 0150 1196      		adiw r26,1
+ 260 0152 3C91      		ld r19,X
+ 261 0154 1197      		sbiw r26,1
+ 262               	.LVL25:
+ 263 0156 1A2F      		mov r17,r26
+ 264 0158 0B2F      		mov r16,r27
+ 265 015a C901      		movw r24,r18
+ 266               	.LVL26:
+ 267 015c DC01      		movw r26,r24
+ 268 015e 1296      		adiw r26,2
+ 269 0160 8D91      		ld r24,X+
+ 270 0162 9C91      		ld r25,X
+ 271 0164 1397      		sbiw r26,2+1
+ 272 0166 8E17      		cp r24,r30
+ 273 0168 9F07      		cpc r25,r31
+ 274 016a 00F0      		brlo .L17
+ 275               	.LVL27:
+ 276 016c E12F      		mov r30,r17
+ 277               	.LVL28:
+ 278 016e F02F      		mov r31,r16
+ 279 0170 EB01      		movw r28,r22
+ 280               	.LVL29:
+ 281 0172 B983      		std Y+1,r27
+ 282 0174 A883      		st Y,r26
+ 283 0176 7183      		std Z+1,r23
+ 284 0178 6083      		st Z,r22
+ 285               	.LVL30:
+ 286               	.L16:
+ 287               	.LBE4:
+ 288               	.LM31:
+ 289 017a E701      		movw r28,r14
+ 290               	.LVL31:
+ 291 017c 2596      		adiw r28,5
+ 292               	.LM32:
+ 293 017e 8091 0000 		lds r24,xFreeBytesRemaining
+ 294 0182 9091 0000 		lds r25,(xFreeBytesRemaining)+1
+ 295 0186 FA01      		movw r30,r20
+ 296               	.LVL32:
+ 297 0188 2281      		ldd r18,Z+2
+ 298 018a 3381      		ldd r19,Z+3
+ 299 018c 821B      		sub r24,r18
+ 300 018e 930B      		sbc r25,r19
+ 301 0190 9093 0000 		sts (xFreeBytesRemaining)+1,r25
+ 302 0194 8093 0000 		sts xFreeBytesRemaining,r24
+ 303 0198 00C0      		rjmp .L18
+ 304               	.LVL33:
+ 305               	.L13:
+ 306 019a C0E0      		ldi r28,lo8(0)
+ 307 019c D0E0      		ldi r29,hi8(0)
+ 308               	.LVL34:
+ 309               	.L18:
+ 310               	.LM33:
+ 311 019e 0E94 0000 		call xTaskResumeAll
+ 312               	.LVL35:
+ 313               	.LM34:
+ 314 01a2 CE01      		movw r24,r28
+ 315               	.LVL36:
+ 316               	/* epilogue start */
+ 317 01a4 DF91      		pop r29
+ 318 01a6 CF91      		pop r28
+ 319 01a8 1F91      		pop r17
+ 320               	.LVL37:
+ 321 01aa 0F91      		pop r16
+ 322               	.LVL38:
+ 323 01ac FF90      		pop r15
+ 324 01ae EF90      		pop r14
+ 325 01b0 0895      		ret
+ 326               	.LFE2:
+ 328               		.data
+ 331               	xFreeBytesRemaining:
+ 332 0000 B80B      		.word	3000
+ 333               		.lcomm xHeapHasBeenInitialised.1500,1
+ 334               		.lcomm xHeap,3000
+ 335               		.lcomm xStart,4
+ 336               		.lcomm xEnd,4
+ 385               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 heap_2.c
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:2      *ABS*:0000003f __SREG__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:3      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:4      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:5      *ABS*:00000034 __CCP__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:18     .text:00000000 xPortGetFreeHeapSize
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:331    .data:00000000 xFreeBytesRemaining
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:32     .text:0000000a vPortInitialiseBlocks
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:44     .text:0000000c vPortFree
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:334    .bss:00000bb9 xStart
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:119    .text:0000006c pvPortMalloc
+                             .bss:00000000 xHeapHasBeenInitialised.1500
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:333    .bss:00000001 xHeap
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccKVzGAE.s:335    .bss:00000bbd xEnd
+
+UNDEFINED SYMBOLS
+vTaskSuspendAll
+xTaskResumeAll
+__do_copy_data
+__do_clear_bss

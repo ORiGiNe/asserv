@@ -1,0 +1,1532 @@
+   1               		.file	"queue.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	.global	uxQueueMessagesWaiting
+  18               	uxQueueMessagesWaiting:
+  19               	.LFB9:
+  20               	.LM1:
+  21               	.LVL0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24 0000 FC01      		movw r30,r24
+  25               	.LM2:
+  26               	/* #APP */
+  27               	 ;  1060 "src/FreeRTOS/queue.c" 1
+  28 0002 0FB6      		in		__tmp_reg__, __SREG__
+  29               	 ;  0 "" 2
+  30               	 ;  1060 "src/FreeRTOS/queue.c" 1
+  31 0004 F894      		cli
+  32               	 ;  0 "" 2
+  33               	 ;  1060 "src/FreeRTOS/queue.c" 1
+  34 0006 0F92      		push	__tmp_reg__
+  35               	 ;  0 "" 2
+  36               	.LM3:
+  37               	/* #NOAPP */
+  38 0008 828D      		ldd r24,Z+26
+  39               	.LVL1:
+  40               	.LM4:
+  41               	/* #APP */
+  42               	 ;  1062 "src/FreeRTOS/queue.c" 1
+  43 000a 0F90      		pop		__tmp_reg__
+  44               	 ;  0 "" 2
+  45               	 ;  1062 "src/FreeRTOS/queue.c" 1
+  46 000c 0FBE      		out		__SREG__, __tmp_reg__
+  47               	 ;  0 "" 2
+  48               	.LVL2:
+  49               	/* epilogue start */
+  50               	.LM5:
+  51               	/* #NOAPP */
+  52 000e 0895      		ret
+  53               	.LFE9:
+  55               	.global	uxQueueMessagesWaitingFromISR
+  57               	uxQueueMessagesWaitingFromISR:
+  58               	.LFB10:
+  59               	.LM6:
+  60               	.LVL3:
+  61               	/* prologue: function */
+  62               	/* frame size = 0 */
+  63 0010 FC01      		movw r30,r24
+  64               	.LM7:
+  65 0012 828D      		ldd r24,Z+26
+  66               	.LVL4:
+  67               	.LVL5:
+  68               	/* epilogue start */
+  69               	.LM8:
+  70 0014 0895      		ret
+  71               	.LFE10:
+  73               	.global	xQueueIsQueueEmptyFromISR
+  75               	xQueueIsQueueEmptyFromISR:
+  76               	.LFB16:
+  77               	.LM9:
+  78               	.LVL6:
+  79               	/* prologue: function */
+  80               	/* frame size = 0 */
+  81 0016 FC01      		movw r30,r24
+  82               	.LM10:
+  83 0018 828D      		ldd r24,Z+26
+  84               	.LVL7:
+  85 001a 90E0      		ldi r25,lo8(0)
+  86 001c 8823      		tst r24
+  87 001e 01F4      		brne .L6
+  88 0020 91E0      		ldi r25,lo8(1)
+  89               	.L6:
+  90               	.LM11:
+  91 0022 892F      		mov r24,r25
+  92               	/* epilogue start */
+  93 0024 0895      		ret
+  94               	.LFE16:
+  96               	.global	xQueueIsQueueFullFromISR
+  98               	xQueueIsQueueFullFromISR:
+  99               	.LFB18:
+ 100               	.LM12:
+ 101               	.LVL8:
+ 102               	/* prologue: function */
+ 103               	/* frame size = 0 */
+ 104 0026 FC01      		movw r30,r24
+ 105               	.LM13:
+ 106 0028 928D      		ldd r25,Z+26
+ 107 002a 20E0      		ldi r18,lo8(0)
+ 108 002c 838D      		ldd r24,Z+27
+ 109               	.LVL9:
+ 110 002e 9817      		cp r25,r24
+ 111 0030 01F4      		brne .L9
+ 112 0032 21E0      		ldi r18,lo8(1)
+ 113               	.L9:
+ 114               	.LM14:
+ 115 0034 822F      		mov r24,r18
+ 116               	/* epilogue start */
+ 117 0036 0895      		ret
+ 118               	.LFE18:
+ 121               	prvUnlockQueue:
+ 122               	.LFB14:
+ 123               	.LM15:
+ 124               	.LVL10:
+ 125 0038 0F93      		push r16
+ 126 003a 1F93      		push r17
+ 127 003c CF93      		push r28
+ 128 003e DF93      		push r29
+ 129               	/* prologue: function */
+ 130               	/* frame size = 0 */
+ 131 0040 EC01      		movw r28,r24
+ 132               	.LM16:
+ 133               	/* #APP */
+ 134               	 ;  1151 "src/FreeRTOS/queue.c" 1
+ 135 0042 0FB6      		in		__tmp_reg__, __SREG__
+ 136               	 ;  0 "" 2
+ 137               	 ;  1151 "src/FreeRTOS/queue.c" 1
+ 138 0044 F894      		cli
+ 139               	 ;  0 "" 2
+ 140               	 ;  1151 "src/FreeRTOS/queue.c" 1
+ 141 0046 0F92      		push	__tmp_reg__
+ 142               	 ;  0 "" 2
+ 143               	.LM17:
+ 144               	/* #NOAPP */
+ 145 0048 8C01      		movw r16,r24
+ 146 004a 0F5E      		subi r16,lo8(-(17))
+ 147 004c 1F4F      		sbci r17,hi8(-(17))
+ 148 004e 00C0      		rjmp .L12
+ 149               	.LVL11:
+ 150               	.L15:
+ 151               	.LM18:
+ 152 0050 8989      		ldd r24,Y+17
+ 153 0052 8823      		tst r24
+ 154 0054 01F0      		breq .L13
+ 155               	.LM19:
+ 156 0056 C801      		movw r24,r16
+ 157 0058 0E94 0000 		call xTaskRemoveFromEventList
+ 158 005c 8823      		tst r24
+ 159 005e 01F0      		breq .L14
+ 160               	.LM20:
+ 161 0060 0E94 0000 		call vTaskMissedYield
+ 162               	.L14:
+ 163               	.LM21:
+ 164 0064 8E8D      		ldd r24,Y+30
+ 165 0066 8150      		subi r24,lo8(-(-1))
+ 166 0068 8E8F      		std Y+30,r24
+ 167               	.LVL12:
+ 168               	.L12:
+ 169               	.LM22:
+ 170 006a 8E8D      		ldd r24,Y+30
+ 171 006c 1816      		cp __zero_reg__,r24
+ 172 006e 04F0      		brlt .L15
+ 173               	.L13:
+ 174               	.LM23:
+ 175 0070 8FEF      		ldi r24,lo8(-1)
+ 176 0072 8E8F      		std Y+30,r24
+ 177               	.LM24:
+ 178               	/* #APP */
+ 179               	 ;  1179 "src/FreeRTOS/queue.c" 1
+ 180 0074 0F90      		pop		__tmp_reg__
+ 181               	 ;  0 "" 2
+ 182               	 ;  1179 "src/FreeRTOS/queue.c" 1
+ 183 0076 0FBE      		out		__SREG__, __tmp_reg__
+ 184               	 ;  0 "" 2
+ 185               	.LM25:
+ 186               	 ;  1182 "src/FreeRTOS/queue.c" 1
+ 187 0078 0FB6      		in		__tmp_reg__, __SREG__
+ 188               	 ;  0 "" 2
+ 189               	 ;  1182 "src/FreeRTOS/queue.c" 1
+ 190 007a F894      		cli
+ 191               	 ;  0 "" 2
+ 192               	 ;  1182 "src/FreeRTOS/queue.c" 1
+ 193 007c 0F92      		push	__tmp_reg__
+ 194               	 ;  0 "" 2
+ 195               	.LM26:
+ 196               	/* #NOAPP */
+ 197 007e 8E01      		movw r16,r28
+ 198 0080 085F      		subi r16,lo8(-(8))
+ 199 0082 1F4F      		sbci r17,hi8(-(8))
+ 200 0084 00C0      		rjmp .L16
+ 201               	.L19:
+ 202               	.LM27:
+ 203 0086 8885      		ldd r24,Y+8
+ 204 0088 8823      		tst r24
+ 205 008a 01F0      		breq .L17
+ 206               	.LM28:
+ 207 008c C801      		movw r24,r16
+ 208 008e 0E94 0000 		call xTaskRemoveFromEventList
+ 209 0092 8823      		tst r24
+ 210 0094 01F0      		breq .L18
+ 211               	.LM29:
+ 212 0096 0E94 0000 		call vTaskMissedYield
+ 213               	.L18:
+ 214               	.LM30:
+ 215 009a 8D8D      		ldd r24,Y+29
+ 216 009c 8150      		subi r24,lo8(-(-1))
+ 217 009e 8D8F      		std Y+29,r24
+ 218               	.L16:
+ 219               	.LM31:
+ 220 00a0 8D8D      		ldd r24,Y+29
+ 221 00a2 1816      		cp __zero_reg__,r24
+ 222 00a4 04F0      		brlt .L19
+ 223               	.L17:
+ 224               	.LM32:
+ 225 00a6 8FEF      		ldi r24,lo8(-1)
+ 226 00a8 8D8F      		std Y+29,r24
+ 227               	.LM33:
+ 228               	/* #APP */
+ 229               	 ;  1203 "src/FreeRTOS/queue.c" 1
+ 230 00aa 0F90      		pop		__tmp_reg__
+ 231               	 ;  0 "" 2
+ 232               	 ;  1203 "src/FreeRTOS/queue.c" 1
+ 233 00ac 0FBE      		out		__SREG__, __tmp_reg__
+ 234               	 ;  0 "" 2
+ 235               	/* epilogue start */
+ 236               	.LM34:
+ 237               	/* #NOAPP */
+ 238 00ae DF91      		pop r29
+ 239 00b0 CF91      		pop r28
+ 240               	.LVL13:
+ 241 00b2 1F91      		pop r17
+ 242 00b4 0F91      		pop r16
+ 243 00b6 0895      		ret
+ 244               	.LFE14:
+ 246               	.global	vQueueWaitForMessageRestricted
+ 248               	vQueueWaitForMessageRestricted:
+ 249               	.LFB19:
+ 250               	.LM35:
+ 251               	.LVL14:
+ 252 00b8 CF93      		push r28
+ 253 00ba DF93      		push r29
+ 254               	/* prologue: function */
+ 255               	/* frame size = 0 */
+ 256 00bc EC01      		movw r28,r24
+ 257               	.LM36:
+ 258               	/* #APP */
+ 259               	 ;  1529 "src/FreeRTOS/queue.c" 1
+ 260 00be 0FB6      		in		__tmp_reg__, __SREG__
+ 261               	 ;  0 "" 2
+ 262               	 ;  1529 "src/FreeRTOS/queue.c" 1
+ 263 00c0 F894      		cli
+ 264               	 ;  0 "" 2
+ 265               	 ;  1529 "src/FreeRTOS/queue.c" 1
+ 266 00c2 0F92      		push	__tmp_reg__
+ 267               	 ;  0 "" 2
+ 268               	/* #NOAPP */
+ 269 00c4 8D8D      		ldd r24,Y+29
+ 270               	.LVL15:
+ 271 00c6 8F3F      		cpi r24,lo8(-1)
+ 272 00c8 01F4      		brne .L22
+ 273 00ca 1D8E      		std Y+29,__zero_reg__
+ 274               	.L22:
+ 275 00cc 8E8D      		ldd r24,Y+30
+ 276 00ce 8F3F      		cpi r24,lo8(-1)
+ 277 00d0 01F4      		brne .L23
+ 278 00d2 1E8E      		std Y+30,__zero_reg__
+ 279               	.L23:
+ 280               	/* #APP */
+ 281               	 ;  1529 "src/FreeRTOS/queue.c" 1
+ 282 00d4 0F90      		pop		__tmp_reg__
+ 283               	 ;  0 "" 2
+ 284               	 ;  1529 "src/FreeRTOS/queue.c" 1
+ 285 00d6 0FBE      		out		__SREG__, __tmp_reg__
+ 286               	 ;  0 "" 2
+ 287               	.LM37:
+ 288               	/* #NOAPP */
+ 289 00d8 8A8D      		ldd r24,Y+26
+ 290 00da 8823      		tst r24
+ 291 00dc 01F4      		brne .L24
+ 292               	.LM38:
+ 293 00de CE01      		movw r24,r28
+ 294 00e0 4196      		adiw r24,17
+ 295 00e2 0E94 0000 		call vTaskPlaceOnEventListRestricted
+ 296               	.LVL16:
+ 297               	.L24:
+ 298               	.LM39:
+ 299 00e6 CE01      		movw r24,r28
+ 300 00e8 0E94 0000 		call prvUnlockQueue
+ 301               	.LVL17:
+ 302               	/* epilogue start */
+ 303               	.LM40:
+ 304 00ec DF91      		pop r29
+ 305 00ee CF91      		pop r28
+ 306               	.LVL18:
+ 307 00f0 0895      		ret
+ 308               	.LFE19:
+ 310               	.global	vQueueDelete
+ 312               	vQueueDelete:
+ 313               	.LFB11:
+ 314               	.LM41:
+ 315               	.LVL19:
+ 316 00f2 0F93      		push r16
+ 317 00f4 1F93      		push r17
+ 318               	/* prologue: function */
+ 319               	/* frame size = 0 */
+ 320 00f6 8C01      		movw r16,r24
+ 321               	.LM42:
+ 322 00f8 FC01      		movw r30,r24
+ 323 00fa 8081      		ld r24,Z
+ 324 00fc 9181      		ldd r25,Z+1
+ 325               	.LVL20:
+ 326 00fe 0E94 0000 		call vPortFree
+ 327               	.LM43:
+ 328 0102 C801      		movw r24,r16
+ 329 0104 0E94 0000 		call vPortFree
+ 330               	/* epilogue start */
+ 331               	.LM44:
+ 332 0108 1F91      		pop r17
+ 333 010a 0F91      		pop r16
+ 334               	.LVL21:
+ 335 010c 0895      		ret
+ 336               	.LFE11:
+ 338               	.global	xQueueReceiveFromISR
+ 340               	xQueueReceiveFromISR:
+ 341               	.LFB8:
+ 342               	.LM45:
+ 343               	.LVL22:
+ 344 010e 0F93      		push r16
+ 345 0110 1F93      		push r17
+ 346 0112 CF93      		push r28
+ 347 0114 DF93      		push r29
+ 348               	/* prologue: function */
+ 349               	/* frame size = 0 */
+ 350 0116 EC01      		movw r28,r24
+ 351 0118 FB01      		movw r30,r22
+ 352               	.LVL23:
+ 353 011a 8A01      		movw r16,r20
+ 354               	.LM46:
+ 355 011c 8A8D      		ldd r24,Y+26
+ 356               	.LVL24:
+ 357 011e 8823      		tst r24
+ 358 0120 01F0      		breq .L30
+ 359               	.LVL25:
+ 360               	.LBB10:
+ 361               	.LBB11:
+ 362               	.LM47:
+ 363 0122 4881      		ld r20,Y
+ 364 0124 5981      		ldd r21,Y+1
+ 365 0126 4115      		cp r20,__zero_reg__
+ 366 0128 5105      		cpc r21,__zero_reg__
+ 367 012a 01F0      		breq .L31
+ 368               	.LM48:
+ 369 012c 8C8D      		ldd r24,Y+28
+ 370 012e 2E81      		ldd r18,Y+6
+ 371 0130 3F81      		ldd r19,Y+7
+ 372 0132 280F      		add r18,r24
+ 373 0134 311D      		adc r19,__zero_reg__
+ 374 0136 3F83      		std Y+7,r19
+ 375 0138 2E83      		std Y+6,r18
+ 376               	.LM49:
+ 377 013a 8A81      		ldd r24,Y+2
+ 378 013c 9B81      		ldd r25,Y+3
+ 379 013e 2817      		cp r18,r24
+ 380 0140 3907      		cpc r19,r25
+ 381 0142 00F0      		brlo .L32
+ 382               	.LM50:
+ 383 0144 5F83      		std Y+7,r21
+ 384 0146 4E83      		std Y+6,r20
+ 385               	.L32:
+ 386               	.LM51:
+ 387 0148 4C8D      		ldd r20,Y+28
+ 388 014a 6E81      		ldd r22,Y+6
+ 389 014c 7F81      		ldd r23,Y+7
+ 390 014e CF01      		movw r24,r30
+ 391 0150 50E0      		ldi r21,lo8(0)
+ 392 0152 0E94 0000 		call memcpy
+ 393               	.L31:
+ 394               	.LBE11:
+ 395               	.LBE10:
+ 396               	.LM52:
+ 397 0156 8A8D      		ldd r24,Y+26
+ 398 0158 8150      		subi r24,lo8(-(-1))
+ 399 015a 8A8F      		std Y+26,r24
+ 400               	.LM53:
+ 401 015c 8D8D      		ldd r24,Y+29
+ 402 015e 8F3F      		cpi r24,lo8(-1)
+ 403 0160 01F4      		brne .L34
+ 404               	.LM54:
+ 405 0162 8885      		ldd r24,Y+8
+ 406 0164 8823      		tst r24
+ 407 0166 01F0      		breq .L35
+ 408               	.LM55:
+ 409 0168 CE01      		movw r24,r28
+ 410 016a 0896      		adiw r24,8
+ 411 016c 0E94 0000 		call xTaskRemoveFromEventList
+ 412 0170 8823      		tst r24
+ 413 0172 01F0      		breq .L35
+ 414               	.LM56:
+ 415 0174 81E0      		ldi r24,lo8(1)
+ 416 0176 F801      		movw r30,r16
+ 417 0178 8083      		st Z,r24
+ 418 017a 00C0      		rjmp .L30
+ 419               	.L34:
+ 420               	.LM57:
+ 421 017c 8F5F      		subi r24,lo8(-(1))
+ 422 017e 8D8F      		std Y+29,r24
+ 423               	.L35:
+ 424 0180 81E0      		ldi r24,lo8(1)
+ 425               	.LVL26:
+ 426               	.L30:
+ 427               	.LVL27:
+ 428               	/* epilogue start */
+ 429               	.LM58:
+ 430 0182 DF91      		pop r29
+ 431 0184 CF91      		pop r28
+ 432               	.LVL28:
+ 433 0186 1F91      		pop r17
+ 434 0188 0F91      		pop r16
+ 435               	.LVL29:
+ 436 018a 0895      		ret
+ 437               	.LFE8:
+ 439               	.global	xQueueGenericReceive
+ 441               	xQueueGenericReceive:
+ 442               	.LFB7:
+ 443               	.LM59:
+ 444               	.LVL30:
+ 445 018c 7F92      		push r7
+ 446 018e 8F92      		push r8
+ 447 0190 9F92      		push r9
+ 448 0192 AF92      		push r10
+ 449 0194 BF92      		push r11
+ 450 0196 CF92      		push r12
+ 451 0198 DF92      		push r13
+ 452 019a EF92      		push r14
+ 453 019c FF92      		push r15
+ 454 019e 0F93      		push r16
+ 455 01a0 1F93      		push r17
+ 456 01a2 DF93      		push r29
+ 457 01a4 CF93      		push r28
+ 458 01a6 00D0      		rcall .
+ 459 01a8 0F92      		push __tmp_reg__
+ 460 01aa 0F92      		push __tmp_reg__
+ 461 01ac CDB7      		in r28,__SP_L__
+ 462 01ae DEB7      		in r29,__SP_H__
+ 463               	/* prologue: function */
+ 464               	/* frame size = 5 */
+ 465 01b0 8C01      		movw r16,r24
+ 466 01b2 962E      		mov r9,r22
+ 467 01b4 872E      		mov r8,r23
+ 468               	.LVL31:
+ 469 01b6 5D83      		std Y+5,r21
+ 470 01b8 4C83      		std Y+4,r20
+ 471 01ba 722E      		mov r7,r18
+ 472               	.LM60:
+ 473 01bc 91E1      		ldi r25,lo8(17)
+ 474 01be C92E      		mov r12,r25
+ 475 01c0 D12C      		mov r13,__zero_reg__
+ 476 01c2 C00E      		add r12,r16
+ 477 01c4 D11E      		adc r13,r17
+ 478 01c6 20E0      		ldi r18,lo8(0)
+ 479               	.LVL32:
+ 480               	.LM61:
+ 481 01c8 7E01      		movw r14,r28
+ 482 01ca 0894      		sec
+ 483 01cc E11C      		adc r14,__zero_reg__
+ 484 01ce F11C      		adc r15,__zero_reg__
+ 485               	.LM62:
+ 486 01d0 84E0      		ldi r24,lo8(4)
+ 487 01d2 A82E      		mov r10,r24
+ 488 01d4 B12C      		mov r11,__zero_reg__
+ 489               	.LVL33:
+ 490 01d6 AC0E      		add r10,r28
+ 491 01d8 BD1E      		adc r11,r29
+ 492 01da 00C0      		rjmp .L38
+ 493               	.LVL34:
+ 494               	.L54:
+ 495               	.LM63:
+ 496 01dc 21E0      		ldi r18,lo8(1)
+ 497               	.LVL35:
+ 498               	.L38:
+ 499               	.LM64:
+ 500               	/* #APP */
+ 501               	 ;  864 "src/FreeRTOS/queue.c" 1
+ 502 01de 0FB6      		in		__tmp_reg__, __SREG__
+ 503               	 ;  0 "" 2
+ 504               	 ;  864 "src/FreeRTOS/queue.c" 1
+ 505 01e0 F894      		cli
+ 506               	 ;  0 "" 2
+ 507               	 ;  864 "src/FreeRTOS/queue.c" 1
+ 508 01e2 0F92      		push	__tmp_reg__
+ 509               	 ;  0 "" 2
+ 510               	.LM65:
+ 511               	/* #NOAPP */
+ 512 01e4 F801      		movw r30,r16
+ 513 01e6 828D      		ldd r24,Z+26
+ 514 01e8 8823      		tst r24
+ 515 01ea 01F4      		brne .+2
+ 516 01ec 00C0      		rjmp .L39
+ 517               	.LM66:
+ 518 01ee E680      		ldd r14,Z+6
+ 519 01f0 F780      		ldd r15,Z+7
+ 520               	.LVL36:
+ 521               	.LBB12:
+ 522               	.LBB13:
+ 523               	.LM67:
+ 524 01f2 4081      		ld r20,Z
+ 525 01f4 5181      		ldd r21,Z+1
+ 526 01f6 4115      		cp r20,__zero_reg__
+ 527 01f8 5105      		cpc r21,__zero_reg__
+ 528 01fa 01F0      		breq .L40
+ 529               	.LM68:
+ 530 01fc 848D      		ldd r24,Z+28
+ 531 01fe 9701      		movw r18,r14
+ 532               	.LVL37:
+ 533 0200 280F      		add r18,r24
+ 534 0202 311D      		adc r19,__zero_reg__
+ 535 0204 3783      		std Z+7,r19
+ 536 0206 2683      		std Z+6,r18
+ 537               	.LM69:
+ 538 0208 8281      		ldd r24,Z+2
+ 539 020a 9381      		ldd r25,Z+3
+ 540 020c 2817      		cp r18,r24
+ 541 020e 3907      		cpc r19,r25
+ 542 0210 00F0      		brlo .L41
+ 543               	.LM70:
+ 544 0212 5783      		std Z+7,r21
+ 545 0214 4683      		std Z+6,r20
+ 546               	.L41:
+ 547               	.LM71:
+ 548 0216 F801      		movw r30,r16
+ 549 0218 448D      		ldd r20,Z+28
+ 550 021a 6681      		ldd r22,Z+6
+ 551 021c 7781      		ldd r23,Z+7
+ 552 021e 892D      		mov r24,r9
+ 553 0220 982D      		mov r25,r8
+ 554 0222 50E0      		ldi r21,lo8(0)
+ 555 0224 0E94 0000 		call memcpy
+ 556               	.LVL38:
+ 557               	.L40:
+ 558               	.LBE13:
+ 559               	.LBE12:
+ 560               	.LM72:
+ 561 0228 7720      		tst r7
+ 562 022a 01F4      		brne .L43
+ 563               	.LM73:
+ 564 022c F801      		movw r30,r16
+ 565 022e 828D      		ldd r24,Z+26
+ 566 0230 8150      		subi r24,lo8(-(-1))
+ 567 0232 828F      		std Z+26,r24
+ 568               	.LM74:
+ 569 0234 8081      		ld r24,Z
+ 570 0236 9181      		ldd r25,Z+1
+ 571 0238 892B      		or r24,r25
+ 572 023a 01F4      		brne .L44
+ 573               	.LM75:
+ 574 023c 0E94 0000 		call xTaskGetCurrentTaskHandle
+ 575               	.LVL39:
+ 576 0240 F801      		movw r30,r16
+ 577 0242 9383      		std Z+3,r25
+ 578 0244 8283      		std Z+2,r24
+ 579               	.LVL40:
+ 580               	.L44:
+ 581               	.LM76:
+ 582 0246 F801      		movw r30,r16
+ 583 0248 8085      		ldd r24,Z+8
+ 584 024a 8823      		tst r24
+ 585 024c 01F0      		breq .L45
+ 586               	.LM77:
+ 587 024e C801      		movw r24,r16
+ 588 0250 0896      		adiw r24,8
+ 589 0252 0E94 0000 		call xTaskRemoveFromEventList
+ 590               	.LVL41:
+ 591 0256 8130      		cpi r24,lo8(1)
+ 592 0258 01F4      		brne .L45
+ 593 025a 00C0      		rjmp .L56
+ 594               	.LVL42:
+ 595               	.L43:
+ 596               	.LM78:
+ 597 025c F801      		movw r30,r16
+ 598 025e F782      		std Z+7,r15
+ 599 0260 E682      		std Z+6,r14
+ 600               	.LM79:
+ 601 0262 8189      		ldd r24,Z+17
+ 602 0264 8823      		tst r24
+ 603 0266 01F0      		breq .L45
+ 604               	.LM80:
+ 605 0268 C601      		movw r24,r12
+ 606 026a 0E94 0000 		call xTaskRemoveFromEventList
+ 607               	.LVL43:
+ 608 026e 8823      		tst r24
+ 609 0270 01F0      		breq .L45
+ 610               	.L56:
+ 611               	.LM81:
+ 612 0272 0E94 0000 		call vPortYield
+ 613               	.LVL44:
+ 614               	.L45:
+ 615               	.LM82:
+ 616               	/* #APP */
+ 617               	 ;  924 "src/FreeRTOS/queue.c" 1
+ 618 0276 0F90      		pop		__tmp_reg__
+ 619               	 ;  0 "" 2
+ 620               	 ;  924 "src/FreeRTOS/queue.c" 1
+ 621 0278 0FBE      		out		__SREG__, __tmp_reg__
+ 622               	 ;  0 "" 2
+ 623               	/* #NOAPP */
+ 624 027a 81E0      		ldi r24,lo8(1)
+ 625 027c 00C0      		rjmp .L46
+ 626               	.LVL45:
+ 627               	.L39:
+ 628               	.LM83:
+ 629 027e 8C81      		ldd r24,Y+4
+ 630 0280 9D81      		ldd r25,Y+5
+ 631 0282 892B      		or r24,r25
+ 632 0284 01F4      		brne .L47
+ 633               	.LVL46:
+ 634               	.LM84:
+ 635               	/* #APP */
+ 636               	 ;  933 "src/FreeRTOS/queue.c" 1
+ 637 0286 0F90      		pop		__tmp_reg__
+ 638               	 ;  0 "" 2
+ 639               	 ;  933 "src/FreeRTOS/queue.c" 1
+ 640 0288 0FBE      		out		__SREG__, __tmp_reg__
+ 641               	 ;  0 "" 2
+ 642               	/* #NOAPP */
+ 643 028a 00C0      		rjmp .L57
+ 644               	.L47:
+ 645               	.LM85:
+ 646 028c 2223      		tst r18
+ 647 028e 01F4      		brne .L48
+ 648               	.LM86:
+ 649 0290 C701      		movw r24,r14
+ 650               	.LVL47:
+ 651 0292 0E94 0000 		call vTaskSetTimeOutState
+ 652               	.LVL48:
+ 653               	.L48:
+ 654               	.LM87:
+ 655               	/* #APP */
+ 656               	 ;  946 "src/FreeRTOS/queue.c" 1
+ 657 0296 0F90      		pop		__tmp_reg__
+ 658               	 ;  0 "" 2
+ 659               	 ;  946 "src/FreeRTOS/queue.c" 1
+ 660 0298 0FBE      		out		__SREG__, __tmp_reg__
+ 661               	 ;  0 "" 2
+ 662               	.LM88:
+ 663               	/* #NOAPP */
+ 664 029a 0E94 0000 		call vTaskSuspendAll
+ 665               	.LVL49:
+ 666               	.LM89:
+ 667               	/* #APP */
+ 668               	 ;  952 "src/FreeRTOS/queue.c" 1
+ 669 029e 0FB6      		in		__tmp_reg__, __SREG__
+ 670               	 ;  0 "" 2
+ 671               	 ;  952 "src/FreeRTOS/queue.c" 1
+ 672 02a0 F894      		cli
+ 673               	 ;  0 "" 2
+ 674               	 ;  952 "src/FreeRTOS/queue.c" 1
+ 675 02a2 0F92      		push	__tmp_reg__
+ 676               	 ;  0 "" 2
+ 677               	/* #NOAPP */
+ 678 02a4 F801      		movw r30,r16
+ 679 02a6 858D      		ldd r24,Z+29
+ 680 02a8 8F3F      		cpi r24,lo8(-1)
+ 681 02aa 01F4      		brne .L49
+ 682 02ac 158E      		std Z+29,__zero_reg__
+ 683               	.L49:
+ 684 02ae F801      		movw r30,r16
+ 685 02b0 868D      		ldd r24,Z+30
+ 686 02b2 8F3F      		cpi r24,lo8(-1)
+ 687 02b4 01F4      		brne .L50
+ 688 02b6 168E      		std Z+30,__zero_reg__
+ 689               	.L50:
+ 690               	/* #APP */
+ 691               	 ;  952 "src/FreeRTOS/queue.c" 1
+ 692 02b8 0F90      		pop		__tmp_reg__
+ 693               	 ;  0 "" 2
+ 694               	 ;  952 "src/FreeRTOS/queue.c" 1
+ 695 02ba 0FBE      		out		__SREG__, __tmp_reg__
+ 696               	 ;  0 "" 2
+ 697               	.LM90:
+ 698               	/* #NOAPP */
+ 699 02bc C701      		movw r24,r14
+ 700 02be B501      		movw r22,r10
+ 701 02c0 0E94 0000 		call xTaskCheckForTimeOut
+ 702 02c4 8823      		tst r24
+ 703 02c6 01F4      		brne .L51
+ 704               	.LBB14:
+ 705               	.LBB15:
+ 706               	.LM91:
+ 707               	/* #APP */
+ 708               	 ;  1211 "src/FreeRTOS/queue.c" 1
+ 709 02c8 0FB6      		in		__tmp_reg__, __SREG__
+ 710               	 ;  0 "" 2
+ 711               	 ;  1211 "src/FreeRTOS/queue.c" 1
+ 712 02ca F894      		cli
+ 713               	 ;  0 "" 2
+ 714               	 ;  1211 "src/FreeRTOS/queue.c" 1
+ 715 02cc 0F92      		push	__tmp_reg__
+ 716               	 ;  0 "" 2
+ 717               	.LM92:
+ 718               	/* #NOAPP */
+ 719 02ce F801      		movw r30,r16
+ 720 02d0 828D      		ldd r24,Z+26
+ 721               	.LM93:
+ 722               	/* #APP */
+ 723               	 ;  1213 "src/FreeRTOS/queue.c" 1
+ 724 02d2 0F90      		pop		__tmp_reg__
+ 725               	 ;  0 "" 2
+ 726               	 ;  1213 "src/FreeRTOS/queue.c" 1
+ 727 02d4 0FBE      		out		__SREG__, __tmp_reg__
+ 728               	 ;  0 "" 2
+ 729               	/* #NOAPP */
+ 730               	.LBE15:
+ 731               	.LBE14:
+ 732               	.LM94:
+ 733 02d6 8823      		tst r24
+ 734 02d8 01F4      		brne .L52
+ 735               	.LM95:
+ 736 02da F801      		movw r30,r16
+ 737 02dc 8081      		ld r24,Z
+ 738 02de 9181      		ldd r25,Z+1
+ 739 02e0 892B      		or r24,r25
+ 740 02e2 01F4      		brne .L53
+ 741               	.LM96:
+ 742               	/* #APP */
+ 743               	 ;  965 "src/FreeRTOS/queue.c" 1
+ 744 02e4 0FB6      		in		__tmp_reg__, __SREG__
+ 745               	 ;  0 "" 2
+ 746               	 ;  965 "src/FreeRTOS/queue.c" 1
+ 747 02e6 F894      		cli
+ 748               	 ;  0 "" 2
+ 749               	 ;  965 "src/FreeRTOS/queue.c" 1
+ 750 02e8 0F92      		push	__tmp_reg__
+ 751               	 ;  0 "" 2
+ 752               	.LM97:
+ 753               	/* #NOAPP */
+ 754 02ea F801      		movw r30,r16
+ 755 02ec 8281      		ldd r24,Z+2
+ 756 02ee 9381      		ldd r25,Z+3
+ 757 02f0 0E94 0000 		call vTaskPriorityInherit
+ 758               	.LM98:
+ 759               	/* #APP */
+ 760               	 ;  969 "src/FreeRTOS/queue.c" 1
+ 761 02f4 0F90      		pop		__tmp_reg__
+ 762               	 ;  0 "" 2
+ 763               	 ;  969 "src/FreeRTOS/queue.c" 1
+ 764 02f6 0FBE      		out		__SREG__, __tmp_reg__
+ 765               	 ;  0 "" 2
+ 766               	/* #NOAPP */
+ 767               	.L53:
+ 768               	.LM99:
+ 769 02f8 6C81      		ldd r22,Y+4
+ 770 02fa 7D81      		ldd r23,Y+5
+ 771 02fc C601      		movw r24,r12
+ 772 02fe 0E94 0000 		call vTaskPlaceOnEventList
+ 773               	.LM100:
+ 774 0302 C801      		movw r24,r16
+ 775 0304 0E94 0000 		call prvUnlockQueue
+ 776               	.LM101:
+ 777 0308 0E94 0000 		call xTaskResumeAll
+ 778 030c 8823      		tst r24
+ 779 030e 01F0      		breq .+2
+ 780 0310 00C0      		rjmp .L54
+ 781               	.LM102:
+ 782 0312 0E94 0000 		call vPortYield
+ 783 0316 00C0      		rjmp .L54
+ 784               	.L52:
+ 785               	.LM103:
+ 786 0318 C801      		movw r24,r16
+ 787 031a 0E94 0000 		call prvUnlockQueue
+ 788               	.LM104:
+ 789 031e 0E94 0000 		call xTaskResumeAll
+ 790 0322 00C0      		rjmp .L54
+ 791               	.L51:
+ 792               	.LM105:
+ 793 0324 C801      		movw r24,r16
+ 794 0326 0E94 0000 		call prvUnlockQueue
+ 795               	.LM106:
+ 796 032a 0E94 0000 		call xTaskResumeAll
+ 797               	.LVL50:
+ 798               	.L57:
+ 799 032e 80E0      		ldi r24,lo8(0)
+ 800               	.LVL51:
+ 801               	.L46:
+ 802               	/* epilogue start */
+ 803               	.LM107:
+ 804 0330 0F90      		pop __tmp_reg__
+ 805 0332 0F90      		pop __tmp_reg__
+ 806 0334 0F90      		pop __tmp_reg__
+ 807 0336 0F90      		pop __tmp_reg__
+ 808 0338 0F90      		pop __tmp_reg__
+ 809 033a CF91      		pop r28
+ 810 033c DF91      		pop r29
+ 811 033e 1F91      		pop r17
+ 812 0340 0F91      		pop r16
+ 813               	.LVL52:
+ 814 0342 FF90      		pop r15
+ 815 0344 EF90      		pop r14
+ 816               	.LVL53:
+ 817 0346 DF90      		pop r13
+ 818 0348 CF90      		pop r12
+ 819 034a BF90      		pop r11
+ 820 034c AF90      		pop r10
+ 821 034e 9F90      		pop r9
+ 822               	.LVL54:
+ 823 0350 8F90      		pop r8
+ 824               	.LVL55:
+ 825 0352 7F90      		pop r7
+ 826               	.LVL56:
+ 827 0354 0895      		ret
+ 828               	.LFE7:
+ 831               	prvCopyDataToQueue:
+ 832               	.LFB12:
+ 833               	.LM108:
+ 834               	.LVL57:
+ 835 0356 CF93      		push r28
+ 836 0358 DF93      		push r29
+ 837               	/* prologue: function */
+ 838               	/* frame size = 0 */
+ 839 035a EC01      		movw r28,r24
+ 840 035c 842F      		mov r24,r20
+ 841               	.LVL58:
+ 842               	.LM109:
+ 843 035e 4C8D      		ldd r20,Y+28
+ 844               	.LVL59:
+ 845 0360 4423      		tst r20
+ 846 0362 01F4      		brne .L59
+ 847               	.LM110:
+ 848 0364 8881      		ld r24,Y
+ 849 0366 9981      		ldd r25,Y+1
+ 850               	.LVL60:
+ 851 0368 892B      		or r24,r25
+ 852 036a 01F4      		brne .L60
+ 853               	.LM111:
+ 854 036c 8A81      		ldd r24,Y+2
+ 855 036e 9B81      		ldd r25,Y+3
+ 856 0370 0E94 0000 		call vTaskPriorityDisinherit
+ 857               	.LVL61:
+ 858               	.LM112:
+ 859 0374 1B82      		std Y+3,__zero_reg__
+ 860 0376 1A82      		std Y+2,__zero_reg__
+ 861 0378 00C0      		rjmp .L60
+ 862               	.LVL62:
+ 863               	.L59:
+ 864               	.LM113:
+ 865 037a 8823      		tst r24
+ 866 037c 01F4      		brne .L61
+ 867               	.LM114:
+ 868 037e 8C81      		ldd r24,Y+4
+ 869               	.LVL63:
+ 870 0380 9D81      		ldd r25,Y+5
+ 871 0382 50E0      		ldi r21,lo8(0)
+ 872 0384 0E94 0000 		call memcpy
+ 873               	.LVL64:
+ 874               	.LM115:
+ 875 0388 8C8D      		ldd r24,Y+28
+ 876 038a 2C81      		ldd r18,Y+4
+ 877 038c 3D81      		ldd r19,Y+5
+ 878 038e 280F      		add r18,r24
+ 879 0390 311D      		adc r19,__zero_reg__
+ 880 0392 3D83      		std Y+5,r19
+ 881 0394 2C83      		std Y+4,r18
+ 882               	.LM116:
+ 883 0396 8A81      		ldd r24,Y+2
+ 884 0398 9B81      		ldd r25,Y+3
+ 885 039a 2817      		cp r18,r24
+ 886 039c 3907      		cpc r19,r25
+ 887 039e 00F0      		brlo .L60
+ 888               	.LM117:
+ 889 03a0 8881      		ld r24,Y
+ 890 03a2 9981      		ldd r25,Y+1
+ 891 03a4 9D83      		std Y+5,r25
+ 892 03a6 8C83      		std Y+4,r24
+ 893 03a8 00C0      		rjmp .L60
+ 894               	.LVL65:
+ 895               	.L61:
+ 896               	.LM118:
+ 897 03aa 8E81      		ldd r24,Y+6
+ 898               	.LVL66:
+ 899 03ac 9F81      		ldd r25,Y+7
+ 900 03ae 50E0      		ldi r21,lo8(0)
+ 901 03b0 0E94 0000 		call memcpy
+ 902               	.LVL67:
+ 903               	.LM119:
+ 904 03b4 8C8D      		ldd r24,Y+28
+ 905 03b6 90E0      		ldi r25,lo8(0)
+ 906 03b8 4427      		clr r20
+ 907 03ba 5527      		clr r21
+ 908 03bc 481B      		sub r20,r24
+ 909 03be 590B      		sbc r21,r25
+ 910 03c0 8E81      		ldd r24,Y+6
+ 911 03c2 9F81      		ldd r25,Y+7
+ 912 03c4 840F      		add r24,r20
+ 913 03c6 951F      		adc r25,r21
+ 914 03c8 9F83      		std Y+7,r25
+ 915 03ca 8E83      		std Y+6,r24
+ 916               	.LM120:
+ 917 03cc 2881      		ld r18,Y
+ 918 03ce 3981      		ldd r19,Y+1
+ 919 03d0 8217      		cp r24,r18
+ 920 03d2 9307      		cpc r25,r19
+ 921 03d4 00F4      		brsh .L60
+ 922               	.LM121:
+ 923 03d6 8A81      		ldd r24,Y+2
+ 924 03d8 9B81      		ldd r25,Y+3
+ 925 03da 840F      		add r24,r20
+ 926 03dc 951F      		adc r25,r21
+ 927 03de 9F83      		std Y+7,r25
+ 928 03e0 8E83      		std Y+6,r24
+ 929               	.LVL68:
+ 930               	.L60:
+ 931               	.LM122:
+ 932 03e2 8A8D      		ldd r24,Y+26
+ 933 03e4 8F5F      		subi r24,lo8(-(1))
+ 934 03e6 8A8F      		std Y+26,r24
+ 935               	/* epilogue start */
+ 936               	.LM123:
+ 937 03e8 DF91      		pop r29
+ 938 03ea CF91      		pop r28
+ 939               	.LVL69:
+ 940 03ec 0895      		ret
+ 941               	.LFE12:
+ 943               	.global	xQueueGenericSendFromISR
+ 945               	xQueueGenericSendFromISR:
+ 946               	.LFB6:
+ 947               	.LM124:
+ 948               	.LVL70:
+ 949 03ee 0F93      		push r16
+ 950 03f0 1F93      		push r17
+ 951 03f2 CF93      		push r28
+ 952 03f4 DF93      		push r29
+ 953               	/* prologue: function */
+ 954               	/* frame size = 0 */
+ 955 03f6 EC01      		movw r28,r24
+ 956 03f8 8A01      		movw r16,r20
+ 957               	.LM125:
+ 958 03fa 9A8D      		ldd r25,Y+26
+ 959 03fc 8B8D      		ldd r24,Y+27
+ 960               	.LVL71:
+ 961 03fe 9817      		cp r25,r24
+ 962 0400 00F0      		brlo .L66
+ 963               	.LVL72:
+ 964 0402 80E0      		ldi r24,lo8(0)
+ 965               	.LVL73:
+ 966 0404 00C0      		rjmp .L67
+ 967               	.LVL74:
+ 968               	.L66:
+ 969               	.LM126:
+ 970 0406 CE01      		movw r24,r28
+ 971 0408 422F      		mov r20,r18
+ 972 040a 0E94 0000 		call prvCopyDataToQueue
+ 973               	.LVL75:
+ 974               	.LM127:
+ 975 040e 8E8D      		ldd r24,Y+30
+ 976 0410 8F3F      		cpi r24,lo8(-1)
+ 977 0412 01F4      		brne .L68
+ 978               	.LM128:
+ 979 0414 8989      		ldd r24,Y+17
+ 980 0416 8823      		tst r24
+ 981 0418 01F0      		breq .L69
+ 982               	.LM129:
+ 983 041a CE01      		movw r24,r28
+ 984 041c 4196      		adiw r24,17
+ 985 041e 0E94 0000 		call xTaskRemoveFromEventList
+ 986 0422 8823      		tst r24
+ 987 0424 01F0      		breq .L69
+ 988               	.LM130:
+ 989 0426 81E0      		ldi r24,lo8(1)
+ 990 0428 F801      		movw r30,r16
+ 991 042a 8083      		st Z,r24
+ 992 042c 00C0      		rjmp .L67
+ 993               	.L68:
+ 994               	.LM131:
+ 995 042e 8F5F      		subi r24,lo8(-(1))
+ 996 0430 8E8F      		std Y+30,r24
+ 997               	.L69:
+ 998 0432 81E0      		ldi r24,lo8(1)
+ 999               	.LVL76:
+ 1000               	.L67:
+ 1001               	.LVL77:
+ 1002               	/* epilogue start */
+ 1003               	.LM132:
+ 1004 0434 DF91      		pop r29
+ 1005 0436 CF91      		pop r28
+ 1006               	.LVL78:
+ 1007 0438 1F91      		pop r17
+ 1008 043a 0F91      		pop r16
+ 1009               	.LVL79:
+ 1010 043c 0895      		ret
+ 1011               	.LFE6:
+ 1013               	.global	xQueueGenericSend
+ 1015               	xQueueGenericSend:
+ 1016               	.LFB5:
+ 1017               	.LM133:
+ 1018               	.LVL80:
+ 1019 043e 7F92      		push r7
+ 1020 0440 8F92      		push r8
+ 1021 0442 9F92      		push r9
+ 1022 0444 AF92      		push r10
+ 1023 0446 BF92      		push r11
+ 1024 0448 CF92      		push r12
+ 1025 044a DF92      		push r13
+ 1026 044c EF92      		push r14
+ 1027 044e FF92      		push r15
+ 1028 0450 0F93      		push r16
+ 1029 0452 1F93      		push r17
+ 1030 0454 DF93      		push r29
+ 1031 0456 CF93      		push r28
+ 1032 0458 00D0      		rcall .
+ 1033 045a 0F92      		push __tmp_reg__
+ 1034 045c 0F92      		push __tmp_reg__
+ 1035 045e CDB7      		in r28,__SP_L__
+ 1036 0460 DEB7      		in r29,__SP_H__
+ 1037               	/* prologue: function */
+ 1038               	/* frame size = 5 */
+ 1039 0462 8C01      		movw r16,r24
+ 1040 0464 6B01      		movw r12,r22
+ 1041 0466 5D83      		std Y+5,r21
+ 1042 0468 4C83      		std Y+4,r20
+ 1043 046a 722E      		mov r7,r18
+ 1044               	.LM134:
+ 1045 046c 48E0      		ldi r20,lo8(8)
+ 1046 046e E42E      		mov r14,r20
+ 1047 0470 F12C      		mov r15,__zero_reg__
+ 1048               	.LVL81:
+ 1049 0472 E80E      		add r14,r24
+ 1050 0474 F91E      		adc r15,r25
+ 1051 0476 20E0      		ldi r18,lo8(0)
+ 1052               	.LVL82:
+ 1053               	.LM135:
+ 1054 0478 5E01      		movw r10,r28
+ 1055 047a 0894      		sec
+ 1056 047c A11C      		adc r10,__zero_reg__
+ 1057 047e B11C      		adc r11,__zero_reg__
+ 1058               	.LM136:
+ 1059 0480 34E0      		ldi r19,lo8(4)
+ 1060 0482 832E      		mov r8,r19
+ 1061 0484 912C      		mov r9,__zero_reg__
+ 1062 0486 8C0E      		add r8,r28
+ 1063 0488 9D1E      		adc r9,r29
+ 1064 048a 00C0      		rjmp .L72
+ 1065               	.LVL83:
+ 1066               	.L82:
+ 1067               	.LM137:
+ 1068 048c 21E0      		ldi r18,lo8(1)
+ 1069               	.LVL84:
+ 1070               	.L72:
+ 1071               	.LM138:
+ 1072               	/* #APP */
+ 1073               	 ;  480 "src/FreeRTOS/queue.c" 1
+ 1074 048e 0FB6      		in		__tmp_reg__, __SREG__
+ 1075               	 ;  0 "" 2
+ 1076               	 ;  480 "src/FreeRTOS/queue.c" 1
+ 1077 0490 F894      		cli
+ 1078               	 ;  0 "" 2
+ 1079               	 ;  480 "src/FreeRTOS/queue.c" 1
+ 1080 0492 0F92      		push	__tmp_reg__
+ 1081               	 ;  0 "" 2
+ 1082               	.LM139:
+ 1083               	/* #NOAPP */
+ 1084 0494 F801      		movw r30,r16
+ 1085 0496 928D      		ldd r25,Z+26
+ 1086 0498 838D      		ldd r24,Z+27
+ 1087 049a 9817      		cp r25,r24
+ 1088 049c 00F4      		brsh .L73
+ 1089               	.LM140:
+ 1090 049e C801      		movw r24,r16
+ 1091 04a0 B601      		movw r22,r12
+ 1092 04a2 472D      		mov r20,r7
+ 1093 04a4 0E94 0000 		call prvCopyDataToQueue
+ 1094               	.LVL85:
+ 1095               	.LM141:
+ 1096 04a8 F801      		movw r30,r16
+ 1097 04aa 8189      		ldd r24,Z+17
+ 1098 04ac 8823      		tst r24
+ 1099 04ae 01F0      		breq .L74
+ 1100               	.LM142:
+ 1101 04b0 C801      		movw r24,r16
+ 1102 04b2 4196      		adiw r24,17
+ 1103 04b4 0E94 0000 		call xTaskRemoveFromEventList
+ 1104 04b8 8130      		cpi r24,lo8(1)
+ 1105 04ba 01F4      		brne .L74
+ 1106               	.LM143:
+ 1107 04bc 0E94 0000 		call vPortYield
+ 1108               	.L74:
+ 1109               	.LM144:
+ 1110               	/* #APP */
+ 1111               	 ;  503 "src/FreeRTOS/queue.c" 1
+ 1112 04c0 0F90      		pop		__tmp_reg__
+ 1113               	 ;  0 "" 2
+ 1114               	 ;  503 "src/FreeRTOS/queue.c" 1
+ 1115 04c2 0FBE      		out		__SREG__, __tmp_reg__
+ 1116               	 ;  0 "" 2
+ 1117               	/* #NOAPP */
+ 1118 04c4 81E0      		ldi r24,lo8(1)
+ 1119 04c6 00C0      		rjmp .L75
+ 1120               	.LVL86:
+ 1121               	.L73:
+ 1122               	.LM145:
+ 1123 04c8 8C81      		ldd r24,Y+4
+ 1124 04ca 9D81      		ldd r25,Y+5
+ 1125 04cc 892B      		or r24,r25
+ 1126 04ce 01F4      		brne .L76
+ 1127               	.LVL87:
+ 1128               	.LM146:
+ 1129               	/* #APP */
+ 1130               	 ;  515 "src/FreeRTOS/queue.c" 1
+ 1131 04d0 0F90      		pop		__tmp_reg__
+ 1132               	 ;  0 "" 2
+ 1133               	 ;  515 "src/FreeRTOS/queue.c" 1
+ 1134 04d2 0FBE      		out		__SREG__, __tmp_reg__
+ 1135               	 ;  0 "" 2
+ 1136               	/* #NOAPP */
+ 1137 04d4 00C0      		rjmp .L84
+ 1138               	.L76:
+ 1139               	.LM147:
+ 1140 04d6 2223      		tst r18
+ 1141 04d8 01F4      		brne .L77
+ 1142               	.LM148:
+ 1143 04da C501      		movw r24,r10
+ 1144               	.LVL88:
+ 1145 04dc 0E94 0000 		call vTaskSetTimeOutState
+ 1146               	.LVL89:
+ 1147               	.L77:
+ 1148               	.LM149:
+ 1149               	/* #APP */
+ 1150               	 ;  531 "src/FreeRTOS/queue.c" 1
+ 1151 04e0 0F90      		pop		__tmp_reg__
+ 1152               	 ;  0 "" 2
+ 1153               	 ;  531 "src/FreeRTOS/queue.c" 1
+ 1154 04e2 0FBE      		out		__SREG__, __tmp_reg__
+ 1155               	 ;  0 "" 2
+ 1156               	.LM150:
+ 1157               	/* #NOAPP */
+ 1158 04e4 0E94 0000 		call vTaskSuspendAll
+ 1159               	.LVL90:
+ 1160               	.LM151:
+ 1161               	/* #APP */
+ 1162               	 ;  537 "src/FreeRTOS/queue.c" 1
+ 1163 04e8 0FB6      		in		__tmp_reg__, __SREG__
+ 1164               	 ;  0 "" 2
+ 1165               	 ;  537 "src/FreeRTOS/queue.c" 1
+ 1166 04ea F894      		cli
+ 1167               	 ;  0 "" 2
+ 1168               	 ;  537 "src/FreeRTOS/queue.c" 1
+ 1169 04ec 0F92      		push	__tmp_reg__
+ 1170               	 ;  0 "" 2
+ 1171               	/* #NOAPP */
+ 1172 04ee F801      		movw r30,r16
+ 1173 04f0 858D      		ldd r24,Z+29
+ 1174 04f2 8F3F      		cpi r24,lo8(-1)
+ 1175 04f4 01F4      		brne .L78
+ 1176 04f6 158E      		std Z+29,__zero_reg__
+ 1177               	.L78:
+ 1178 04f8 F801      		movw r30,r16
+ 1179 04fa 868D      		ldd r24,Z+30
+ 1180 04fc 8F3F      		cpi r24,lo8(-1)
+ 1181 04fe 01F4      		brne .L79
+ 1182 0500 168E      		std Z+30,__zero_reg__
+ 1183               	.L79:
+ 1184               	/* #APP */
+ 1185               	 ;  537 "src/FreeRTOS/queue.c" 1
+ 1186 0502 0F90      		pop		__tmp_reg__
+ 1187               	 ;  0 "" 2
+ 1188               	 ;  537 "src/FreeRTOS/queue.c" 1
+ 1189 0504 0FBE      		out		__SREG__, __tmp_reg__
+ 1190               	 ;  0 "" 2
+ 1191               	.LM152:
+ 1192               	/* #NOAPP */
+ 1193 0506 C501      		movw r24,r10
+ 1194 0508 B401      		movw r22,r8
+ 1195 050a 0E94 0000 		call xTaskCheckForTimeOut
+ 1196 050e 8823      		tst r24
+ 1197 0510 01F4      		brne .L80
+ 1198               	.LBB16:
+ 1199               	.LBB17:
+ 1200               	.LM153:
+ 1201               	/* #APP */
+ 1202               	 ;  1234 "src/FreeRTOS/queue.c" 1
+ 1203 0512 0FB6      		in		__tmp_reg__, __SREG__
+ 1204               	 ;  0 "" 2
+ 1205               	 ;  1234 "src/FreeRTOS/queue.c" 1
+ 1206 0514 F894      		cli
+ 1207               	 ;  0 "" 2
+ 1208               	 ;  1234 "src/FreeRTOS/queue.c" 1
+ 1209 0516 0F92      		push	__tmp_reg__
+ 1210               	 ;  0 "" 2
+ 1211               	.LM154:
+ 1212               	/* #NOAPP */
+ 1213 0518 F801      		movw r30,r16
+ 1214 051a 928D      		ldd r25,Z+26
+ 1215               	.LM155:
+ 1216               	/* #APP */
+ 1217               	 ;  1236 "src/FreeRTOS/queue.c" 1
+ 1218 051c 0F90      		pop		__tmp_reg__
+ 1219               	 ;  0 "" 2
+ 1220               	 ;  1236 "src/FreeRTOS/queue.c" 1
+ 1221 051e 0FBE      		out		__SREG__, __tmp_reg__
+ 1222               	 ;  0 "" 2
+ 1223               	/* #NOAPP */
+ 1224               	.LBE17:
+ 1225               	.LBE16:
+ 1226               	.LM156:
+ 1227 0520 F801      		movw r30,r16
+ 1228 0522 838D      		ldd r24,Z+27
+ 1229 0524 9817      		cp r25,r24
+ 1230 0526 01F4      		brne .L81
+ 1231               	.LM157:
+ 1232 0528 6C81      		ldd r22,Y+4
+ 1233 052a 7D81      		ldd r23,Y+5
+ 1234 052c C701      		movw r24,r14
+ 1235 052e 0E94 0000 		call vTaskPlaceOnEventList
+ 1236               	.LM158:
+ 1237 0532 C801      		movw r24,r16
+ 1238 0534 0E94 0000 		call prvUnlockQueue
+ 1239               	.LM159:
+ 1240 0538 0E94 0000 		call xTaskResumeAll
+ 1241 053c 8823      		tst r24
+ 1242 053e 01F0      		breq .+2
+ 1243 0540 00C0      		rjmp .L82
+ 1244               	.LM160:
+ 1245 0542 0E94 0000 		call vPortYield
+ 1246 0546 00C0      		rjmp .L82
+ 1247               	.L81:
+ 1248               	.LM161:
+ 1249 0548 C801      		movw r24,r16
+ 1250 054a 0E94 0000 		call prvUnlockQueue
+ 1251               	.LM162:
+ 1252 054e 0E94 0000 		call xTaskResumeAll
+ 1253 0552 00C0      		rjmp .L82
+ 1254               	.L80:
+ 1255               	.LM163:
+ 1256 0554 C801      		movw r24,r16
+ 1257 0556 0E94 0000 		call prvUnlockQueue
+ 1258               	.LM164:
+ 1259 055a 0E94 0000 		call xTaskResumeAll
+ 1260               	.LVL91:
+ 1261               	.L84:
+ 1262 055e 80E0      		ldi r24,lo8(0)
+ 1263               	.L75:
+ 1264               	/* epilogue start */
+ 1265               	.LM165:
+ 1266 0560 0F90      		pop __tmp_reg__
+ 1267 0562 0F90      		pop __tmp_reg__
+ 1268 0564 0F90      		pop __tmp_reg__
+ 1269 0566 0F90      		pop __tmp_reg__
+ 1270 0568 0F90      		pop __tmp_reg__
+ 1271 056a CF91      		pop r28
+ 1272 056c DF91      		pop r29
+ 1273 056e 1F91      		pop r17
+ 1274 0570 0F91      		pop r16
+ 1275               	.LVL92:
+ 1276 0572 FF90      		pop r15
+ 1277 0574 EF90      		pop r14
+ 1278 0576 DF90      		pop r13
+ 1279 0578 CF90      		pop r12
+ 1280               	.LVL93:
+ 1281 057a BF90      		pop r11
+ 1282 057c AF90      		pop r10
+ 1283 057e 9F90      		pop r9
+ 1284 0580 8F90      		pop r8
+ 1285 0582 7F90      		pop r7
+ 1286               	.LVL94:
+ 1287 0584 0895      		ret
+ 1288               	.LFE5:
+ 1290               	.global	xQueueCreateMutex
+ 1292               	xQueueCreateMutex:
+ 1293               	.LFB3:
+ 1294               	.LM166:
+ 1295 0586 CF93      		push r28
+ 1296 0588 DF93      		push r29
+ 1297               	/* prologue: function */
+ 1298               	/* frame size = 0 */
+ 1299               	.LM167:
+ 1300 058a 8FE1      		ldi r24,lo8(31)
+ 1301 058c 90E0      		ldi r25,hi8(31)
+ 1302 058e 0E94 0000 		call pvPortMalloc
+ 1303 0592 EC01      		movw r28,r24
+ 1304               	.LM168:
+ 1305 0594 0097      		sbiw r24,0
+ 1306               	.LVL95:
+ 1307 0596 01F0      		breq .L86
+ 1308               	.LM169:
+ 1309 0598 1B82      		std Y+3,__zero_reg__
+ 1310 059a 1A82      		std Y+2,__zero_reg__
+ 1311               	.LM170:
+ 1312 059c 1982      		std Y+1,__zero_reg__
+ 1313 059e 1882      		st Y,__zero_reg__
+ 1314               	.LM171:
+ 1315 05a0 1D82      		std Y+5,__zero_reg__
+ 1316 05a2 1C82      		std Y+4,__zero_reg__
+ 1317               	.LM172:
+ 1318 05a4 1F82      		std Y+7,__zero_reg__
+ 1319 05a6 1E82      		std Y+6,__zero_reg__
+ 1320               	.LM173:
+ 1321 05a8 1A8E      		std Y+26,__zero_reg__
+ 1322               	.LM174:
+ 1323 05aa 81E0      		ldi r24,lo8(1)
+ 1324               	.LVL96:
+ 1325 05ac 8B8F      		std Y+27,r24
+ 1326               	.LM175:
+ 1327 05ae 1C8E      		std Y+28,__zero_reg__
+ 1328               	.LM176:
+ 1329 05b0 8FEF      		ldi r24,lo8(-1)
+ 1330 05b2 8D8F      		std Y+29,r24
+ 1331               	.LM177:
+ 1332 05b4 8E8F      		std Y+30,r24
+ 1333               	.LM178:
+ 1334 05b6 CE01      		movw r24,r28
+ 1335 05b8 0896      		adiw r24,8
+ 1336 05ba 0E94 0000 		call vListInitialise
+ 1337               	.LM179:
+ 1338 05be CE01      		movw r24,r28
+ 1339 05c0 4196      		adiw r24,17
+ 1340 05c2 0E94 0000 		call vListInitialise
+ 1341               	.LM180:
+ 1342 05c6 CE01      		movw r24,r28
+ 1343 05c8 60E0      		ldi r22,lo8(0)
+ 1344 05ca 70E0      		ldi r23,hi8(0)
+ 1345 05cc 40E0      		ldi r20,lo8(0)
+ 1346 05ce 50E0      		ldi r21,hi8(0)
+ 1347 05d0 20E0      		ldi r18,lo8(0)
+ 1348 05d2 0E94 0000 		call xQueueGenericSend
+ 1349               	.LVL97:
+ 1350               	.L86:
+ 1351               	.LM181:
+ 1352 05d6 CE01      		movw r24,r28
+ 1353               	.LVL98:
+ 1354               	/* epilogue start */
+ 1355 05d8 DF91      		pop r29
+ 1356 05da CF91      		pop r28
+ 1357 05dc 0895      		ret
+ 1358               	.LFE3:
+ 1360               	.global	xQueueCreate
+ 1362               	xQueueCreate:
+ 1363               	.LFB2:
+ 1364               	.LM182:
+ 1365               	.LVL99:
+ 1366 05de AF92      		push r10
+ 1367 05e0 BF92      		push r11
+ 1368 05e2 CF92      		push r12
+ 1369 05e4 DF92      		push r13
+ 1370 05e6 EF92      		push r14
+ 1371 05e8 FF92      		push r15
+ 1372 05ea 0F93      		push r16
+ 1373 05ec 1F93      		push r17
+ 1374 05ee CF93      		push r28
+ 1375 05f0 DF93      		push r29
+ 1376               	/* prologue: function */
+ 1377               	/* frame size = 0 */
+ 1378 05f2 B82E      		mov r11,r24
+ 1379 05f4 A62E      		mov r10,r22
+ 1380               	.LM183:
+ 1381 05f6 8823      		tst r24
+ 1382 05f8 01F4      		brne .+2
+ 1383 05fa 00C0      		rjmp .L89
+ 1384               	.LVL100:
+ 1385               	.LM184:
+ 1386 05fc 8FE1      		ldi r24,lo8(31)
+ 1387 05fe 90E0      		ldi r25,hi8(31)
+ 1388               	.LVL101:
+ 1389 0600 0E94 0000 		call pvPortMalloc
+ 1390 0604 EC01      		movw r28,r24
+ 1391               	.LM185:
+ 1392 0606 0097      		sbiw r24,0
+ 1393               	.LVL102:
+ 1394 0608 01F0      		breq .L89
+ 1395               	.LM186:
+ 1396 060a EB2C      		mov r14,r11
+ 1397 060c FF24      		clr r15
+ 1398 060e CA2C      		mov r12,r10
+ 1399 0610 DD24      		clr r13
+ 1400 0612 CE9C      		mul r12,r14
+ 1401 0614 8001      		movw r16,r0
+ 1402 0616 CF9C      		mul r12,r15
+ 1403 0618 100D      		add r17,r0
+ 1404 061a DE9C      		mul r13,r14
+ 1405 061c 100D      		add r17,r0
+ 1406 061e 1124      		clr r1
+ 1407               	.LM187:
+ 1408 0620 C801      		movw r24,r16
+ 1409               	.LVL103:
+ 1410 0622 0196      		adiw r24,1
+ 1411 0624 0E94 0000 		call pvPortMalloc
+ 1412 0628 9C01      		movw r18,r24
+ 1413 062a 9983      		std Y+1,r25
+ 1414 062c 8883      		st Y,r24
+ 1415               	.LVL104:
+ 1416               	.LM188:
+ 1417 062e 0097      		sbiw r24,0
+ 1418 0630 01F0      		breq .L90
+ 1419               	.LM189:
+ 1420 0632 080F      		add r16,r24
+ 1421 0634 191F      		adc r17,r25
+ 1422 0636 1B83      		std Y+3,r17
+ 1423 0638 0A83      		std Y+2,r16
+ 1424               	.LM190:
+ 1425 063a 1A8E      		std Y+26,__zero_reg__
+ 1426               	.LM191:
+ 1427 063c 9D83      		std Y+5,r25
+ 1428 063e 8C83      		std Y+4,r24
+ 1429               	.LM192:
+ 1430 0640 0894      		sec
+ 1431 0642 E108      		sbc r14,__zero_reg__
+ 1432 0644 F108      		sbc r15,__zero_reg__
+ 1433 0646 EC9C      		mul r14,r12
+ 1434 0648 C001      		movw r24,r0
+ 1435 064a ED9C      		mul r14,r13
+ 1436 064c 900D      		add r25,r0
+ 1437 064e FC9C      		mul r15,r12
+ 1438 0650 900D      		add r25,r0
+ 1439 0652 1124      		clr r1
+ 1440 0654 280F      		add r18,r24
+ 1441 0656 391F      		adc r19,r25
+ 1442 0658 3F83      		std Y+7,r19
+ 1443 065a 2E83      		std Y+6,r18
+ 1444               	.LM193:
+ 1445 065c BB8E      		std Y+27,r11
+ 1446               	.LM194:
+ 1447 065e AC8E      		std Y+28,r10
+ 1448               	.LM195:
+ 1449 0660 8FEF      		ldi r24,lo8(-1)
+ 1450 0662 8D8F      		std Y+29,r24
+ 1451               	.LM196:
+ 1452 0664 8E8F      		std Y+30,r24
+ 1453               	.LM197:
+ 1454 0666 CE01      		movw r24,r28
+ 1455 0668 0896      		adiw r24,8
+ 1456 066a 0E94 0000 		call vListInitialise
+ 1457               	.LM198:
+ 1458 066e CE01      		movw r24,r28
+ 1459 0670 4196      		adiw r24,17
+ 1460 0672 0E94 0000 		call vListInitialise
+ 1461 0676 9E01      		movw r18,r28
+ 1462               	.LVL105:
+ 1463 0678 00C0      		rjmp .L91
+ 1464               	.LVL106:
+ 1465               	.L90:
+ 1466               	.LM199:
+ 1467 067a CE01      		movw r24,r28
+ 1468 067c 0E94 0000 		call vPortFree
+ 1469               	.LVL107:
+ 1470               	.L89:
+ 1471 0680 20E0      		ldi r18,lo8(0)
+ 1472 0682 30E0      		ldi r19,hi8(0)
+ 1473               	.LVL108:
+ 1474               	.L91:
+ 1475               	.LM200:
+ 1476 0684 C901      		movw r24,r18
+ 1477               	.LVL109:
+ 1478               	/* epilogue start */
+ 1479 0686 DF91      		pop r29
+ 1480 0688 CF91      		pop r28
+ 1481               	.LVL110:
+ 1482 068a 1F91      		pop r17
+ 1483 068c 0F91      		pop r16
+ 1484 068e FF90      		pop r15
+ 1485 0690 EF90      		pop r14
+ 1486 0692 DF90      		pop r13
+ 1487 0694 CF90      		pop r12
+ 1488 0696 BF90      		pop r11
+ 1489               	.LVL111:
+ 1490 0698 AF90      		pop r10
+ 1491               	.LVL112:
+ 1492 069a 0895      		ret
+ 1493               	.LFE2:
+ 1495               	.global	xQueueCreateCountingSemaphore
+ 1497               	xQueueCreateCountingSemaphore:
+ 1498               	.LFB4:
+ 1499               	.LM201:
+ 1500               	.LVL113:
+ 1501 069c 1F93      		push r17
+ 1502               	/* prologue: function */
+ 1503               	/* frame size = 0 */
+ 1504 069e 162F      		mov r17,r22
+ 1505               	.LM202:
+ 1506 06a0 60E0      		ldi r22,lo8(0)
+ 1507               	.LVL114:
+ 1508 06a2 0E94 0000 		call xQueueCreate
+ 1509               	.LVL115:
+ 1510 06a6 FC01      		movw r30,r24
+ 1511               	.LVL116:
+ 1512               	.LM203:
+ 1513 06a8 0097      		sbiw r24,0
+ 1514 06aa 01F0      		breq .L94
+ 1515               	.LVL117:
+ 1516               	.LM204:
+ 1517 06ac 128F      		std Z+26,r17
+ 1518               	.L94:
+ 1519               	.LM205:
+ 1520 06ae CF01      		movw r24,r30
+ 1521               	.LVL118:
+ 1522               	/* epilogue start */
+ 1523 06b0 1F91      		pop r17
+ 1524               	.LVL119:
+ 1525 06b2 0895      		ret
+ 1526               	.LFE4:
+ 1664               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 queue.c
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:2      *ABS*:0000003f __SREG__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:3      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:4      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:5      *ABS*:00000034 __CCP__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:18     .text:00000000 uxQueueMessagesWaiting
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:57     .text:00000010 uxQueueMessagesWaitingFromISR
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:75     .text:00000016 xQueueIsQueueEmptyFromISR
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:98     .text:00000026 xQueueIsQueueFullFromISR
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:121    .text:00000038 prvUnlockQueue
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:248    .text:000000b8 vQueueWaitForMessageRestricted
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:312    .text:000000f2 vQueueDelete
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:340    .text:0000010e xQueueReceiveFromISR
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:441    .text:0000018c xQueueGenericReceive
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:831    .text:00000356 prvCopyDataToQueue
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:945    .text:000003ee xQueueGenericSendFromISR
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:1015   .text:0000043e xQueueGenericSend
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:1292   .text:00000586 xQueueCreateMutex
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:1362   .text:000005de xQueueCreate
+C:\DOCUME~1\adrian\LOCALS~1\Temp/ccBOrPpQ.s:1497   .text:0000069c xQueueCreateCountingSemaphore
+
+UNDEFINED SYMBOLS
+xTaskRemoveFromEventList
+vTaskMissedYield
+vTaskPlaceOnEventListRestricted
+vPortFree
+memcpy
+xTaskGetCurrentTaskHandle
+vPortYield
+vTaskSetTimeOutState
+vTaskSuspendAll
+xTaskCheckForTimeOut
+vTaskPriorityInherit
+vTaskPlaceOnEventList
+xTaskResumeAll
+vTaskPriorityDisinherit
+pvPortMalloc
+vListInitialise
