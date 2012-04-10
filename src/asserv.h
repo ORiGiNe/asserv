@@ -23,6 +23,7 @@ extern "C"
 
 
 
+typedef uint16_t	 ErrorCode;
 
 typedef uint16_t	 Command; // PID.pid
 typedef Command		 EncoderValue;
@@ -66,7 +67,7 @@ struct asserv
 // Fonctions permettant de controler l'asservissement
 //  uint8_t asservNb;
   EncoderValue (*getEncoderValue) (void); // récupérer la sortie du systeme
-  tEFBerrCode (*sendNewCmdToMotor) (Command); // fct permettant d'envoyer consigne au moteur
+  ErrorCode (*sendNewCmdToMotor) (Command); // fct permettant d'envoyer consigne au moteur
   Frequency freq; // Nbre de mesure par seconde
 
 
@@ -75,10 +76,10 @@ struct asserv
 };
 
 /* Creer un nouvel asservissement */
-Asserv* createNewAsserv(uint8_t kp, uint8_t kd, uint8_t ki, uint16_t asservFrequency,
-                         uint8_t (*getDiffTickCount) (void),
-                         tEFBerrCode (*sendNewCommandToMotor) (/* à preciser */void));
-
+Asserv* createNewAsserv(uint8_t kp, uint8_t kd, uint8_t ki, Frequency asservFrequency,
+                         EncoderValue (*getEncoderValue) (void),
+                         ErrorCode (*sendNewCmdToMotor) (Command));
+AsservError launchAsserv(Asserv*, Order);
 
 
 /*

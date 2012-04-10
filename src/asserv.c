@@ -13,7 +13,7 @@ static uint8_t nbAsserv = 0;
 
 Asserv *createNewAsserv (Coef kp, Coef kd, Coef ki, Frequency asservRefreshFreq,
                          uint8_t (*getEncoderValue) (void),
-                         tEFBerrCode (*sendNewCmdToMotor) (Command))
+                         AsservError (*sendNewCmdToMotor) (Command))
 {
   unsigned char timerName[4];
   
