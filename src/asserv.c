@@ -173,3 +173,24 @@ ErrorCode tryToStopAsserv (Asserv* asserv, portTickType xBlockTime)
   }
   return OK;
 }
+
+//TESTS
+EncoderValue getEncoderValueTest(void)
+{
+  return 12;
+}
+
+ErrorCode sendNewCmdToMotor(Command cmd)
+{
+  return OK;
+}
+
+int main(void)
+{
+  Asserv* asserv;
+  asserv = createNewAsserv(12, 42, 15, 20, 
+			getEncoderValueTest,
+			sendNewCmdToMotor);
+  launchAsserv(asserv, 13);
+  return 0;
+}
