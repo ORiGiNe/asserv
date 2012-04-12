@@ -74,10 +74,6 @@ task.h is included from an application file. */
 
 #undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
 
-#if (configGENERATE_RUN_TIME_STATS == 1)
- #include "efbStringUtils.h"
-#endif
-
 /*
  * Macro to define the amount of stack available to the idle task.
  */
@@ -2235,7 +2231,7 @@ tskTCB *pxNewTCB;
       }
       #endif
 
-      sprintf( pcStatusString, ( char * ) "%s\t\t%c\t%u\t%u\t%u\r\n", pxNextTCB->pcTaskName, cStatus, ( unsigned int ) pxNextTCB->uxPriority, usStackRemaining, ( unsigned int ) pxNextTCB->uxTCBNumber );
+      //sprintf( pcStatusString, ( char * ) "%s\t\t%c\t%u\t%u\t%u\r\n", pxNextTCB->pcTaskName, cStatus, ( unsigned int ) pxNextTCB->uxPriority, usStackRemaining, ( unsigned int ) pxNextTCB->uxTCBNumber );
       strcat( ( char * ) pcWriteBuffer, ( char * ) pcStatusString );
 
     } while( pxNextTCB != pxFirstTCB );
@@ -2251,7 +2247,6 @@ tskTCB *pxNewTCB;
   volatile tskTCB *pxNextTCB, *pxFirstTCB;
   unsigned long ulStatsAsPercentage;
   unsigned long ulRunTimeCounter;
-  unsigned char pcWriteBufferBuffer[configMAX_TASK_NAME_LEN + 18];
 
     /* Write the run time stats of all the TCB's in pxList into the buffer. */
     listGET_OWNER_OF_NEXT_ENTRY( pxFirstTCB, pxList );
@@ -2268,7 +2263,8 @@ tskTCB *pxNewTCB;
         if( ulRunTimeCounter == 0 )
         {
           /* The task has used no CPU time at all. */
-          usprintf (pcWriteBufferBuffer, "%s\t00000000\t00%%\r\n", (tEFBstring) pxNextTCB->pcTaskName);
+          // TODO : reintegrer usprintf
+		  //usprintf (pcWriteBuffer, "%s\t00000000\t00%\r\n", (tEFBstring) pxNextTCB->pcTaskName);
         }
         else
         {
@@ -2279,15 +2275,15 @@ tskTCB *pxNewTCB;
 
           if( ulStatsAsPercentage > 0 )
           {
-            usprintf (pcWriteBufferBuffer, "%s\t%l\t%u%%\r\n", (tEFBstring) pxNextTCB->pcTaskName, ulRunTimeCounter, ulStatsAsPercentage);
+            //usprintf (pcWriteBuffer, "%s\t%l\t%u%%\r\n", (tEFBstring) pxNextTCB->pcTaskName, ulRunTimeCounter, ulStatsAsPercentage);
           }
           else
           {
-            usprintf (pcWriteBufferBuffer, "%s\t%l\t<1%%\r\n", (tEFBstring) pxNextTCB->pcTaskName, ulRunTimeCounter, ulStatsAsPercentage);
+            //usprintf (pcWriteBuffer, "%s\t%l\t<1%%\r\n", (tEFBstring) pxNextTCB->pcTaskName, ulRunTimeCounter, ulStatsAsPercentage);
           }
         }
       }
-      ustrcat (pcWriteBuffer, pcWriteBufferBuffer);
+
     } while( pxNextTCB != pxFirstTCB );
   }
 
