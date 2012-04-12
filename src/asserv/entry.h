@@ -7,6 +7,6 @@ struct entry
   Module *parent;
 };
 
-Entry initEntry(Module*);
+void *initEntry(Module*);
 
 #endif

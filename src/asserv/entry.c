@@ -7,3 +7,16 @@ void *initEntry(Module *parent)
 	
 	return (void*)entry;
 }
+
+ErrorCode updateEntry(Module* parent)
+{
+  return OK;
+}
+
+
+/*
+ * entry = initModule ( 0, N, moduleType.entry, initEntry, updateEntry );
+ *
+ *
+ *
+ */

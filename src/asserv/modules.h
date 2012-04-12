@@ -9,19 +9,27 @@ extern "C"
 
 typedef struct module Module;
 typedef enum moduleType ModuleType;
+typedef struct moduleInput ModuleInput;
+
+struct moduleInput
+{
+  Module *module;
+  OriginWord port;
+};
 
 
 struct module
 {
-  ModuleValue *output;
+  ModuleValue *outputs;
   OriginWord nbOutputs;
 
-  Module *inputModule;
-  OriginWord nbInput;
+  ModuleInput *inputs;
+  OriginWord nbInputs;
 
   ModuleType type;
-  void *functionnality;
+  void *fun;
 
+  ErrorCode (*update)(Module*);
 };
 
 

@@ -77,7 +77,7 @@ struct asserv
   AsservValue deriv; // Pas indispensable mais plus simple, dérivée de l'erreur
   Order order; // Entrée voulu par l'utilisateur
   Frequency freq; // Nbre de mesure par seconde
-
+  
 // Valeurs constantes
   Coef coef;
 
