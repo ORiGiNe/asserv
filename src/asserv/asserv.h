@@ -6,52 +6,67 @@ extern "C"
 {
 #endif
 
-#include "main.h"
-
+//#include "main.h"
+#include "FreeRTOS/FreeRTOS.h"
 #define OK			0x0000
 
 #define ERR_SEM_NOT_DEF		0x1000 // 0x10XX -> sémaphores
 #define ERR_SEM_TAKEN		0x1001
 #define ERR_SEM_EPIC_FAIL	0x10FF
 
-#define ERR_ASSERV_LAUNCHED	0x5000 // 0x50XX -> Asserv
+#define ASSERV_DEST_REACHED	0x5000 // 0x50XX -> Asserv
+#define ERR_ASSERV_LAUNCHED	0x5001
 #define ERR_ASSERV_EPIC_FAIL	0x50FF
 
-#define NB_ASSERV_MAX 5
+#define NB_ASSERV_MAX		5
 
-
+#define ERROR_MIN_ALLOWED	5 // à régler en tic d'encodeur
 
 
 typedef uint16_t	 ErrorCode;
 typedef uint8_t		 OriginBool;
 typedef uint8_t		 OriginByte;
 typedef uint16_t	 OriginWord;
+typedef int8_t		 OriginSByte;
+typedef int16_t		 OriginSWord;
 
-typedef OriginWord	 AsservValue;
+typedef OriginSWord	 AsservValue;
 
 typedef AsservValue	 Command; // PID.pid
 typedef AsservValue	 EncoderValue;
 typedef OriginWord	 Frequency;
-typedef OriginWord	 Coef;
 typedef OriginWord	 ErrorValue;
 
 typedef struct order	 Order;
 typedef struct timer	 Timer;
 typedef struct asserv	 Asserv;
+typedef struct group	 Group;
+typedef struct coef	 Coef;
 
+
+struct group
+{
+  Asserv* tbAsserv;
+};
 
 struct order
 {
   AsservValue order; // Consigne utilisateur
-  AsservValue orderMaxDeriv; // Permet de connaitre les limites à ne pas dépasser
+  AsservValue commandThreshold; // Permet de connaitre les limites à ne pas dépasser
 };
 
 struct timer
 {
   xTimerHandle timerHandle; // Permet de controler le timer
   OriginBool isTimerActive; // Permet de savoir l'état du timer
-//  xTimerHandle timerHandle;
-//  tEFBboolean isTimerActive;
+  AsservValue errorMinAllowed; // Erreur authorisée sur le déplacement
+};
+
+struct coef
+{
+  AsservValue kp; // proportionnelle, erreur statique
+  AsservValue ki; // erreur integrale, distance, plus t'es loin, plus tu vas vite
+  AsservValue kd; // erreur différentielle, la pente
 };
 
 struct asserv
@@ -61,17 +76,15 @@ struct asserv
   AsservValue integral; // Permet de connaitre l'intégrale de l'erreur
   AsservValue deriv; // Pas indispensable mais plus simple, dérivée de l'erreur
   Order order; // Entrée voulu par l'utilisateur
+  Frequency freq; // Nbre de mesure par seconde
 
 // Valeurs constantes
-  Coef kp; // proportionnelle, erreur statique
-  Coef ki; // erreur integrale, distance, plus t'es loin, plus tu vas vite
-  Coef kd; // erreur différentielle, la pente
+  Coef coef;
 
 // Fonctions permettant de controler l'asservissement
 //  uint8_t asservNb;
   EncoderValue (*getEncoderValue) (void); // récupérer la sortie du systeme
   ErrorCode (*sendNewCmdToMotor) (Command); // fct permettant d'envoyer consigne au moteur
-  Frequency freq; // Nbre de mesure par seconde
 
 
   xSemaphoreHandle sem; //semaphore permettant de synchroniser la fin du timer avec la réponse à la panda
