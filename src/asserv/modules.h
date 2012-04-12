@@ -10,6 +10,7 @@ extern "C"
 typedef struct module Module;
 typedef enum moduleType ModuleType;
 typedef struct moduleInput ModuleInput;
+typedef struct moduleOutput ModuleOutput;
 
 struct moduleInput
 {
@@ -17,10 +18,15 @@ struct moduleInput
   OriginWord port;
 };
 
+struct moduleOutput
+{
+  ModuleValue value;
+  OriginBool upToDate;
+};
 
 struct module
 {
-  ModuleValue *outputs;
+  ModuleOutput *outputs;
   OriginWord nbOutputs;
 
   ModuleInput *inputs;

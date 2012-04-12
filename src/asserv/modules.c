@@ -7,10 +7,16 @@ Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
 {
   Module *module = pvPortMalloc(sizeof(Module));
 
-  module->outputs = pvPortMalloc(nbOutput * sizeof(OriginWord));
+  module->outputs = pvPortMalloc(nbOutput * sizeof(ModuleOutput));
   module->nbOutputs = nbOutputs;
+  for(i = 0; i < module->nbOutputs; i++)
+  {
+    module->outputs[i].upToDate = 0;
+  }
+
   module->inputs = pvPortMalloc(nbOutput * sizeof(ModuleInput));
   module->nbInputs = nbInputs;
+
   module->type = type;
   module->fun = initFun(module);
   module->update = updateFun;
