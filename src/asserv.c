@@ -189,8 +189,8 @@ int main(void)
 {
   Asserv* asserv;
   asserv = createNewAsserv(12, 42, 15, 20, 
-			getEncoderValueTest,
-			sendNewCmdToMotor);
+			&getEncoderValueTest,
+			&sendNewCmdToMotor);
   launchAsserv(asserv, 13);
   return 0;
 }

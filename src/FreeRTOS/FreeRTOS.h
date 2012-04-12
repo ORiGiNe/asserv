@@ -487,6 +487,10 @@ typedef portBASE_TYPE (*pdTASK_HOOK_CODE)( void * );
 	#define debugPUTTY 0
 #endif
 
+#ifndef debugAFF_ERREUR
+  #define debugAFF_ERREUR 0
+#endif
+
 
 #endif /* INC_FREERTOS_H */
 

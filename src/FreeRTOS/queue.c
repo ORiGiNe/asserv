@@ -493,7 +493,7 @@ xTimeOutType xTimeOut;
 					if( xTaskRemoveFromEventList( &( pxQueue->xTasksWaitingToReceive ) ) == pdTRUE )
 					{
 						/* The unblocked task has a priority higher than
-						our own so yield immediately.  Yes it is EFB_OK to do
+						our own so yield immediately.  Yes it is ok to do
 						this from within the critical section - the kernel
 						takes care of that. */
 						portYIELD_WITHIN_API();
