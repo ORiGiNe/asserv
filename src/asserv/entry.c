@@ -1,9 +1,9 @@
-#include entry.h
+#include "entry.h"
 
-Entry initEntry(void (*updateEntry) (int, AsservValue))
+void *initEntry(Module *parent)
 {
-	Entry curEntry;
-	curEntry.updateEntry = updateEntry;
+	Entry *entry = pvPortMalloc(sizeof(Entry));
+	entry->parent = parent;
 	
-	return curEntry;
+	return (void*)entry;
 }
