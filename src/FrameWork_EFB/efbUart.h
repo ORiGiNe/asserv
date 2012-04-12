@@ -11,6 +11,7 @@
  *
  * Functions designed to handle strings stored in FLASh memory can be enabled
  * by defining EFB_UART_ENPGM
+ *
  * -----------------------------------------------------------------------------
  */
 
@@ -22,7 +23,7 @@ extern "C"
 {
 #endif
 
-#include "efbAvr.h"
+#include "main.h"
 
 #ifdef EFB_UART_ENPGM
   #include <pgmspace.h>
@@ -33,13 +34,17 @@ extern "C"
  * -----------------------------------------------------------------------------
  */
 //***** Define chip capabilities
-#if defined (__AVR_ATmega32__) || defined (__AVR_ATmega8515__)
-  // Chip with one USART
+#if defined (__AVR_ATmega328P__)
   #define AVR_USART
-#elif defined (__AVR_ATmega64__) || defined (__AVR_ATmega128__)
+  #define EFB_UART_EN0
+#elif defined (__AVR_ATmega2560__)
   // Chip with two USARTs
   #define AVR_USART0
   #define AVR_USART1
+  #define EFB_UART_EN0
+  #define EFB_UART_EN1
+  //#define AVR_USART23
+  //#define EFB_UART_EN23
 #else
   #error "Unsupported chip"
 #endif
@@ -56,6 +61,10 @@ extern "C"
 // Size of the circular transmit buffer (must be power of 2)
 #define UART0_TX_BUFFER_SIZE 16
 #define UART1_TX_BUFFER_SIZE 16
+
+//** Error handling
+// Bit used in the UART lastError variable to set the RX buffer overflow error
+#define EFB_UART_ERRBIT_RXBUFFER_OVERFLOW 1
 
 /* -----------------------------------------------------------------------------
  * Structures
@@ -87,12 +96,6 @@ typedef struct
 
 #endif // EFB_UART_EN0
 
-#if defined (AVR_USART1) && defined (EFB_UART_EN1)
-
-  extern volatile tEFBuartControl gEFBuartControl1;
-
-#endif // AVR_USART1 && EFB_UART_EN1
-
 /* -----------------------------------------------------------------------------
  * Macros
  * -----------------------------------------------------------------------------
@@ -113,21 +116,6 @@ typedef struct
 
 #endif // EFB_UART_EN0
 
-#if defined (AVR_USART1) && defined (EFB_UART_EN1)
-
-  #define EFBuart1WasWatchedByteSpotted() (gEFBuartControl1.isWatchedByteDetected)
-
-  // Circular buffer helper
-  #define EFBuart1FifoPopByteFromBuffer(pDataByte) \
-            EFBuart1FifoPopByteFromBufferImpl (&gEFBuartControl1.rxBuffer, pDataByte)
-  #define EFBuart1PushByteToBuffer(dataByte) \
-            EFBuart1PushByteToBufferImpl (&gEFBuartControl1.txBuffer, dataByte, EFB_TRUE)
-  #define EFBuart1PushStringToBuffer(string) \
-            EFBuart1PushStringToBufferImpl (&gEFBuartControl1.txBuffer, string, EFB_TRUE)
-  #define EFBuart1PushStringToBuffer_p(string_p) \
-            EFBuart1PushStringToBufferImpl_p (&gEFBuartControl1.txBuffer, string_p, EFB_TRUE)
-
-#endif // AVR_USART1 && EFB_UART_EN1
 
 //** Low level macros
 #define EFBInitUartControlStruct(uartControl) \
@@ -191,7 +179,7 @@ typedef struct
 //**** UART0
 #ifdef EFB_UART_EN0
 
-  extern void EFBuart0Init (uint32_t baudRate, uint8_t byteToWatch);
+  extern void EFBuart0Init (uint32_t baudRate, tEFBboolean doubleTransmissionSpeed, uint8_t byteToWatch);
   extern tEFBerrCode EFBuart0FifoPopByteFromBufferImpl (volatile tEFBuartCircularBuffer * pCircularBuffer,
                                                     byte * pDataByte);
   extern void EFBuart0PushByteToBufferImpl (volatile tEFBuartCircularBuffer * pCircularBuffer,
@@ -207,34 +195,10 @@ typedef struct
   #ifdef EFB_UART_ENPGM
     // Transmit string from FLASH space through UART0. Include déclaration of given
     // string into FLASH space instead of stack
-    #define EFBuart0PutStringToBuffer_P (__string_p) EFBuart0PushStringToBuffer_p (PSTR (__string_p))
+    #define EFBuart0PutEFBstringToBuffer_P (__string_p) EFBuart0PushStringToBuffer_p (PSTR (__string_p))
   #endif
 
 #endif // EFB_UART_EN0
-
-//**** UART1
-#ifdef EFB_UART_EN1
-
-  extern void EFBuart1Init (uint32_t baudRate, tEFBboolean doubleTransmissionSpeed, uint8_t byteToWatch);
-  extern tEFBerrCode EFBuart1FifoPopByteFromBufferImpl (volatile tEFBuartCircularBuffer * pCircularBuffer,
-                                                    byte * pDataByte);
-  extern tEFBerrCode EFBuart1PushByteToBufferImpl (volatile tEFBuartCircularBuffer * pCircularBuffer,
-                                                   byte dataByte,
-                                                   tEFBboolean waitUntilSpace);
-  extern tEFBerrCode EFBuart1PushStringToBufferImpl (volatile tEFBuartCircularBuffer * pCircularBuffer,
-                                                     const char * string,
-                                                     tEFBboolean waitUntilSpace);
-  extern tEFBerrCode EFBuart1PushStringToBufferImpl_p (volatile tEFBuartCircularBuffer * pCircularBuffer,
-                                                       const char * string_p,
-                                                       tEFBboolean waitUntilSpace);
-
-  #ifdef EFB_UART_ENPGM
-    // Transmit string from FLASH space through UART1. Include déclaration of given
-    // string into FLASH space instead of stack
-    #define EFBuart1PutStringToBuffer_P(__string_p) EFBuart1PushStringToBuffer_p (PSTR (__string_p))
-  #endif
-
-#endif // EFB_UART_EN1
 
 /* -----------------------------------------------------------------------------
  */
