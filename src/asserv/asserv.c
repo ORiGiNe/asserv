@@ -11,7 +11,26 @@ static OriginByte nbAsserv = 0;
 /* 
  */
 
-Asserv *createNewAsserv (Coef kp, Coef kd, Coef ki, Frequency asservRefreshFreq,
+Coef createCoef(AsservValue kp, AsservValue ki, AsservValue kd)
+{
+  Coef coef;
+  coef.kp = kp;
+  coef.ki = ki;
+  coef.kd = kd;
+  return coef;
+}
+
+Order createOrder(AsservValue order, AsservValue commandThreshold, AsservValue errorMinAllowed)
+{
+  Order order;
+  order.order = order;
+  order.commandThreshold = commandThreshold;
+  order.errorMinAllowed = errorMinAllowed;
+  return order;
+}
+
+
+Asserv *createNewAsserv (Coef coef, Frequency asservRefreshFreq,
                          EncoderValue (*getEncoderValue) (void),
                          ErrorCode (*sendNewCmdToMotor) (Command))
 {
@@ -29,13 +48,12 @@ Asserv *createNewAsserv (Coef kp, Coef kd, Coef ki, Frequency asservRefreshFreq,
   // Initialisation des données
   asserv->error = 0;
   asserv->integral = 0;
-  asserv->order.order = 0;
-  asserv->order.orderMaxDeriv = 42; // à définir
 
   // On initialise les constantes
-  asserv->kp = kp;
-  asserv->kd = kd;
-  asserv->ki = ki;
+  asserv->coef = coef;
+  asserv->coef.kp = kp;
+  asserv->coef.kd = kd;
+  asserv->coef.ki = ki;
 
   // On enregistre les fonctions
   asserv->getEncoderValue = getEncoderValue;
@@ -73,9 +91,14 @@ void vCallbackAsserv (xTimerHandle pxTimer)
 {
 
   Asserv* asserv;
+  ErrorCode err;
 
   asserv = (Asserv*)pvTimerGetTimerID(pxTimer); // Recupère l'asservissement en cours
-  updateAsserv(asserv); // Mise à jour de l'asservissement
+  err = updateAsserv(asserv); // Mise à jour de l'asservissement
+  if(err == ASSERV_DEST_REACHED)
+  {
+ // On arrete l'asserv
+  }
 
 }
 
@@ -109,6 +132,12 @@ ErrorCode updateAsserv(Asserv* asserv)
   /* Calcul de l'erreur (sortie - entrée)*/
   newError = encoderValue - asserv->order.order;
 
+  /* On regarde si on est arrivé à destination */
+  if(newError < asserv->errorMinAllowed)
+  {
+    return ASSERV_DEST_REACHED;
+  }
+
   /* Mise à jour de la dérivée de l'erreur */
   asserv->deriv = newError - asserv->error;
 
@@ -119,9 +148,12 @@ ErrorCode updateAsserv(Asserv* asserv)
   asserv->error = newError;
 
   /* On passe aux choses serieuses : calcul de la commande à envoyer au moteur */
-  command = asserv->kp * asserv->error // terme proportionnel
-  	  + asserv->ki * asserv->integral // terme intégral
-	  + asserv->kd * asserv->deriv; // terme dérivé
+  command = asserv->coef.kp * asserv->error // terme proportionnel
+  	  + asserv->coef.ki * asserv->integral // terme intégral
+	  + asserv->coef.kd * asserv->deriv; // terme dérivé
+ // On ecrete si trop grand
+  command = (command > asserv->commandThreshold) ? asserv->commandThreshold : command;
+
 
   /* On envoie la commande au moteur */
   asserv->sendNewCommandToMotor(command); // Envoi la commande après asservissement au moteur
@@ -138,7 +170,7 @@ ErrorCode updateAsserv(Asserv* asserv)
 }
 
 // Anciennement moveMotor
-ErrorCode launchAsserv(Asserv* asserv, Order order) //uint16_t moveAccel, uint16_t moveSpeed, uint16_t moveDistance)
+ErrorCode launchAsserv(Asserv* asserv, Order order)
 {
   // On verifie qu'elle n'est pas déjà lancée
   if (asserv->timer.isTimerActive != false)
@@ -147,7 +179,9 @@ ErrorCode launchAsserv(Asserv* asserv, Order order) //uint16_t moveAccel, uint16
   }
   asserv->timer.isTimerActive = true;
 
-  /* preparer les valeurs à mettre à jour dans la structure asserv */
+  /* Initialisation du déplacement */
+  asserv->order = order;
+  asserv->error = asserv->order.order;
 
 
   // Lancer le timer: si l'attente est trop longue c'est qu'il y a un gros soucis et on renvoit une erreur
@@ -187,10 +221,16 @@ ErrorCode sendNewCmdToMotor(Command cmd)
 
 int main(void)
 {
+  Coef coef;
+  Order order;
   Asserv* asserv;
-  asserv = createNewAsserv(12, 42, 15, 20, 
-			&getEncoderValueTest,
-			&sendNewCmdToMotor);
-  launchAsserv(asserv, 13);
+
+  coef = createCoef(12, 42, 15);
+  order = createOrder(15000, 20, 5);
+  asserv = createNewAsserv(coef, 20, 
+			getEncoderValueTest,
+			sendNewCmdToMotor);
+  launchAsserv(asserv, order);
+
   return 0;
 }
