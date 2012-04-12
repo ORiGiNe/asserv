@@ -9,7 +9,7 @@ Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
 
   module->outputs = pvPortMalloc(nbOutput * sizeof(OriginWord));
   module->nbOutputs = nbOutputs;
-  module->inputs = pvPortMalloc(nbOutput * sizeof(Module));
+  module->inputs = pvPortMalloc(nbOutput * sizeof(ModuleInput));
   module->nbInputs = nbInputs;
   module->type = type;
   module->fun = initFun(module);
@@ -18,7 +18,16 @@ Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
   return module;
 }
 
-linkWithInput(Module* input, OriginWord inputPort, Module* module)
+ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
+              Module* module, OriginWord modulePort)
 {
-  
+  ModuleInput modIn;
+  modIn.module = inputModule;
+  modIn.port = inputModulePort;
+  if(modulePort >= module.nbInputs || modulePort < 0)
+  {
+    return FAIL; /*FIXME*/
+  }
+  module->inputs[modulePort] = modIn;
+  return OK;
 }
