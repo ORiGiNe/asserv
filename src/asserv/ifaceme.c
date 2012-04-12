@@ -1,20 +1,15 @@
 #include "types.h"
 #include "ifaceme.h"
 
-IfaceME initIfaceME(void (*sendCmd)(AsservValue),
-                    AsservValue (*getMeasure)(void),
-                    AsservValue (*getInput)(void))
+void *initIfaceME(Module *parent)
 {
-  IfaceME ifaceme;
+  IfaceME *ifaceme = pvPortMalloc(sizeof(IfaceME));
   int i;
+  ifaceme->parent = parent;
+  
+  // ifaceme.getInput = getInput;
+  // ifaceme.getMeasure = getMeasure;
+  // ifaceme.sendCmd = sendCmd;
 
-  ifaceme.getInput = getInput;
-  ifaceme.getMeasure = getMeasure;
-  ifaceme.sendCmd = sendCmd;
-  for(i=0; i < MAX_IFACEME_OUTPUT; i++)
-  {
-    ifaceme.output[i] = -1;
-  }
-
-  return ifaceme;
+  return (void*)ifaceme;
 }
