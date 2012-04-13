@@ -1,5 +1,5 @@
-#ifndef ...
-#define ...
+#ifndef ASSERV_MODULES_H
+#define ASSERV_MODULES_H
 
 #ifdef __cplusplus
 extern "C"

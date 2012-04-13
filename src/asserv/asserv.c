@@ -29,7 +29,11 @@ Order createOrder(AsservValue order, AsservValue commandThreshold, AsservValue e
   return order;
 }
 
-
+// Entrées du module : coef1, coef2, coef3, frequency, command, deriv, precision + mesure
+//
+//
+//
+//
 Asserv *createNewAsserv (Coef coef, Frequency asservRefreshFreq,
                          EncoderValue (*getEncoderValue) (void),
                          ErrorCode (*sendNewCmdToMotor) (Command))
