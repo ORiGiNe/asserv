@@ -1,5 +1,5 @@
-#ifndef INC_ASSERV
-#define INC_ASSERV
+#ifndef ASSERV_ASSERV_H
+#define ASSERV_ASSERV_H
 
 #ifdef __cplusplus
 extern "C"
@@ -53,11 +53,6 @@ struct asserv
 };
 
 /* Creer un nouvel asservissement */
-//Asserv* createNewAsserv(Coef kp, Coef kd, Coef ki, Frequency asservFrequency,
-//                         EncoderValue (*getEncoderValue) (void),
-//                         ErrorCode (*sendNewCmdToMotor) (Command));
-//ErrorCode launchAsserv(Asserv*, Order);
-
 
 /*
  * Fonction de déplacement d'un moteur bloquant: créer le timer software, créer la rampe.

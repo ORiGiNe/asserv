@@ -6,6 +6,9 @@ extern "C"
 {
 #endif
 
+#include <timer.h>
+#include <semphr.h>
+
 typedef struct timer Timer;
 typedef struct ctlBlock CtlBlock;
 
@@ -24,6 +27,13 @@ struct ctlBlock
 };
 
 
+ErrorCode createLauncher(CtlBlock*, Module* , 
+                         void (*)(xTimerHandle),
+                         OriginWord);
+
+ErrorCode startLauncher(CtlBlock*);
+
+ErrorCode waitEndOfLauncher(CtlBlock*, portTickType);
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-
+#include "launcher.h"
 
 ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter, 
                          void (*moduleCallback)(xTimerHandle),
@@ -82,10 +82,10 @@ void vCallback(xTimerHandle pxTimer)
 }
 
 /*TODO*/
-ErrorCode waitToStopLauncher(CtlBlock *ctlBlock)
+ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType waitTime)
 {
-  /* On regarde si on peut prendre la sémaphore */
-  if( xSemaphoreTake( ctlBlock->sem, (portTickType)0) )
+  /* On attend la fin de la sémaphore */
+  if( xSemaphoreTake( ctlBlock->sem, waitTime ) ) /* TODO: régler la bonne valeur */
   {
     ctlBlock->lastError = ERR_SEM_TAKEN;
     return;
@@ -93,6 +93,4 @@ ErrorCode waitToStopLauncher(CtlBlock *ctlBlock)
   
   return OK;
 }
-
-
 
