@@ -32,18 +32,20 @@ typedef int16_t		 OriginSWord;
 
 typedef OriginSWord	 AsservValue;
 
-typedef AsservValue	 Command; // PID.pid
-typedef AsservValue	 EncoderValue;
-typedef OriginWord	 Frequency;
-typedef OriginWord	 ErrorValue;
+//typedef AsservValue	 Command; // PID.pid
+//typedef AsservValue	 EncoderValue;
+//typedef OriginWord	 Frequency;
+//typedef OriginWord	 ErrorValue;
 
-typedef struct order	 Order;
-typedef struct timer	 Timer;
+//typedef struct order	 Order;
+//typedef struct timer	 Timer;
+//typedef struct group	 Group;
+//typedef struct coef	 Coef;
+
+typedef struct opFunc	 OpFunc;
 typedef struct asserv	 Asserv;
-typedef struct group	 Group;
-typedef struct coef	 Coef;
 
-
+/*
 struct group
 {
   Asserv* tbAsserv;
@@ -61,41 +63,29 @@ struct timer
   OriginBool isTimerActive; // Permet de savoir l'état du timer
   AsservValue errorMinAllowed; // Erreur authorisée sur le déplacement
 };
+*/
 
-struct coef
+struct opFunc
 {
-  AsservValue kp; // proportionnelle, erreur statique
-  AsservValue ki; // erreur integrale, distance, plus t'es loin, plus tu vas vite
-  AsservValue kd; // erreur différentielle, la pente
+  ModuleValue (*h1)(ModuleValue);
+  ModuleValue (*h2)(ModuleValue);
+  ModuleValue (*h3)(ModuleValue);
 };
 
 struct asserv
 {
 // Données du problème
-  AsservValue error; // Erreur 
+  Module *parent;
+  AsservValue oldError; // Erreur 
   AsservValue integral; // Permet de connaitre l'intégrale de l'erreur
-  AsservValue deriv; // Pas indispensable mais plus simple, dérivée de l'erreur
-  Order order; // Entrée voulu par l'utilisateur
-  Frequency freq; // Nbre de mesure par seconde
-  
-// Valeurs constantes
-  Coef coef;
-
-// Fonctions permettant de controler l'asservissement
-//  uint8_t asservNb;
-  EncoderValue (*getEncoderValue) (void); // récupérer la sortie du systeme
-  ErrorCode (*sendNewCmdToMotor) (Command); // fct permettant d'envoyer consigne au moteur
-
-
-  xSemaphoreHandle sem; //semaphore permettant de synchroniser la fin du timer avec la réponse à la panda
-  Timer timer; // Gestion du timer
+  OpFunc h;
 };
 
 /* Creer un nouvel asservissement */
-Asserv* createNewAsserv(Coef kp, Coef kd, Coef ki, Frequency asservFrequency,
-                         EncoderValue (*getEncoderValue) (void),
-                         ErrorCode (*sendNewCmdToMotor) (Command));
-ErrorCode launchAsserv(Asserv*, Order);
+//Asserv* createNewAsserv(Coef kp, Coef kd, Coef ki, Frequency asservFrequency,
+//                         EncoderValue (*getEncoderValue) (void),
+//                         ErrorCode (*sendNewCmdToMotor) (Command));
+//ErrorCode launchAsserv(Asserv*, Order);
 
 
 /*

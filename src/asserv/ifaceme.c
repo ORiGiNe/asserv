@@ -1,6 +1,5 @@
 #include "types.h"
 #include "ifaceme.h"
-#include "interface.h"
 
 
 void *initIfaceME(Module *parent, void* args)
@@ -9,7 +8,7 @@ void *initIfaceME(Module *parent, void* args)
   IME* ime = (IME*)args;
 
   ifaceme->parent = parent;
-  ifaceme->ime = ime;
+  ifaceme->ime = *ime;
   ifaceme->measureUpToDate = 0;
   ifaceme->measure = 0;
 
@@ -38,7 +37,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     error = parent->inputs[0].module->update(parent->inputs[0].module);
     if (error != OK)
     {
-      /* FIXME y'a une erreur */
+      return error;
     }
     command = parent->inputs[0].module->outputs[parent->inputs[0].port].value;
 
