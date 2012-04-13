@@ -8,6 +8,9 @@ extern "C"
 
 #include <timer.h>
 #include <semphr.h>
+#include "types.h"
+#include "defines.h"
+#include "module.h"
 
 typedef struct timer Timer;
 typedef struct ctlBlock CtlBlock;
