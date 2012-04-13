@@ -3,13 +3,15 @@
 #include "interface.h"
 
 
-void *initIfaceME(Module *parent)
+void *initIfaceME(Module *parent, void* args)
 {
   IfaceME *ifaceme = pvPortMalloc(sizeof(IfaceME));
+  IME* ime = (IME*)args;
 
   ifaceme->parent = parent;
-  ifaceme->getEncoderValue = getEncoderValue;
-  ifaceme->sendNewCommand = sendNewCommandToMotor;
+  ifaceme->ime = ime;
+  ifaceme->measureUpToDate = 0;
+  ifaceme->measure = 0;
 
   return (void*)ifaceme;
 }
@@ -17,6 +19,8 @@ void *initIfaceME(Module *parent)
 ErrorCode updateIfaceME(Module* parent, OriginWord port){
   ModuleValue command;
   ErrorCode error;
+  IME ime = ((IfaceME*)parent->fun)->ime;
+
 
   // On verifie si la sortie est à jour
   if(parent->outputs[port].upToDate == 0)
@@ -27,7 +31,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   if (((IfaceME*)parent->fun)->measureUpToDate == 0)
   {
     // On effectue la mesure
-    ((IfaceME*)parent->fun)->measure = getEncoderValue();
+    ((IfaceME*)parent->fun)->measure = ime.getEncoderValue();
     ((IfaceME*)parent->fun)->measureUpToDate = 1;
 
     // On met à jour l'entrée
@@ -39,7 +43,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     command = parent->inputs[0].module->outputs[parent->inputs[0].port].value;
 
     // On envoie la commande au système
-    ((IfaceME*)parent->fun)->sendNewCommand(command);
+    ime.sendNewCommand(command);
   }
   else
   {
