@@ -1,70 +1,27 @@
 #include "asserv.h"
 
 
-static Asserv* tbAsserv[NB_ASSERV_MAX];
-
-/* Permet de compter le nombre d'asservissements dans
- * le but d'éviter de prendre trop de mémoire
- */
-static OriginByte nbAsserv = 0;
-
-/* 
- */
-
-Coef createCoef(AsservValue kp, AsservValue ki, AsservValue kd)
-{
-  Coef coef;
-  coef.kp = kp;
-  coef.ki = ki;
-  coef.kd = kd;
-  return coef;
-}
-
-Order createOrder(AsservValue order, AsservValue commandThreshold, AsservValue errorMinAllowed)
-{
-  Order order;
-  order.order = order;
-  order.commandThreshold = commandThreshold;
-  order.errorMinAllowed = errorMinAllowed;
-  return order;
-}
-
 // Entrées du module : coef1, coef2, coef3, frequency, command, deriv, precision + mesure
 //
 //
 //
 //
-Asserv *createNewAsserv (Coef coef, Frequency asservRefreshFreq,
-                         EncoderValue (*getEncoderValue) (void),
-                         ErrorCode (*sendNewCmdToMotor) (Command))
+void *initAsserv (Module *parent, void* args) //(Coef coef, Frequency asservRefreshFreq,
 {
-  unsigned char timerName[4];
-  
-
-  if (nbAsserv > NB_ASSERV_MAX)
-  {
-    return NULL;
-  }
-
   // On reserve la place pour la structure asserv
   Asserv* asserv = pvPortMalloc (sizeof(Asserv));
+  OpFunc *opFunc = (OpFunc*)args;
 
   // Initialisation des données
-  asserv->error = 0;
+  asserv->parent = parent;
+  asserv->oldError = 0;
   asserv->integral = 0;
-
-  // On initialise les constantes
-  asserv->coef = coef;
-  asserv->coef.kp = kp;
-  asserv->coef.kd = kd;
-  asserv->coef.ki = ki;
-
-  // On enregistre les fonctions
-  asserv->getEncoderValue = getEncoderValue;
-  asserv->sendNewCmdToMotor = sendNewCmdToMotor;
-
+  asserv->h = *opFunc;
+}
+/*
   // On créé le timer de l'asserv (sert pour quand on voudra faire tourner un moteur)
   //usprintf (timerName, "AS%u", nbAsserv);
+  unsigned char timerName[4];
   timerName[0] = 'A';
   timerName[1] = 'S';
   timerName[2] = (unsigned char) nbAsserv + 0x30;
@@ -84,7 +41,7 @@ Asserv *createNewAsserv (Coef coef, Frequency asservRefreshFreq,
 
   return asserv;
 }
-
+*/
 
 
 /* 
@@ -106,73 +63,94 @@ void vCallbackAsserv (xTimerHandle pxTimer)
 
 }
 
-ErrorCode updateAsserv(Asserv* asserv)
+ErrorCode updateAsserv(Module* parent, OriginWord port)
 {
-  EncoderValue encoderValue;
-  Command command;
+  ModuleValue kp, ki, kd;
+  ModuleValue accuracy, command, deriv, measure;
+  ModuleValue realDeriv, newError;
+  ErrorCode error;
 
-  AsservValue newError;
-
+  // MAJ des entrées
+  for(i=0; i < parent->nbInputs; i++)
+  {
+    error = parent->inputs[0].module->update(
+                               parent->inputs[0].module,
+                               parent->inputs[0].port);
+    if(error != OK)
+    {
+      return error;
+    }
+  }
+// Entrées du module : coef1, coef2, coef3, frequency, command, deriv, precision + mesure
+  // On récupère les entrées
+  kp = getInput(parent, 0); //parent->inputs[0].module->outputs[parent->inputs[0].port].value;
+  ki = getInput(parent, 1); //parent->inputs[1].module->outputs[parent->inputs[1].port].value;
+  kd = getInput(parent, 2); //parent->inputs[2].module->outputs[parent->inputs[2].port].value;
+  accuracy = getInput(parent, 3);
+  command = ((Asserv*)parent->fun)->h.h1(getInput(parent, 4));
+  deriv = getInput(parent, 5);
+  measure = ((Asserv*)parent->fun)->h.h2(getInput(parent, 6));
 
   /* On regarde si un calcul d'asserv n'est pas déjà en cours */
-  if( asserv->sem == NULL )
-  {
-    return ERR_SEM_NOT_DEF; // La sémaphore n'a pas été initialisée
-  }
+//  if( asserv->sem == NULL )
+//  {
+//    return ERR_SEM_NOT_DEF; // La sémaphore n'a pas été initialisée
+//  }
 
-  /* On tente de prendre la semaphore */
-  if( xSemaphoreTake( asserv->sem, (portTickType)0) )
-  {
-    return ERR_SEM_TAKEN; // La sémaphore est déjà prise
-  }
+//  /* On tente de prendre la semaphore */
+//  if( xSemaphoreTake( asserv->sem, (portTickType)0) )
+//  {
+//    return ERR_SEM_TAKEN; // La sémaphore est déjà prise
+//  }
 
   /*************************************
    * On est enfin seul sur l'asserv :p *
    *************************************/
 
   /* On récupère la valeur mesurée */
-  encoderValue = asserv->getEncoderValue(); // Récupère la position réèlle
+  //encoderValue = asserv->getEncoderValue(); // Récupère la position réèlle
 
   /* Calcul de l'erreur (sortie - entrée)*/
-  newError = encoderValue - asserv->order.order;
+  newError = measure - command;
 
   /* On regarde si on est arrivé à destination */
-  if(newError < asserv->errorMinAllowed)
+  if(newError < accuracy)
   {
     return ASSERV_DEST_REACHED;
   }
 
   /* Mise à jour de la dérivée de l'erreur */
-  asserv->deriv = newError - asserv->error;
+  realDeriv = newError - asserv->oldError;
 
   /* Mise à jour de l'integrale */
   asserv->integral += newError;
 
   /* Mise à jour de l'erreur */
-  asserv->error = newError;
+  asserv->oldError = newError;
 
   /* On passe aux choses serieuses : calcul de la commande à envoyer au moteur */
-  command = asserv->coef.kp * asserv->error // terme proportionnel
-  	  + asserv->coef.ki * asserv->integral // terme intégral
-	  + asserv->coef.kd * asserv->deriv; // terme dérivé
- // On ecrete si trop grand
-  command = (command > asserv->commandThreshold) ? asserv->commandThreshold : command;
+  command = kp * newError; // terme proportionnel
+  	  + ki * asserv->integral // terme intégral
+	  + kd * realDeriv; // terme dérivé
+ // On ecrete si trop grand FIXME
+ // command = (command > deriv) ? deriv : command;
 
 
-  /* On envoie la commande au moteur */
-  asserv->sendNewCommandToMotor(command); // Envoi la commande après asservissement au moteur
-  
-
-  /* On tente de rendre la sémaphore */
-  if(xSemaphoreGive( asserv->sem ) != pdTRUE )
-  {
-    return ERR_SEM_EPIC_FAIL // on a pas rendu la semaphore, pas sensé arriver
-  }
+  /* On envoie la commande sur la sortie */
+  setOutput(parent, 0, ((Asserv*)parent->fun)->h.h3(command));
 
   return OK;
-
 }
-
+//  /* On tente de rendre la sémaphore */
+//  if(xSemaphoreGive( asserv->sem ) != pdTRUE )
+//  {
+//    return ERR_SEM_EPIC_FAIL // on a pas rendu la semaphore, pas sensé arriver
+//  }
+//
+//  return OK;
+//
+//}
+//
 // Anciennement moveMotor
 ErrorCode launchAsserv(Asserv* asserv, Order order)
 {

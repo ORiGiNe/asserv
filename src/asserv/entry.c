@@ -8,7 +8,7 @@ void *initEntry(Module *parent, void* args)
 	return (void*)entry;
 }
 
-ErrorCode updateEntry(Module* parent)
+ErrorCode updateEntry(Module* parent, OriginWord port)
 {
   //int i;
   //for(i = 0; i < parent->nbOutputs; parent->outputs[i++].upToDate = 1);
