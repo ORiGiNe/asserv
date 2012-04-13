@@ -1,6 +1,11 @@
 #ifndef ASSERV_LAUNCHER_H
 #define ASSERV_LAUNCHER_H
 
+#include "types.h"
+#include "defines.h"
+
+#include "module.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -8,9 +13,6 @@ extern "C"
 
 #include <timer.h>
 #include <semphr.h>
-#include "types.h"
-#include "defines.h"
-#include "module.h"
 
 typedef struct timer Timer;
 typedef struct ctlBlock CtlBlock;

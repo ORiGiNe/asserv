@@ -66,7 +66,7 @@ void vCallback(xTimerHandle pxTimer)
   ctlBlock->lastError = ctlBlock->starter->update(ctlBlock->starter, 0);
   if(ctlBlock->lastError == ASSERV_DEST_REACHED)
   {
-    if(xTimerStop(ctlBlock->timer.handle, (portTickType)2 MS) == pdFAIL) /*FIXME*/
+    if(xTimerStop(ctlBlock->timer.handle, (portTickType)2 MS) == pdFAIL)
     {
       ctlBlock->lastError = ERR_TIMER_EPIC_FAIL;
     }
@@ -81,14 +81,12 @@ void vCallback(xTimerHandle pxTimer)
   }
 }
 
-/*TODO*/
-ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType waitTime)
+ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
 {
   /* On attend la fin de la sémaphore */
-  if( xSemaphoreTake( ctlBlock->sem, waitTime ) ) /* TODO: régler la bonne valeur */
+  if( xSemaphoreTake( ctlBlock->sem, xBlockTime ) )
   {
-    ctlBlock->lastError = ERR_SEM_TAKEN;
-    return;
+    return ERR_SEM_TAKEN;
   }
   
   return OK;

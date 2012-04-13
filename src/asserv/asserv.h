@@ -26,25 +26,15 @@ struct opFunc
 
 struct asserv
 {
-// Données du problème
   Module *parent;
   ModuleValue oldError; // Erreur 
   ModuleValue integral; // Permet de connaitre l'intégrale de l'erreur
   OpFunc h; // fonctions remplissant le role des blocs H1, H2, et H3
 };
 
-/* Creer un nouvel asservissement */
 
-/*
- * Fonction de déplacement d'un moteur bloquant: créer le timer software, créer la rampe.
- * La fonction est bloquante, elle renvoit un code d'erreur quand le mouvement est fini.
- *
- */
-
-//tEFBerrCode moveMotor(Asserv* asserv, uint16_t moveAccel, uint16_t moveSpeed, uint16_t moveDistance);
-
-//tEFBerrCode waitForMoveToFinish (Asserv* asserv, portTickType xBlockTime);
-
+void *initAsserv (Module *, void*);
+ErrorCode updateAsserv(Module*, OriginWord);
 
 
 #ifdef __cplusplus

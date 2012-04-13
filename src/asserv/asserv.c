@@ -3,7 +3,7 @@
 
 
 // Entrées du module : coef1, coef2, coef3, frequency, command, deriv, precision + mesure
-void *initAsserv (Module *parent, void* args) //(Coef coef, Frequency asservRefreshFreq,
+void *initAsserv (Module *parent, void* args)
 {
   // On reserve la place pour la structure asserv
   Asserv* asserv = pvPortMalloc (sizeof(Asserv));
@@ -17,7 +17,7 @@ void *initAsserv (Module *parent, void* args) //(Coef coef, Frequency asservRefr
   return asserv;
 }
 
-
+/* FIXME: Comment prendre en compte la dérivée de la commande ? */
 ErrorCode updateAsserv(Module* parent, OriginWord port)
 {
   ModuleValue kp, ki, kd;
@@ -80,18 +80,3 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
 
   return OK;
 }
-
-
-/* TODO : à faire un peu plus proprement
- * asserv : asservissement 
- *
-ErrorCode tryToStopAsserv (Asserv* asserv, portTickType xBlockTime)
-{
-  // On attend que l'asserv soit fini.
-  if (xSemaphoreTake (asserv->sem, xBlockTime) != pdPASS)
-  {
-    return ERR_SEM_TAKEN;
-  }
-  return OK;
-}
-*/
