@@ -11,17 +11,26 @@ extern "C"
 #define MAX_IFACEME_OUTPUT 1
 
 typedef struct ifaceME IfaceME;
-struct ifaceME
+typedef struct iME IME;
+
+struct iME
 {
-  Module *parent;
   ModuleValue (*getEncoderValue)(void);
   void (*sendNewCommand)(ModuleValue);
 };
 
-void *initIfaceME(Module*);
-ErrorCode updateIfaceME(Module*);
-// FIXME : getEncoderValue
-// FIXME : sendNewCommand
+struct ifaceME
+{
+  Module *parent;
+
+  ModuleValue measure;
+  OriginBool measureUpToDate;
+
+  IME ime;
+};
+
+void *initIfaceME(Module*, void*);
+ErrorCode updateIfaceME(Module*, OriginWord);
 
 #ifdef __cplusplus
 }
