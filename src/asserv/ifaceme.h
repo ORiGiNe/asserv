@@ -14,14 +14,16 @@ typedef struct ifaceME IfaceME;
 struct ifaceME
 {
   Module *parent;
+
+  ModuleValue measure;
+  OriginBool measureUpToDate;
+
   ModuleValue (*getEncoderValue)(void);
   void (*sendNewCommand)(ModuleValue);
 };
 
 void *initIfaceME(Module*);
-ErrorCode updateIfaceME(Module*);
-// FIXME : getEncoderValue
-// FIXME : sendNewCommand
+ErrorCode updateIfaceME(Module*, OriginWord);
 
 #ifdef __cplusplus
 }

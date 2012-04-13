@@ -7,8 +7,6 @@ void *initIfaceME(Module *parent)
 {
   IfaceME *ifaceme = pvPortMalloc(sizeof(IfaceME));
 
-// FIXME : Mettre à 0 le compteur de l'encodeur
-
   ifaceme->parent = parent;
   ifaceme->getEncoderValue = getEncoderValue;
   ifaceme->sendNewCommand = sendNewCommandToMotor;
@@ -16,34 +14,39 @@ void *initIfaceME(Module *parent)
   return (void*)ifaceme;
 }
 
-ErrorCode updateIfaceME(Module* parent){
-  ModuleValue measure;
+ErrorCode updateIfaceME(Module* parent, OriginWord port){
   ModuleValue command;
+  ErrorCode error;
 
-  // Faire la mesure
-  measure = getEncoderValue(); // On effectue la mesure
-
-  // On met à jour les sorties
-  for(i = 0; i < parent->nbOutputs; i++)
+  // On verifie si la sortie est à jour
+  if(parent->outputs[port].upToDate == 0)
   {
-    if(parent->outputs[i].upToDate == 0)
+    return OK;
+  }
+  // Faire la mesure ssi la mesure n'est plus valable
+  if (((IfaceME*)parent->fun)->measureUpToDate == 0)
+  {
+    // On effectue la mesure
+    ((IfaceME*)parent->fun)->measure = getEncoderValue();
+    ((IfaceME*)parent->fun)->measureUpToDate = 1;
+
+    // On met à jour l'entrée
+    error = parent->inputs[0].module->update(parent->inputs[0].module);
+    if (error != OK)
     {
-      parent->outputs[i].value = measure;
-      parent->outputs[i].upToDate = 1;
+      /* FIXME y'a une erreur */
     }
-  }
+    command = parent->inputs[0].module->outputs[parent->inputs[0].port].value;
 
-  // Demande la maj des entrées
-  for(i=0; i < parent->nbInputs; i++)
+    // On envoie la commande au système
+    ((IfaceME*)parent->fun)->sendNewCommand(command);
+  }
+  else
   {
-    parent->inputs[i].module->update(parent->inputs[i].module);
+    // On met à jour la sortie ayant pour port <port>
+    parent->outputs[port].value = ((IfaceME*)parent->fun)->measure;
+    parent->outputs[port].upToDate = 1;
   }
-  command = parent->inputs[0].module->outputs[parent->inputs[0].port].value;
 
-  // On envoie la commande au système
-  ((IfaceME*)parent->fun)->sendNewCommand(command);
-
-// FIXME : Lancer le timer
-// FIXME : Prendre en compte les sémaphores (dans le timer directement)
   return OK;
 }
