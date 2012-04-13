@@ -108,31 +108,6 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
 }
 
 
-// Anciennement moveMotor
-ErrorCode launchAsserv(Asserv* asserv, Order order)
-{
-  // On verifie qu'elle n'est pas déjà lancée
-  if (asserv->timer.isTimerActive != false)
-  {
-    return ERR_ASSERV_LAUNCHED;
-  }
-  asserv->timer.isTimerActive = true;
-
-  /* Initialisation du déplacement */
-  asserv->order = order;
-  asserv->error = asserv->order.order;
-
-
-  // Lancer le timer: si l'attente est trop longue c'est qu'il y a un gros soucis et on renvoit une erreur
-  if (xTimerReset (asserv->timer.timerHandle, 10 MS) != pdPASS)
-  {
-    asserv->timer.isTimerActive = false;
-    return ERR_ASSERV_EPIC_FAIL;
-  }
-
-  return OK;
-}
-
 /* TODO : à faire un peu plus proprement
  * asserv : asservissement 
  *

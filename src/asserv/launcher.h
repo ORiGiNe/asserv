@@ -13,7 +13,6 @@ struct timer
 {
   xTimerHandle handle;
   OriginBool isActive;
-  void (*moduleCallback) (xTimerHandle);
   OriginWord refreshFreq;
 };
 
