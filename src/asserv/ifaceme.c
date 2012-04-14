@@ -28,12 +28,8 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   ErrorCode error;
   IME ime = ((IfaceME*)parent->fun)->ime;
 
-  if(parent->ctl->stop == true)
-  {
-    return ERR_URGENT_STOP;
-  }
   // On verifie si la sortie est à jour
-  if(parent->outputs[port].upToDate == 0)
+  if(parent->outputs[port].upToDate == true)
   {
     return NO_ERR;
   }
@@ -43,6 +39,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     // On effectue la mesure
     ((IfaceME*)parent->fun)->measure = ime.getEncoderValue();
     ((IfaceME*)parent->fun)->measureUpToDate = 1;
+    parent->ctl->rest = ((IfaceME*)parent->fun)->measure;
 
     // On met à jour l'entrée
     error = parent->inputs[0].module->update(parent->inputs[0].module, parent->inputs[0].port);
@@ -53,6 +50,10 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     command = parent->inputs[0].module->outputs[parent->inputs[0].port].value;
 
     // On envoie la commande au système
+    if(parent->ctl->stop == true)
+    {
+      return ERR_URGENT_STOP;
+    }
     ime.sendNewCommand(command);
   }
   else

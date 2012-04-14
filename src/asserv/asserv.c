@@ -26,10 +26,6 @@ ErrorCode configureAsserv(Module* parent, void* args)
 
 ErrorCode updateAsserv(Module* parent, OriginWord port)
 {
-  //if(parent->ctl->stop == true)
-  //{
-  //  return ERR_URGENT_STOP;
-  //}
   ModuleValue kp, ki, kd;
   ModuleValue accuracy, command, derivThreshold, measure;
   ModuleValue newError, derivError;

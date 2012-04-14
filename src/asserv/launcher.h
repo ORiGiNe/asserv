@@ -17,14 +17,13 @@ extern "C"
 #include "modules_group.h"
 
 ErrorCode createLauncher(CtlBlock*, Module*, 
-                         //void (*)(xTimerHandle),
                          OriginWord);
 
 ErrorCode startLauncher(CtlBlock*);
 
 ErrorCode waitEndOfLauncher(CtlBlock*, portTickType);
 
-ErrorCode forceStopLauncher(CtlBlock*, portTickType);
+ErrorCode forceStopLauncher(CtlBlock*);
 
 #ifdef __cplusplus
 }

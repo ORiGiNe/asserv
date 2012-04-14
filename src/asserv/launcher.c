@@ -72,16 +72,20 @@ void vCallback(xTimerHandle pxTimer)
 
   /* Lancement de l'update du systeme */
   error = ctlBlock->starter->update(ctlBlock->starter, 0);
-  if (error != ERR_DEST_REACHED)
+  if (error == ERR_DEST_REACHED)
   {
-    ctlBlock->lastError = error;
+    ctlBlock->destReached = true;
+  }
+  else if (error == ERR_URGENT_STOP)
+  {
+    ctlBlock->destReached = false;
   }
   else
   {
-    ctlBlock->destReached = true;
-    ctlBlock->lastError = NO_ERR;
+    ctlBlock->lastError = error;
   }
-  if(ctlBlock->destReached == true)
+
+  if(ctlBlock->destReached == true || error == ERR_URGENT_STOP)
   {
     if( xTimerStop( ctlBlock->timer.handle, (portTickType)0 MS ) == pdFAIL )
     {
@@ -89,12 +93,7 @@ void vCallback(xTimerHandle pxTimer)
     }
 
     /* On tente de rendre la sémaphore */
-    if(xSemaphoreGive( ctlBlock->sem ) != pdTRUE )
-    {
-      ctlBlock->lastError = ERR_SEM_EPIC_FAIL;
-      return;
-    }
-
+    xSemaphoreGive( ctlBlock->sem );
   }
 }
 
@@ -114,15 +113,18 @@ ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
     {
       return ERR_TIMER_NOT_STOPPED;
     }
-    return NO_ERR;
+  }
+  if (ctlBlock->destReached == false)
+  {
+    return ERR_URGENT_STOP;
   }
   return NO_ERR;
 }
 
 // Attend xBlockTime secondes apres avoir essayé de finir proprement
 // le launcher avant de l'arreter de force (et arreter le mvmt)
-ErrorCode forceStopLauncher(CtlBlock* ctlBlock, portTickType xBlockTime)
+ErrorCode forceStopLauncher(CtlBlock* ctlBlock)
 {
-  /* TODO */
+  ctlBlock->stop = true;
   return NO_ERR;
 }
