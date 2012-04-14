@@ -16,7 +16,7 @@ ErrorCode configureIfaceME(Module *parent, void* args)
   IfaceME *ifaceme = (IfaceME*)parent->fun;
   IME* ime = (IME*)args;
 
-  ime.resetEncoderValue();
+  ime->resetEncoderValue();
   ifaceme->ime = *ime;
   ifaceme->measureUpToDate = 0;
   ifaceme->measure = 0;
@@ -42,7 +42,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     ((IfaceME*)parent->fun)->measureUpToDate = 1;
 
     // On met à jour l'entrée
-    error = parent->inputs[0].module->update(parent->inputs[0].module);
+    error = parent->inputs[0].module->update(parent->inputs[0].module, parent->inputs[0].port);
     if (error != NO_ERR)
     {
       return error;
