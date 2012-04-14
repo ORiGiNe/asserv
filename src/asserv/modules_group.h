@@ -1,8 +1,9 @@
 #ifndef ASSERV_MODULES_GROUP_H
 #define ASSERV_MODULES_GROUP_H
 
-#include "types.h"
-#include "task.h"
+#include "FreeRTOS/types.h"
+#include "FreeRTOS/task.h"
+#include "FreeRTOS/timer.h"
 #include "semphr.h"
 
 #ifdef __cplusplus
