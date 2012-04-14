@@ -107,7 +107,7 @@ ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
   {
     return ERR_SEM_NOT_TAKEN;
   }
-  if(cltBlock->lastError == ERR_TIMER_NOT_STOPPED)
+  if(ctlBlock->lastError == ERR_TIMER_NOT_STOPPED)
   {
     xDiffTime = xTaskGetTickCount() - xLastWakeTime;
     if( xTimerStop( ctlBlock->timer.handle, xBlockTime - xDiffTime ) == pdFAIL )
