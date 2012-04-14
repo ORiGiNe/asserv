@@ -15,10 +15,10 @@ extern "C"
 #include <timer.h>
 #include <semphr.h>
 
-typedef struct timer Timer;
+typedef struct timerBlock TimerBlock;
 typedef struct ctlBlock CtlBlock;
 
-struct timer
+struct timerBlock
 {
   xTimerHandle handle;
   OriginBool isActive;
