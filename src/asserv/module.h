@@ -37,13 +37,13 @@ struct moduleOutput
 
 struct module
 {
+  CtlBlock *ctl;
+
   ModuleOutput *outputs;
   OriginWord nbOutputs;
 
   ModuleInput *inputs;
   OriginWord nbInputs;
-
-  OriginBool stop;
 
   ModuleType type;
   void *fun;
@@ -52,7 +52,7 @@ struct module
   ErrorCode (*configure)(Module*, void*);
 };
 
-Module *initModule(OriginWord, OriginWord, ModuleType,
+Module *initModule(CtlBlock, OriginWord, OriginWord, ModuleType,
   void* (*)(Module*),
   ErrorCode (*)(Module*,void*),
   ErrorCode (*)(Module*,OriginWord));

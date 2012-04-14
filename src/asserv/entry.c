@@ -61,7 +61,7 @@ ErrorCode configureEntry(Module* parent, void* args)
  */
 ErrorCode updateEntry(Module* parent, OriginWord port)
 {
-  if ( parent->stop == true)
+  if ( parent->ctl->stop == true)
   {
     return ERR_URGENT_STOP;
   }

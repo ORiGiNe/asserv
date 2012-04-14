@@ -28,7 +28,10 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   ErrorCode error;
   IME ime = ((IfaceME*)parent->fun)->ime;
 
-
+  if(parent->ctl->stop == true)
+  {
+    return ERR_URGENT_STOP;
+  }
   // On verifie si la sortie est à jour
   if(parent->outputs[port].upToDate == 0)
   {
