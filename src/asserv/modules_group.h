@@ -14,7 +14,6 @@ typedef struct moduleInput  ModuleInput;
 typedef struct moduleOutput ModuleOutput;
 typedef OriginSWord         ModuleValue;
 
-typedef struct module Module;
 typedef struct timerBlock TimerBlock;
 typedef struct ctlBlock CtlBlock;
 
