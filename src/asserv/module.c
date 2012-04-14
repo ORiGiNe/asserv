@@ -1,7 +1,8 @@
 #include "FreeRTOS/FreeRTOS.h"
 #include "module.h"
 
-Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
+Module *initModule(CtlBlock *ctlBlock,
+                   OriginWord nbInputs, OriginWord nbOutputs,
                    ModuleType type,
                    void* (*initFun)(Module*),
                    ErrorCode (*configFun)(Module*,void*),
@@ -16,6 +17,8 @@ Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
   {
     module->outputs[i].upToDate = 0;
   }
+
+  module->ctl = ctlBlock;
 
   module->inputs = pvPortMalloc(nbInputs * sizeof(ModuleInput));
   module->nbInputs = nbInputs;
@@ -33,6 +36,13 @@ ErrorCode configureModule(Module* module, void* args)
 {
   return module->configure(module, args);
 }
+
+/*
+ErrorCode configureModule(Module* module, OriginWord port)
+{
+  return module->update(module, port);
+}
+*/
 
 ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
               Module* module, OriginWord modulePort)

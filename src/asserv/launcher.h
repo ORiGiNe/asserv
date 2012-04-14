@@ -16,6 +16,7 @@ extern "C"
 #include "FreeRTOS/task.h"
 #include <semphr.h>
 
+
 typedef struct timerBlock TimerBlock;
 typedef struct ctlBlock CtlBlock;
 
@@ -31,6 +32,9 @@ struct ctlBlock
   TimerBlock timer;
   xSemaphoreHandle sem;
   Module* starter;
+
+  OriginBool stop;
+
   ErrorCode lastError;
   OriginBool destReached;
 };
