@@ -18,6 +18,7 @@ struct iME
 {
   ModuleValue (*getEncoderValue)(void);
   void (*sendNewCommand)(ModuleValue);
+  void (*resetEncoderValue)(void);
 };
 
 struct ifaceME
@@ -30,8 +31,8 @@ struct ifaceME
   IME ime;
 };
 
-void *initIfaceME(Module*, void*);
-
+void *initIfaceME(Module*);
+ErrorCode configureIfaceME(Module*, void*);
 ErrorCode updateIfaceME(Module*, OriginWord);
 
 #ifdef __cplusplus

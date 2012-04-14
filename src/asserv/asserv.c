@@ -3,18 +3,25 @@
 
 
 // Entrées du module : coef1, coef2, coef3, frequency, command, deriv, precision + mesure
-void *initAsserv (Module *parent, void* args)
+void *initAsserv (Module *parent)
 {
   // On reserve la place pour la structure asserv
   Asserv* asserv = pvPortMalloc (sizeof(Asserv));
-  OpFunc* opFunc = (OpFunc*) args;
   // Initialisation des données
   asserv->parent = parent;
+
+  return asserv;
+}
+
+ErrorCode configureAsserv(Module* parent, void* args)
+{
+  Asserv* asserv = (Asserv*) parent->fun;
+  OpFunc* opFunc = (OpFunc*) args;
+
   asserv->oldError = 0;
   asserv->integral = 0;
   asserv->h = *opFunc;
-
-  return asserv;
+  return OK;
 }
 
 /* FIXME: Comment prendre en compte la dérivée de la commande ? */
