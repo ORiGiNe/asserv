@@ -24,7 +24,6 @@ ErrorCode configureAsserv(Module* parent, void* args)
   return NO_ERR;
 }
 
-/* FIXME: Comment prendre en compte la dérivée de la commande ? */
 ErrorCode updateAsserv(Module* parent, OriginWord port)
 {
   ModuleValue kp, ki, kd;
@@ -49,6 +48,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   }
 
   // On récupère les entrées
+  // TODO Faire une enum des noms des entrées
   kp = getInput(parent, 0);
   ki = getInput(parent, 1);
   kd = getInput(parent, 2);
@@ -56,14 +56,14 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   accuracy = getInput(parent, 3);
 
   command = h.h1(getInput(parent, 4));
-  deriv = getInput(parent, 5);
+  derivThreshold = getInput(parent, 5);
   measure = h.h2(getInput(parent, 6));
 
   /* Calcul de l'erreur (sortie - entrée)*/
-  newError = measure - command;
+  newError = command - measure;
 
   /* On regarde si on est arrivé à destination */
-  if(newError < accuracy)
+  if(newError < accuracy && newError > -accuracy)
   {
     return ERR_DEST_REACHED;
   }
@@ -82,8 +82,15 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   	  + ki * asserv->integral // terme intégral
 	  + kd * derivError; // terme dérivé
 
-  /* On ecrete si trop grand FIXME */
-  //command = (command > asserv->commandThreshold) ? asserv->commandThreshold : command;
+  /* On ecrete si trop grand */
+  if(command > derivThreshold)
+  {
+    command = derivThreshold;
+  }
+  else if(command < -derivThreshold)
+  {
+    command = -derivThreshold;
+  }
 
   /* On envoie la commande sur la sortie 0 */
   setOutput(parent, port, h.h3(command));
