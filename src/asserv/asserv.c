@@ -86,7 +86,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   //command = (command > asserv->commandThreshold) ? asserv->commandThreshold : command;
 
   /* On envoie la commande sur la sortie 0 */
-  setOutput(parent, 0, h.h3(command));
+  setOutput(parent, port, h.h3(command));
 
   return NO_ERR;
 }
