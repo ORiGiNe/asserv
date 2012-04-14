@@ -34,7 +34,7 @@ struct ctlBlock
 
 
 ErrorCode createLauncher(CtlBlock*, Module* , 
-                         void (*)(xTimerHandle),
+                         //void (*)(xTimerHandle),
                          OriginWord);
 
 ErrorCode startLauncher(CtlBlock*);

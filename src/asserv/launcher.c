@@ -1,7 +1,7 @@
 #include "launcher.h"
 
 ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter, 
-                         void (*moduleCallback)(xTimerHandle),
+                         //void (*moduleCallback)(xTimerHandle),
                          OriginWord refreshFreq)
 {
   unsigned char timerName[6] = "CTL_%"; //{'C', 'T', 'L', '_', '%', '\0'};
@@ -9,7 +9,7 @@ ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter,
 
   /* Création et init du timer */
   timerName[4] = id++;
-  ctlBlock->timer.moduleCallback = moduleCallback;
+  //ctlBlock->timer.moduleCallback = moduleCallback;
   ctlBlock->timer.refreshFreq = refreshFreq;
   ctlBlock->timer.handle = xTimerCreate (
     (signed char*)timerName,
