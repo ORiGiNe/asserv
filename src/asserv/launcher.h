@@ -40,6 +40,8 @@ ErrorCode startLauncher(CtlBlock*);
 
 ErrorCode waitEndOfLauncher(CtlBlock*, portTickType);
 
+ErrorCode forceStopLauncher(CtlBlock*, portTickType);
+
 #ifdef __cplusplus
 }
 #endif

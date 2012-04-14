@@ -92,3 +92,10 @@ ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
   return OK;
 }
 
+// Attend xBlockTime secondes apres avoir essayé de finir proprement
+// le launcher avant de l'arreter de force (et arreter le mvmt)
+ErrorCode forceStopLauncher(CtlBlock* ctlBlock, portTickType xBlockTime)
+{
+  /* TODO */
+  return OK
+}
