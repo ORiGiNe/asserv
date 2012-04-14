@@ -12,7 +12,7 @@ extern "C"
 #endif
 
 #include "FreeRTOS/FreeRTOS.h"
-#include <timer.h>
+#include "FreeRTOS/timers.h"
 #include <semphr.h>
 
 typedef struct timerBlock TimerBlock;
