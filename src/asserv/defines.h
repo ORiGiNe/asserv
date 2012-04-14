@@ -6,6 +6,9 @@ extern "C"
 {
 #endif
 
+#define true			1
+#define false			0
+
 #define NO_ERR			0x0000
 
 #define ERR_SEM_NOT_DEF		0x1000 // 0x10XX -> sémaphores

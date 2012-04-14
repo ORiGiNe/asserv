@@ -1,5 +1,7 @@
 #include "launcher.h"
 
+void vCallback(xTimerHandle);
+
 ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter, 
                          //void (*moduleCallback)(xTimerHandle),
                          OriginWord refreshFreq)
