@@ -51,7 +51,7 @@ ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
   modIn.port = inputModulePort;
   if(modulePort >= module.nbInputs || modulePort < 0)
   {
-    return FAIL; /*FIXME*/
+    return ERR_MODULE_UNKNOW_PORT;
   }
   module->inputs[modulePort] = modIn;
   return OK;

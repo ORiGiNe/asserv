@@ -62,7 +62,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   /* On regarde si on est arrivé à destination */
   if(newError < accuracy)
   {
-    return ASSERV_DEST_REACHED;
+    return ERR_DEST_REACHED;
   }
 
   /* Mise à jour de la dérivée de l'erreur */

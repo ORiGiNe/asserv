@@ -14,9 +14,9 @@ ErrorCode configureEntry(Module* parent, void* args)
   EntryConfig *config = args;
   uint16_t i;
 
-  if(config->nbEntry != parent->nbOutputs)
+  if(config->nbEntry > parent->nbOutputs)
   {
-    return ERR_ENTRY;
+    return ERR_MODULE_UNKNOW_PORT;
   }
   for(i=0; i < config->nbEntry; i++)
   {
