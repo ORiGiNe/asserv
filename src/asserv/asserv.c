@@ -30,7 +30,10 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   ModuleValue kp, ki, kd;
   ModuleValue accuracy, command, deriv, measure;
   ModuleValue newError, derivError;
-  OpFunc h = ((Asserv*)parent->func)->h;
+  OpFunc h = ((Asserv*)parent->fun)->h;
+  OriginWord i;
+  ErrorCode error;
+  Asserv *asserv = (Asserv*)parent->fun;
 
   // MAJ des entrées
   for(i=0; i < parent->nbInputs; i++)
@@ -75,9 +78,9 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   asserv->error = newError;
 
   /* On passe aux choses serieuses : calcul de la commande à envoyer au moteur */
-  command = asserv->coef.kp * newError // terme proportionnel
-  	  + asserv->coef.ki * asserv->integral // terme intégral
-	  + asserv->coef.kd * derivError; // terme dérivé
+  command = kp * newError // terme proportionnel
+  	  + ki * asserv->integral // terme intégral
+	  + kd * derivError; // terme dérivé
 
   /* On ecrete si trop grand FIXME */
   //command = (command > asserv->commandThreshold) ? asserv->commandThreshold : command;
