@@ -46,7 +46,7 @@ struct module
   ModuleType type;
   void *fun;
 
-  ErrorCode (*update)(Module*);
+  ErrorCode (*update)(Module*, OriginWord);
   ErrorCode (*configure)(Module*, void*);
 };
 
@@ -59,8 +59,6 @@ ErrorCode configureModule(Module*, void*);
 ErrorCode linkModuleWithInput(Module*, OriginWord, Module*, OriginWord);
 
 ModuleValue getInput(Module*, OriginWord);
-
-void setOutput(Module*, OriginWord, ModuleValue);
 void setOutput(Module*, OriginWord, ModuleValue);
 
 #ifdef __cplusplus
