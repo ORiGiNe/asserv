@@ -5,7 +5,7 @@ Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
                    ModuleType type,
                    void* (*initFun)(Module*),
                    ErrorCode (*configFun)(Module*,void*),
-                   ErrorCode (*updateFun)(Module*))
+                   ErrorCode (*updateFun)(Module*, OriginWord))
 {
   Module *module = pvPortMalloc(sizeof(Module));
   OriginWord i;
