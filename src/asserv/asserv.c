@@ -75,7 +75,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   asserv->integral += newError;
 
   /* Mise à jour de l'erreur */
-  asserv->error = newError;
+  asserv->oldError = newError;
 
   /* On passe aux choses serieuses : calcul de la commande à envoyer au moteur */
   command = kp * newError // terme proportionnel
