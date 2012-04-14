@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "defines.h"
-
+#include "launcher.h"
 #ifdef __cplusplus
 extern "C"
 {
@@ -52,7 +52,7 @@ struct module
   ErrorCode (*configure)(Module*, void*);
 };
 
-Module *initModule(CtlBlock, OriginWord, OriginWord, ModuleType,
+Module *initModule(CtlBlock*, OriginWord, OriginWord, ModuleType,
   void* (*)(Module*),
   ErrorCode (*)(Module*,void*),
   ErrorCode (*)(Module*,OriginWord));
