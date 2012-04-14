@@ -45,3 +45,14 @@ ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
   module->inputs[modulePort] = modIn;
   return OK;
 }
+
+ModuleValue getInput(Module* module, OriginWord port)
+{
+  return module->inputs[port].module->outputs[module->inputs[port].port].value;
+}
+
+void setOutput(Module* module, OriginWord port, ModuleValue value)
+{
+  module->outputs[port].value = value;
+  module->outputs[port].upToDate = 1;
+}
