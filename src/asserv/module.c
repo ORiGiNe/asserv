@@ -41,7 +41,7 @@ ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
   modIn.module = inputModule;
   modIn.port = inputModulePort;
 
-  if(modulePort >= module->nbInputs || modulePort < 0)
+  if(modulePort >= module->nbInputs)
   {
     return ERR_MODULE_UNKNOW_PORT;
   }
