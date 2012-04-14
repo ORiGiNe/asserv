@@ -30,6 +30,7 @@ struct ctlBlock
   TimerBlock timer;
   xSemaphoreHandle sem;
   Module* starter;
+  ErrorCode lastError;
 };
 
 
