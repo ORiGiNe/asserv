@@ -27,7 +27,7 @@ struct timerBlock
 
 struct ctlBlock
 {
-  Timer timer;
+  TimerBlock timer;
   xSemaphoreHandle sem;
   Module* starter;
 };
