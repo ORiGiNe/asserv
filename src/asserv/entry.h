@@ -11,6 +11,8 @@ extern "C"
 {
 #endif
 
+#define NB_MAX_ENTRIES 8
+
 typedef struct entry Entry;
 typedef struct entryConfig EntryConfig;
 
