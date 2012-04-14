@@ -1,6 +1,7 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#include "../defines.h"
 #ifdef __cplusplus
 extern "C"
 {
