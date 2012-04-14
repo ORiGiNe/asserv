@@ -4,7 +4,7 @@ ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter,
                          void (*moduleCallback)(xTimerHandle),
                          OriginWord refreshFreq)
 {
-  unsigned char timerName[6] = {'C', 'T', 'L', '_', '%', '\0'};
+  unsigned char timerName[6] = "CTL_%"; //{'C', 'T', 'L', '_', '%', '\0'};
   static unsigned char id = 'a';
 
   /* Création et init du timer */
