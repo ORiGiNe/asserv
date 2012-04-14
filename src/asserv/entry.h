@@ -12,6 +12,13 @@ extern "C"
 #endif
 
 typedef struct entry Entry;
+typedef struct entryConfig EntryConfig;
+
+struct entryConfig
+{
+  OriginWord nbEntry;
+  ModuleValue value[NB_MAX_ENTRIES];
+};
 
 struct entry
 {
@@ -19,7 +26,7 @@ struct entry
 };
 
 void *initEntry(Module*);
-
+ErrorCode configureEntry(Module*, void*);
 ErrorCode updateEntry(Module*, OriginWord);
 
 #ifdef __cplusplus

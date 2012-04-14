@@ -2,17 +2,25 @@
 #include "ifaceme.h"
 
 
-void *initIfaceME(Module *parent, void* args)
+void *initIfaceME(Module *parent)
 {
   IfaceME *ifaceme = pvPortMalloc(sizeof(IfaceME));
-  IME* ime = (IME*)args;
 
   ifaceme->parent = parent;
+
+  return (void*)ifaceme;
+}
+
+ErrorCode configureIfaceME(Module *parent, void* args)
+{
+  IfaceME *ifaceme = (IfaceME*)parent->fun;
+  IME* ime = (IME*)args;
+
+  ime.resetEncoderValue();
   ifaceme->ime = *ime;
   ifaceme->measureUpToDate = 0;
   ifaceme->measure = 0;
-
-  return (void*)ifaceme;
+  return OK;
 }
 
 ErrorCode updateIfaceME(Module* parent, OriginWord port){
@@ -29,7 +37,6 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   // Faire la mesure ssi la mesure n'est plus valable
   if (((IfaceME*)parent->fun)->measureUpToDate == 0)
   {
-  // TODO : Mettre à 0 le compteur de l'encodeur
     // On effectue la mesure
     ((IfaceME*)parent->fun)->measure = ime.getEncoderValue();
     ((IfaceME*)parent->fun)->measureUpToDate = 1;

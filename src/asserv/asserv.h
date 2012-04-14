@@ -33,7 +33,8 @@ struct asserv
 };
 
 
-void *initAsserv (Module *, void*);
+void *initAsserv (Module *);
+ErrorCode configureAsserv (Module *, void*);
 ErrorCode updateAsserv(Module*, OriginWord);
 
 

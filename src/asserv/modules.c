@@ -2,7 +2,10 @@
 #include "modules.h"
 
 Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
-                   ModuleType type, void* (*initFun)(Module*, void*), void* args,  ErrorCode (*updateFun)(Module*))
+                   ModuleType type,
+                   void* (*initFun)(Module*),
+                   ErrorCode (*configFun)(Module*,void*),
+                   ErrorCode (*updateFun)(Module*))
 {
   Module *module = pvPortMalloc(sizeof(Module));
 
@@ -17,10 +20,16 @@ Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
   module->nbInputs = nbInputs;
 
   module->type = type;
-  module->fun = initFun(module, args);
+  module->fun = initFun(module);
   module->update = updateFun;
+  module->configure = configFun;
 
   return module;
+}
+
+ErrorCode configureModule(Module* module, void* args)
+{
+  return module->configure(module, args);
 }
 
 inline ModuleValue getInput(Module* module, OriginWord port)
@@ -42,7 +51,7 @@ ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
   modIn.port = inputModulePort;
   if(modulePort >= module.nbInputs || modulePort < 0)
   {
-    return FAIL; /*FIXME*/
+    return ERR_MODULE_UNKNOW_PORT;
   }
   module->inputs[modulePort] = modIn;
   return OK;

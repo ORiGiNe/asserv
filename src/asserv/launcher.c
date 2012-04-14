@@ -64,7 +64,7 @@ void vCallback(xTimerHandle pxTimer)
 
   /* Lancement de l'update du systeme */
   ctlBlock->lastError = ctlBlock->starter->update(ctlBlock->starter, 0);
-  if(ctlBlock->lastError == ASSERV_DEST_REACHED)
+  if(ctlBlock->lastError == ERR_DEST_REACHED)
   {
     if(xTimerStop(ctlBlock->timer.handle, (portTickType)2 MS) == pdFAIL)
     {

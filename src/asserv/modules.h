@@ -47,8 +47,18 @@ struct module
   void *fun;
 
   ErrorCode (*update)(Module*);
+  ErrorCode (*configure)(Module*, void*);
 };
 
+Module *initModule(OriginWord, OriginWord, ModuleType,
+  void*(*)(Module*),
+  ErrorCode(*)(Module*,void*),
+  ErrorCode(*)(Module*));
+
+ErrorCode configureModule(Module*, void*);
+inline ModuleValue getInput(Module*, OriginWord);
+inline void setOutput(Module*, OriginWord, ModuleValue);
+ErrorCode linkModuleWithInput(Module*, OriginWord, Module*, OriginWord);
 
 #ifdef __cplusplus
 }
