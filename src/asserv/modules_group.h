@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "task.h"
-#include "timer.h"
+#include "timers.h"
 #include "semphr.h"
 
 #ifdef __cplusplus
