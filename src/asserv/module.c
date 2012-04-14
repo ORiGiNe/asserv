@@ -27,7 +27,6 @@ Module *initModule(CtlBlock *ctlBlock,
   module->fun = initFun(module);
   module->update = updateFun;
   module->configure = configFun;
-  module->stop = false;
 
   return module;
 }
