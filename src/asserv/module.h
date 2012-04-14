@@ -18,9 +18,9 @@ typedef OriginSWord         ModuleValue;
 
 enum moduleType
 {
-  entry,
-  asserv,
-  ifaceme
+  tentry,
+  tasserv,
+  tifaceme
 };
 
 struct moduleInput
