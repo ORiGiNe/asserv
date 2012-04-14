@@ -8,15 +8,16 @@ Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
                    ErrorCode (*updateFun)(Module*))
 {
   Module *module = pvPortMalloc(sizeof(Module));
+  OriginWord i;
 
-  module->outputs = pvPortMalloc(nbOutput * sizeof(ModuleOutput));
+  module->outputs = pvPortMalloc(nbOutputs * sizeof(ModuleOutput));
   module->nbOutputs = nbOutputs;
   for(i = 0; i < module->nbOutputs; i++)
   {
     module->outputs[i].upToDate = 0;
   }
 
-  module->inputs = pvPortMalloc(nbOutput * sizeof(ModuleInput));
+  module->inputs = pvPortMalloc(nbInputs * sizeof(ModuleInput));
   module->nbInputs = nbInputs;
 
   module->type = type;
