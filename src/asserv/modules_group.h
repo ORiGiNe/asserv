@@ -2,6 +2,8 @@
 #define ASSERV_MODULES_GROUP_H
 
 #include "types.h"
+#include "task.h"
+#include "semphr.h"
 
 #ifdef __cplusplus
 extern "C"
