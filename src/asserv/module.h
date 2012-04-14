@@ -58,16 +58,10 @@ Module *initModule(OriginWord, OriginWord, ModuleType,
 ErrorCode configureModule(Module*, void*);
 ErrorCode linkModuleWithInput(Module*, OriginWord, Module*, OriginWord);
 
-inline ModuleValue getInput(Module* module, OriginWord port)
-{
-  return module->inputs[port].module->outputs[module->inputs[port].port].value;
-}
+ModuleValue getInput(Module*, OriginWord);
 
-inline void setOutput(Module* module, OriginWord port, ModuleValue value)
-{
-  module->outputs[port].value = value;
-  module->outputs[port].upToDate = 1;
-}
+void setOutput(Module*, OriginWord, ModuleValue);
+void setOutput(Module*, OriginWord, ModuleValue);
 
 #ifdef __cplusplus
 }
