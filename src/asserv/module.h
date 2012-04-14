@@ -51,9 +51,9 @@ struct module
 };
 
 Module *initModule(OriginWord, OriginWord, ModuleType,
-  void*(*)(Module*),
-  ErrorCode(*)(Module*,void*),
-  ErrorCode(*)(Module*));
+  void* (*initFun)(Module*),
+  ErrorCode (*configFun)(Module*,void*),
+  ErrorCode (*updateFun)(Module*));
 
 ErrorCode configureModule(Module*, void*);
 ErrorCode linkModuleWithInput(Module*, OriginWord, Module*, OriginWord);
