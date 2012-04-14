@@ -46,10 +46,10 @@ ErrorCode startLauncher(CtlBlock* ctlBlock)
   /* On lance le timer */
   if (xTimerReset (ctlBlock->timer.handle, ctlBlock->timer.refreshFreq) != pdPASS)
   {
-    ctlBlock->timer.isTimerActive = false;
+    ctlBlock->timer.isActive = false;
     return ERR_TIMER_EPIC_FAIL;
   }
-  ctlBlock->timer.isTimerActive = true;
+  ctlBlock->timer.isActive = true;
 
   return NO_ERR;
 }
@@ -68,13 +68,13 @@ void vCallback(xTimerHandle pxTimer)
   ctlBlock->lastError = ctlBlock->starter->update(ctlBlock->starter, 0);
   if(ctlBlock->lastError == ERR_DEST_REACHED)
   {
-    if(xTimerStop(ctlBlock->timer.handle, (portTickType)2 MS) == pdFAIL)
+    if( xTimerStop( ctlBlock->timer.handle, (portTickType)2 MS ) == pdFAIL )
     {
       ctlBlock->lastError = ERR_TIMER_EPIC_FAIL;
     }
 
     /* On tente de rendre la sémaphore */
-    if(xSemaphoreGive( asserv->sem ) != pdTRUE )
+    if(xSemaphoreGive( ctlBlock->sem ) != pdTRUE )
     {
       ctlBlock->lastError = ERR_SEM_EPIC_FAIL;
       return;
