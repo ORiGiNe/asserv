@@ -37,9 +37,11 @@ ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
               Module* module, OriginWord modulePort)
 {
   ModuleInput modIn;
+
   modIn.module = inputModule;
   modIn.port = inputModulePort;
-  if(modulePort >= module.nbInputs || modulePort < 0)
+
+  if(modulePort >= module->nbInputs || modulePort < 0)
   {
     return ERR_MODULE_UNKNOW_PORT;
   }
