@@ -2,7 +2,7 @@
 #define EMUL_IME_H
 
 #include "modules_group.h"
-
+// TODO regarder pour lambda
 #ifdef __cplusplus
 extern "C"
 {
