@@ -4,7 +4,6 @@
 #include "types.h"
 #include "defines.h"
 
-#include "module.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -15,6 +14,7 @@ extern "C"
 #include "FreeRTOS/timers.h"
 #include "FreeRTOS/task.h"
 #include <semphr.h>
+#include "module.h"
 
 
 typedef struct timerBlock TimerBlock;
@@ -40,7 +40,7 @@ struct ctlBlock
 };
 
 
-ErrorCode createLauncher(CtlBlock*, Module* , 
+ErrorCode createLauncher(CtlBlock*, Module*, 
                          //void (*)(xTimerHandle),
                          OriginWord);
 
