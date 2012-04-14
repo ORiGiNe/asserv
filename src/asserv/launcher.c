@@ -22,6 +22,7 @@ ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter,
 
   /* On indique le module dont l'update lance l'ensemble du schéma block */
   ctlBlock->starter = starter;
+  ctlBlock->lastError = NO_ERR;
 
   /* Création du sémaphore */
   vSemaphoreCreateBinary(ctlBlock->sem);
@@ -42,6 +43,9 @@ ErrorCode startLauncher(CtlBlock* ctlBlock)
   {
     return ERR_TIMER_LAUNCHED;
   }
+  
+  /* On indique qu'il faut se bouger avant d'atteindre son but */
+  ctlBlock->destReached = false;
 
   /* On lance le timer */
   if (xTimerReset (ctlBlock->timer.handle, ctlBlock->timer.refreshFreq) != pdPASS)
@@ -58,6 +62,8 @@ ErrorCode startLauncher(CtlBlock* ctlBlock)
 void vCallback(xTimerHandle pxTimer)
 {
   CtlBlock *ctlBlock = (CtlBlock*)pvTimerGetTimerID(pxTimer);
+  ErrorCode error;
+
   if(ctlBlock->timer.isActive == 0)
   {
     ctlBlock->lastError = ERR_TIMER_NOT_ACTIVE;
@@ -65,12 +71,21 @@ void vCallback(xTimerHandle pxTimer)
   }
 
   /* Lancement de l'update du systeme */
-  ctlBlock->lastError = ctlBlock->starter->update(ctlBlock->starter, 0);
-  if(ctlBlock->lastError == ERR_DEST_REACHED)
+  error = ctlBlock->starter->update(ctlBlock->starter, 0);
+  if (error != ERR_DEST_REACHED)
   {
-    if( xTimerStop( ctlBlock->timer.handle, (portTickType)2 MS ) == pdFAIL )
+    ctlBlock->lastError = error;
+  }
+  else
+  {
+    ctlBlock->destReached = true;
+    ctlBlock->lastError = NO_ERR;
+  }
+  if(ctlBlock->destReached == true)
+  {
+    if( xTimerStop( ctlBlock->timer.handle, (portTickType)0 MS ) == pdFAIL )
     {
-      ctlBlock->lastError = ERR_TIMER_EPIC_FAIL;
+      ctlBlock->lastError = ERR_TIMER_NOT_STOPPED;
     }
 
     /* On tente de rendre la sémaphore */
@@ -85,12 +100,22 @@ void vCallback(xTimerHandle pxTimer)
 
 ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
 {
+  portTickType xLastWakeTime = xTaskGetTickCount();
+  portTickType xDiffTime;
   /* On attend la fin de la sémaphore */
   if( xSemaphoreTake( ctlBlock->sem, xBlockTime ) )
   {
-    return ERR_SEM_TAKEN;
+    return ERR_SEM_NOT_TAKEN;
   }
-  
+  if(cltBlock->lastError == ERR_TIMER_NOT_STOPPED)
+  {
+    xDiffTime = xTaskGetTickCount() - xLastWakeTime;
+    if( xTimerStop( ctlBlock->timer.handle, xBlockTime - xDiffTime ) == pdFAIL )
+    {
+      return ERR_TIMER_NOT_STOPPED;
+    }
+    return NO_ERR;
+  }
   return NO_ERR;
 }
 

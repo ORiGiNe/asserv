@@ -43,6 +43,8 @@ struct module
   ModuleInput *inputs;
   OriginWord nbInputs;
 
+  OriginBool stop;
+
   ModuleType type;
   void *fun;
 

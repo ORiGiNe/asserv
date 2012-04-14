@@ -32,6 +32,7 @@ struct ctlBlock
   xSemaphoreHandle sem;
   Module* starter;
   ErrorCode lastError;
+  OriginBool destReached;
 };
 
 

@@ -13,11 +13,12 @@ extern "C"
 #define NO_ERR			0x0000
 
 #define ERR_SEM_NOT_DEF		0x1000 // 0x10XX -> sémaphores
-#define ERR_SEM_TAKEN		0x1001
+#define ERR_SEM_NOT_TAKEN		0x1001
 #define ERR_SEM_EPIC_FAIL	0x10FF
 
 #define ERR_TIMER_LAUNCHED      0x1100
 #define ERR_TIMER_NOT_ACTIVE    0x1101
+#define ERR_TIMER_NOT_STOPPED   0x1102
 #define ERR_TIMER_EPIC_FAIL     0x11FF
 
 #define ERR_MODULE_UNKNOW_PORT  0x5000
