@@ -1,10 +1,10 @@
-
+#include "launcher.h"
 
 ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter, 
                          void (*moduleCallback)(xTimerHandle),
                          OriginWord refreshFreq)
 {
-  unsigned char timerName[6] = {'C', 'T', 'L', '_', '%', '\0'};
+  unsigned char timerName[6] = "CTL_%"; //{'C', 'T', 'L', '_', '%', '\0'};
   static unsigned char id = 'a';
 
   /* Création et init du timer */
@@ -66,7 +66,7 @@ void vCallback(xTimerHandle pxTimer)
   ctlBlock->lastError = ctlBlock->starter->update(ctlBlock->starter, 0);
   if(ctlBlock->lastError == ASSERV_DEST_REACHED)
   {
-    if(xTimerStop(ctlBlock->timer.handle, (portTickType)2 MS) == pdFAIL) /*FIXME*/
+    if(xTimerStop(ctlBlock->timer.handle, (portTickType)2 MS) == pdFAIL)
     {
       ctlBlock->lastError = ERR_TIMER_EPIC_FAIL;
     }
@@ -81,18 +81,21 @@ void vCallback(xTimerHandle pxTimer)
   }
 }
 
-/*TODO*/
-ErrorCode waitToStopLauncher(CtlBlock *ctlBlock)
+ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
 {
-  /* On regarde si on peut prendre la sémaphore */
-  if( xSemaphoreTake( ctlBlock->sem, (portTickType)0) )
+  /* On attend la fin de la sémaphore */
+  if( xSemaphoreTake( ctlBlock->sem, xBlockTime ) )
   {
-    ctlBlock->lastError = ERR_SEM_TAKEN;
-    return;
+    return ERR_SEM_TAKEN;
   }
   
   return OK;
 }
 
-
-
+// Attend xBlockTime secondes apres avoir essayé de finir proprement
+// le launcher avant de l'arreter de force (et arreter le mvmt)
+ErrorCode forceStopLauncher(CtlBlock* ctlBlock, portTickType xBlockTime)
+{
+  /* TODO */
+  return OK
+}

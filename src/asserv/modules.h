@@ -1,16 +1,27 @@
 #ifndef ASSERV_MODULES_H
 #define ASSERV_MODULES_H
 
+#include "types.h"
+#include "defines.h"
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
 
-typedef struct module Module;
-typedef enum moduleType ModuleType;
-typedef struct moduleInput ModuleInput;
+typedef struct module       Module;
+typedef enum moduleType     ModuleType;
+typedef struct moduleInput  ModuleInput;
 typedef struct moduleOutput ModuleOutput;
+typedef OriginSWord         ModuleValue;
+
+enum moduleType
+{
+  entry,
+  asserv,
+  ifaceme
+};
 
 struct moduleInput
 {
@@ -39,10 +50,8 @@ struct module
 };
 
 
-
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

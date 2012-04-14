@@ -1,6 +1,5 @@
+#include "FreeRTOS/FreeRTOS.h"
 #include "modules.h"
-
-
 
 Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
                    ModuleType type, void* (*initFun)(Module*, void*), void* args,  ErrorCode (*updateFun)(Module*))

@@ -1,14 +1,15 @@
 #ifndef ASSERV_IFACEME_H
 #define ASSERV_IFACEME_H
 
-#define "types.h"
+#include "types.h"
+#include "defines.h"
+
+#include "module.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#define MAX_IFACEME_OUTPUT 1
 
 typedef struct ifaceME IfaceME;
 typedef struct iME IME;
@@ -30,6 +31,7 @@ struct ifaceME
 };
 
 void *initIfaceME(Module*, void*);
+
 ErrorCode updateIfaceME(Module*, OriginWord);
 
 #ifdef __cplusplus

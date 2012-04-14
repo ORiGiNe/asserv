@@ -1,12 +1,9 @@
+#include "FreeRTOS/FreeRTOS.h"
 #include "asserv.h"
 
 
 // Entrées du module : coef1, coef2, coef3, frequency, command, deriv, precision + mesure
-//
-//
-//
-//
-void *initAsserv (Module *parent, void* args) //(Coef coef, Frequency asservRefreshFreq,
+void *initAsserv (Module *parent, void* args)
 {
   // On reserve la place pour la structure asserv
   Asserv* asserv = pvPortMalloc (sizeof(Asserv));
@@ -19,31 +16,8 @@ void *initAsserv (Module *parent, void* args) //(Coef coef, Frequency asservRefr
 
   return asserv;
 }
-/*
-  // On créé le semaphore qui permet de synchroniser la fin du timer avec la réponse à la panda.
-  vSemaphoreCreateBinary(asserv->sem);
-*/
 
-
-/* 
- * 
- * 
- */
-void vCallbackAsserv (xTimerHandle pxTimer)
-{
-
-  Asserv* asserv;
-  ErrorCode err;
-
-  asserv = (Asserv*)pvTimerGetTimerID(pxTimer); // Recupère l'asservissement en cours
-  err = updateAsserv(asserv); // Mise à jour de l'asservissement
-  if(err == ASSERV_DEST_REACHED)
-  {
- // On arrete l'asserv
-  }
-
-}
-
+/* FIXME: Comment prendre en compte la dérivée de la commande ? */
 ErrorCode updateAsserv(Module* parent, OriginWord port)
 {
   ModuleValue kp, ki, kd;
@@ -105,46 +79,4 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   setOutput(parent, 0, h.h3(command));
 
   return OK;
-}
-
-
-/* TODO : à faire un peu plus proprement
- * asserv : asservissement 
- *
- */
-ErrorCode tryToStopAsserv (Asserv* asserv, portTickType xBlockTime)
-{
-  // On attend que l'asserv soit fini.
-  if (xSemaphoreTake (asserv->sem, xBlockTime) != pdPASS)
-  {
-    return ERR_SEM_TAKEN;
-  }
-  return OK;
-}
-
-//TESTS
-EncoderValue getEncoderValueTest(void)
-{
-  return 12;
-}
-
-ErrorCode sendNewCmdToMotor(Command cmd)
-{
-  return OK;
-}
-
-int main(void)
-{
-  Coef coef;
-  Order order;
-  Asserv* asserv;
-
-  coef = createCoef(12, 42, 15);
-  order = createOrder(15000, 20, 5);
-  asserv = createNewAsserv(coef, 20, 
-			getEncoderValueTest,
-			sendNewCmdToMotor);
-  launchAsserv(asserv, order);
-
-  return 0;
 }
