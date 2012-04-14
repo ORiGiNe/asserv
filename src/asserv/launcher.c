@@ -29,7 +29,7 @@ ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter,
   {
     return ERR_SEM_NOT_DEF;
   }
-  return OK;
+  return NO_ERR;
 
 }
 
@@ -49,7 +49,7 @@ ErrorCode startLauncher(CtlBlock* ctlBlock)
   }
   ctlBlock->timer.isTimerActive = true;
 
-  return OK;
+  return NO_ERR;
 }
 
 
@@ -89,7 +89,7 @@ ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
     return ERR_SEM_TAKEN;
   }
   
-  return OK;
+  return NO_ERR;
 }
 
 // Attend xBlockTime secondes apres avoir essayé de finir proprement
@@ -97,5 +97,5 @@ ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
 ErrorCode forceStopLauncher(CtlBlock* ctlBlock, portTickType xBlockTime)
 {
   /* TODO */
-  return OK
+  return NO_ERR;
 }

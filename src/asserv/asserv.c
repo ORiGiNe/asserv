@@ -21,7 +21,7 @@ ErrorCode configureAsserv(Module* parent, void* args)
   asserv->oldError = 0;
   asserv->integral = 0;
   asserv->h = *opFunc;
-  return OK;
+  return NO_ERR;
 }
 
 /* FIXME: Comment prendre en compte la dérivée de la commande ? */
@@ -39,7 +39,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
                      parent->inputs[i].module,
                      parent->inputs[i].port
     );
-    if(error != OK)
+    if(error != NO_ERR)
     {
       return error;
     }
@@ -85,5 +85,5 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   /* On envoie la commande sur la sortie 0 */
   setOutput(parent, 0, h.h3(command));
 
-  return OK;
+  return NO_ERR;
 }
