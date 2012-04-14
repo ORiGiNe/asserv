@@ -11,6 +11,7 @@ extern "C"
 {
 #endif
 
+#include "FreeRTOS/FreeRTOS.h"
 #include <timer.h>
 #include <semphr.h>
 
