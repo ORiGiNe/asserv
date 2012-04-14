@@ -20,7 +20,7 @@ ErrorCode configureIfaceME(Module *parent, void* args)
   ifaceme->ime = *ime;
   ifaceme->measureUpToDate = 0;
   ifaceme->measure = 0;
-  return OK;
+  return NO_ERR;
 }
 
 ErrorCode updateIfaceME(Module* parent, OriginWord port){
@@ -32,7 +32,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   // On verifie si la sortie est à jour
   if(parent->outputs[port].upToDate == 0)
   {
-    return OK;
+    return NO_ERR;
   }
   // Faire la mesure ssi la mesure n'est plus valable
   if (((IfaceME*)parent->fun)->measureUpToDate == 0)
@@ -43,7 +43,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
 
     // On met à jour l'entrée
     error = parent->inputs[0].module->update(parent->inputs[0].module);
-    if (error != OK)
+    if (error != NO_ERR)
     {
       return error;
     }
@@ -59,5 +59,5 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     parent->outputs[port].upToDate = 1;
   }
 
-  return OK;
+  return NO_ERR;
 }

@@ -22,11 +22,11 @@ ErrorCode configureEntry(Module* parent, void* args)
   {
     setOutput(parent, i, config->value[i]);
   }
-  return OK;
+  return NO_ERR;
 }
 
 ErrorCode updateEntry(Module* parent, OriginWord port)
 {
-  return OK;
+  return NO_ERR;
 }
 

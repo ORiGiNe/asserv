@@ -43,7 +43,7 @@ ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
     return ERR_MODULE_UNKNOW_PORT;
   }
   module->inputs[modulePort] = modIn;
-  return OK;
+  return NO_ERR;
 }
 
 ModuleValue getInput(Module* module, OriginWord port)
