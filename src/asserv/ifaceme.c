@@ -29,6 +29,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   // Faire la mesure ssi la mesure n'est plus valable
   if (((IfaceME*)parent->fun)->measureUpToDate == 0)
   {
+  // TODO : Mettre à 0 le compteur de l'encodeur
     // On effectue la mesure
     ((IfaceME*)parent->fun)->measure = ime.getEncoderValue();
     ((IfaceME*)parent->fun)->measureUpToDate = 1;

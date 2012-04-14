@@ -32,38 +32,9 @@ typedef int16_t		 OriginSWord;
 
 typedef OriginSWord	 AsservValue;
 
-//typedef AsservValue	 Command; // PID.pid
-//typedef AsservValue	 EncoderValue;
-//typedef OriginWord	 Frequency;
-//typedef OriginWord	 ErrorValue;
-
-//typedef struct order	 Order;
-//typedef struct timer	 Timer;
-//typedef struct group	 Group;
-//typedef struct coef	 Coef;
-
 typedef struct opFunc	 OpFunc;
 typedef struct asserv	 Asserv;
 
-/*
-struct group
-{
-  Asserv* tbAsserv;
-};
-
-struct order
-{
-  AsservValue order; // Consigne utilisateur
-  AsservValue commandThreshold; // Permet de connaitre les limites à ne pas dépasser
-};
-
-struct timer
-{
-  xTimerHandle timerHandle; // Permet de controler le timer
-  OriginBool isTimerActive; // Permet de savoir l'état du timer
-  AsservValue errorMinAllowed; // Erreur authorisée sur le déplacement
-};
-*/
 
 struct opFunc
 {
@@ -78,7 +49,7 @@ struct asserv
   Module *parent;
   AsservValue oldError; // Erreur 
   AsservValue integral; // Permet de connaitre l'intégrale de l'erreur
-  OpFunc h;
+  OpFunc h; // fonctions remplissant le role des blocs H1, H2, et H3
 };
 
 /* Creer un nouvel asservissement */
