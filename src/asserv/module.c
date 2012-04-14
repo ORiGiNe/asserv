@@ -1,5 +1,5 @@
 #include "FreeRTOS/FreeRTOS.h"
-#include "modules.h"
+#include "module.h"
 
 Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
                    ModuleType type,
@@ -30,17 +30,6 @@ Module *initModule(OriginWord nbInputs, OriginWord nbOutputs,
 ErrorCode configureModule(Module* module, void* args)
 {
   return module->configure(module, args);
-}
-
-inline ModuleValue getInput(Module* module, OriginWord port)
-{
-  return module->inputs[port].module->outputs[module->inputs[port].port].value;
-}
-
-inline void setOutput(Module* module, OriginWord port, ModuleValue value)
-{
-  module->outputs[port].value = value;
-  module->outputs[port].upToDate = 1;
 }
 
 ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
