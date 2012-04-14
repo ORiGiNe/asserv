@@ -27,7 +27,7 @@ ErrorCode configureAsserv(Module* parent, void* args)
 ErrorCode updateAsserv(Module* parent, OriginWord port)
 {
   ModuleValue kp, ki, kd;
-  ModuleValue accuracy, command, deriv, measure;
+  ModuleValue accuracy, command, derivThreshold, measure;
   ModuleValue newError, derivError;
   OpFunc h = ((Asserv*)parent->fun)->h;
   OriginWord i;
