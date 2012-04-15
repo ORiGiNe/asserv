@@ -15,6 +15,7 @@ xTaskHandle xTaskLED;
 
 
 void vTaskLED (void* pvParameters );
+void vTaskSI (void* pvParameters);
 void portConfigure(void);
 
 /* -----------------------------------------------------------------------------
@@ -87,7 +88,7 @@ void vTaskSI (void* pvParameters)
   ifaceME = initModule(&ctlBlock, 1, 0, tIfaceME, initIfaceME, configureIfaceME, updateIfaceME);
   createLauncher(&ctlBlock, ifaceME , 50);
 
-  configureModule(entry, (void*)&entryEntry);
+  configureModule(entry, (void*)&entryConfig);
   configureModule(ifaceME, (void*)&ime);
 
   linkModuleWithInput(entry, 0, ifaceME, 0);

@@ -2,6 +2,7 @@
 #define ASSERV_MODULES_GROUP_H
 
 #include "types.h"
+#include "FreeRTOS.h"
 #include "task.h"
 #include "timers.h"
 #include "semphr.h"
