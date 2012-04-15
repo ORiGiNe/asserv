@@ -23,9 +23,9 @@ typedef struct ctlBlock CtlBlock;
 
 enum moduleType
 {
-  tentry,
-  tasserv,
-  tifaceme
+  tEntry,
+  tAsserv,
+  tIfaceME
 };
 
 struct moduleInput
@@ -73,7 +73,7 @@ struct ctlBlock
   OriginBool stop;
   ErrorCode lastError;
   OriginBool destReached;
-  ModuleValue rest;
+  ModuleValue coveredDistance;
 };
 
 

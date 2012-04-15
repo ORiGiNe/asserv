@@ -61,6 +61,9 @@ ErrorCode configureEntry(Module* parent, void* args)
  */
 ErrorCode updateEntry(Module* parent, OriginWord port)
 {
+  (void) parent;
+  (void) port;
+
   return NO_ERR;
 }
 

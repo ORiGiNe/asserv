@@ -39,7 +39,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     // On effectue la mesure
     ((IfaceME*)parent->fun)->measure = ime.getEncoderValue();
     ((IfaceME*)parent->fun)->measureUpToDate = 1;
-    parent->ctl->rest = ((IfaceME*)parent->fun)->measure;
+    parent->ctl->coveredDistance = ((IfaceME*)parent->fun)->measure;
 
     // On met à jour l'entrée
     error = parent->inputs[0].module->update(parent->inputs[0].module, parent->inputs[0].port);
