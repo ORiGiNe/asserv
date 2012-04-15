@@ -21,7 +21,10 @@
 void *initEntry(Module *parent)
 {
   Entry *entry = pvPortMalloc(sizeof(Entry));
-
+  if (entry == 0)
+  {
+    return 0;
+  }
   entry->parent = parent;
   return (void*)entry;
 }

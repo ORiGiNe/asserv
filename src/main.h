@@ -27,7 +27,7 @@ extern "C"
 
 #define EFBGENE_FREERTOS
 
-//#define DEBUGPRINTF
+#define DEBUGPRINTF
 
 /* -----------------------------------------------------------------------------
  * Generic Includes

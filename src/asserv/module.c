@@ -9,9 +9,17 @@ Module *initModule(CtlBlock *ctlBlock,
                    ErrorCode (*updateFun)(Module*, OriginWord))
 {
   Module *module = pvPortMalloc(sizeof(Module));
+  if (module == 0)
+  {
+    return 0;
+  }
   OriginWord i;
 
   module->outputs = pvPortMalloc(nbOutputs * sizeof(ModuleOutput));
+  if (module->outputs == 0 && nbOutputs > 0)
+  {
+    return 0;
+  }
   module->nbOutputs = nbOutputs;
   for(i = 0; i < module->nbOutputs; i++)
   {
@@ -21,10 +29,19 @@ Module *initModule(CtlBlock *ctlBlock,
   module->ctl = ctlBlock;
 
   module->inputs = pvPortMalloc(nbInputs * sizeof(ModuleInput));
+  if (module->inputs == 0 && nbInputs > 0)
+  {
+    return 0;
+  }
   module->nbInputs = nbInputs;
 
   module->type = type;
+ 
   module->fun = initFun(module);
+  if(module->fun == 0)
+  {
+    return 0;
+  }
   module->update = updateFun;
   module->configure = configFun;
 

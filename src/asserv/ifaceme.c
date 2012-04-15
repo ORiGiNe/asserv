@@ -2,9 +2,15 @@
 #include "ifaceme.h"
 
 
+#include "stringUtils.h"
+
 void *initIfaceME(Module *parent)
 {
   IfaceME *ifaceme = pvPortMalloc(sizeof(IfaceME));
+  if (ifaceme == 0)
+  {
+    return 0;
+  }
 
   ifaceme->parent = parent;
 
@@ -15,6 +21,8 @@ ErrorCode configureIfaceME(Module *parent, void* args)
 {
   IfaceME *ifaceme = (IfaceME*)parent->fun;
   IME* ime = (IME*)args;
+// TODO : ne pas s'engueuler avec FreeRTOS, on peut pas test /o\
+  parent->ctl->coveredDistance = 0;
 
   ime->resetEncoderValue();
   ifaceme->ime = *ime;
@@ -29,7 +37,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   IME ime = ((IfaceME*)parent->fun)->ime;
 
   // On verifie si la sortie est à jour
-  if(parent->outputs[port].upToDate == true)
+  if(port < parent->nbOutputs && parent->outputs[port].upToDate == true)
   {
     return NO_ERR;
   }
@@ -54,6 +62,8 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     {
       return ERR_URGENT_STOP;
     }
+
+    ((IfaceME*)parent->fun)->measureUpToDate = 0;
     ime.sendNewCommand(command);
   }
   else

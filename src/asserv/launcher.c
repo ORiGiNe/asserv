@@ -18,6 +18,11 @@ ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter,
   );
   ctlBlock->timer.isActive = false;
 
+  if (ctlBlock->timer.handle == 0)
+  {
+    return ERR_TIMER_NOT_DEF;
+  }
+
   /* On indique le module dont l'update lance l'ensemble du schéma block */
   ctlBlock->starter = starter;
   ctlBlock->lastError = NO_ERR;
