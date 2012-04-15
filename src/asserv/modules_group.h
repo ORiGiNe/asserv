@@ -71,9 +71,9 @@ struct ctlBlock
   Module* starter;
 
   OriginBool stop;
-
   ErrorCode lastError;
   OriginBool destReached;
+  ModuleValue rest;
 };
 
 
