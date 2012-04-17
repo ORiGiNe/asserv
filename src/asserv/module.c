@@ -1,4 +1,4 @@
-#include "FreeRTOS/FreeRTOS.h"
+#include "sysInterface.h"
 #include "module.h"
 
 Module *initModule(CtlBlock *ctlBlock,
@@ -8,14 +8,14 @@ Module *initModule(CtlBlock *ctlBlock,
                    ErrorCode (*configFun)(Module*,void*),
                    ErrorCode (*updateFun)(Module*, OriginWord))
 {
-  Module *module = pvPortMalloc(sizeof(Module));
+  Module *module = malloc (sizeof(Module));
   if (module == 0)
   {
     return 0;
   }
   OriginWord i;
 
-  module->outputs = pvPortMalloc(nbOutputs * sizeof(ModuleOutput));
+  module->outputs = malloc(nbOutputs * sizeof(ModuleOutput));
   if (module->outputs == 0 && nbOutputs > 0)
   {
     return 0;
@@ -28,7 +28,7 @@ Module *initModule(CtlBlock *ctlBlock,
 
   module->ctl = ctlBlock;
 
-  module->inputs = pvPortMalloc(nbInputs * sizeof(ModuleInput));
+  module->inputs = malloc(nbInputs * sizeof(ModuleInput));
   if (module->inputs == 0 && nbInputs > 0)
   {
     return 0;

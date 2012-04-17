@@ -8,8 +8,8 @@
  *
  */
 
-#include "FreeRTOS/FreeRTOS.h"
 #include "entry.h"
+#include "sysInterface.h"
 
 /**
  * \fn void *initEntry(Module *parent)
@@ -20,7 +20,7 @@
  */
 void *initEntry(Module *parent)
 {
-  Entry *entry = pvPortMalloc(sizeof(Entry));
+  Entry *entry = malloc (sizeof(Entry));
   if (entry == 0)
   {
     return 0;
@@ -45,8 +45,10 @@ ErrorCode configureEntry(Module* parent, void* args)
   {
     return ERR_MODULE_UNKNOW_PORT;
   }
+
   for(i=0; i < config->nbEntry; i++)
   {
+
     setOutput(parent, i, config->value[i]);
   }
   return NO_ERR;

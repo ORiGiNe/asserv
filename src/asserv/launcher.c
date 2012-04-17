@@ -1,6 +1,9 @@
 #include "launcher.h"
+#include "sysInterface.h"
 
-void vCallback(xTimerHandle);
+#include <stdio.h>
+
+void vCallback(Timer);
 
 ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter, 
                          OriginWord refreshFreq)
@@ -11,9 +14,9 @@ ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter,
   /* Création et init du timer */
   timerName[4] = id++;
   ctlBlock->timer.refreshFreq = refreshFreq;
-  ctlBlock->timer.handle = xTimerCreate (
+  ctlBlock->timer.handle = timerCreate (
     (signed char*)timerName,
-    refreshFreq, pdTRUE,
+    refreshFreq,
     (void *)ctlBlock, vCallback //ctlBlock->timer.moduleCallback
   );
   ctlBlock->timer.isActive = false;
@@ -25,16 +28,17 @@ ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter,
 
   /* On indique le module dont l'update lance l'ensemble du schéma block */
   ctlBlock->starter = starter;
+  ctlBlock->stop = false;
   ctlBlock->lastError = NO_ERR;
 
   /* Création du sémaphore */
-  vSemaphoreCreateBinary(ctlBlock->sem);
+  semaphoreCreate(ctlBlock->sem);
 
   /* On regarde si le sémaphore a été initialisé */
-  if(ctlBlock->sem == 0)
-  {
-    return ERR_SEM_NOT_DEF;
-  }
+  //if(ctlBlock->sem == 0)
+  //{
+//    return ERR_SEM_NOT_DEF;
+  //}
   return NO_ERR;
 
 }
@@ -49,9 +53,9 @@ ErrorCode startLauncher(CtlBlock* ctlBlock)
   
   /* On indique qu'il faut se bouger avant d'atteindre son but */
   ctlBlock->destReached = false;
-
+printf("timerReset\n");
   /* On lance le timer */
-  if (xTimerReset (ctlBlock->timer.handle, ctlBlock->timer.refreshFreq) != pdPASS)
+  if (timerReset (ctlBlock->timer.handle, ctlBlock->timer.refreshFreq) != pdPASS)
   {
     ctlBlock->timer.isActive = false;
     return ERR_TIMER_EPIC_FAIL;
@@ -62,9 +66,9 @@ ErrorCode startLauncher(CtlBlock* ctlBlock)
 }
 
 
-void vCallback(xTimerHandle pxTimer)
+void vCallback(Timer pxTimer)
 {
-  CtlBlock *ctlBlock = (CtlBlock*)pvTimerGetTimerID(pxTimer);
+  CtlBlock *ctlBlock = (CtlBlock*)timerGetArg(pxTimer);
   ErrorCode error;
 
   if(ctlBlock->timer.isActive == 0)
@@ -90,29 +94,29 @@ void vCallback(xTimerHandle pxTimer)
 
   if(ctlBlock->destReached == true || error == ERR_URGENT_STOP)
   {
-    if( xTimerStop( ctlBlock->timer.handle, (portTickType)0 MS ) == pdFAIL )
+    if( timerStop( ctlBlock->timer.handle, (portTickType)0 MS ) == pdFAIL )
     {
       ctlBlock->lastError = ERR_TIMER_NOT_STOPPED;
     }
 
     /* On tente de rendre la sémaphore */
-    xSemaphoreGive( ctlBlock->sem );
+    semaphoreGive( ctlBlock->sem );
   }
 }
 
 ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
 {
-  portTickType xLastWakeTime = xTaskGetTickCount();
+  portTickType xLastWakeTime = taskGetTickCount();
   portTickType xDiffTime;
   /* On attend la fin de la sémaphore */
-  if( xSemaphoreTake( ctlBlock->sem, xBlockTime ) )
+  if( semaphoreTake( ctlBlock->sem, xBlockTime ) )
   {
     return ERR_SEM_NOT_TAKEN;
   }
   if(ctlBlock->lastError == ERR_TIMER_NOT_STOPPED)
   {
-    xDiffTime = xTaskGetTickCount() - xLastWakeTime;
-    if( xTimerStop( ctlBlock->timer.handle, xBlockTime - xDiffTime ) == pdFAIL )
+    xDiffTime = taskGetTickCount() - xLastWakeTime;
+    if( timerStop( ctlBlock->timer.handle, xBlockTime - xDiffTime ) == pdFAIL )
     {
       return ERR_TIMER_NOT_STOPPED;
     }

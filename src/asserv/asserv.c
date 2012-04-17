@@ -1,12 +1,12 @@
-#include "FreeRTOS/FreeRTOS.h"
 #include "asserv.h"
-
+#include "sysInterface.h"
+#include <stdio.h>
 
 // Entrées du module : coef1, coef2, coef3, frequency, command, deriv, precision + mesure
 void *initAsserv (Module *parent)
 {
   // On reserve la place pour la structure asserv
-  Asserv* asserv = pvPortMalloc (sizeof(Asserv));
+  Asserv* asserv = malloc (sizeof(Asserv));
   // Initialisation des données
   asserv->parent = parent;
 
@@ -33,7 +33,6 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   OriginWord i;
   ErrorCode error;
   Asserv *asserv = (Asserv*)parent->fun;
-
   // MAJ des entrées
   for(i=0; i < parent->nbInputs; i++)
   {
@@ -53,7 +52,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   ki = getInput(parent, 1);
   kd = getInput(parent, 2);
 
-  accuracy = getInput(parent, 3);
+  accuracy = getInput(parent, 3); // FIXME
 
   command = h.h1(getInput(parent, 4));
   derivThreshold = getInput(parent, 5);
@@ -63,10 +62,11 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   newError = command - measure;
 
   /* On regarde si on est arrivé à destination */
-  if(newError < accuracy && newError > -accuracy)
-  {
-    return ERR_DEST_REACHED;
-  }
+//  if(newError < accuracy && newError > -accuracy) // FIXME à mettre dans IFACEME !
+//  {
+//printf("DEST REACHED\n");
+//    return ERR_DEST_REACHED;
+//  }
 
   /* Mise à jour de la dérivée de l'erreur */
   derivError = newError - asserv->oldError;
@@ -76,11 +76,21 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
 
   /* Mise à jour de l'erreur */
   asserv->oldError = newError;
-
   /* On passe aux choses serieuses : calcul de la commande à envoyer au moteur */
-  command = kp * newError // terme proportionnel
+  command = (kp * newError // terme proportionnel
   	  + ki * asserv->integral // terme intégral
-	  + kd * derivError; // terme dérivé
+	  + kd * derivError)/100; // terme dérivé
+
+printf("\tAsserv -> kp       : %i\n", kp);
+printf("\tAsserv -> ki       : %i\n", ki);
+printf("\tAsserv -> kd       : %i\n", kd);
+printf("\tAsserv -> accuracy : %i\n", accuracy);
+printf("\tAsserv -> command  : %i\n", command);
+printf("\tAsserv -> measure  : %i\n", measure);
+printf("\t newError          : %i\n", newError);
+printf("\t integrale         : %i\n", asserv->integral);
+printf("\t derivee           : %i\n", derivError);
+printf("\t command           : %i\n", command);
 
   /* On ecrete si trop grand */
   if(command > derivThreshold)

@@ -2,11 +2,7 @@
 #define ASSERV_MODULES_GROUP_H
 
 #include "types.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
-#include "semphr.h"
-
+#include "sysInterface.h"
 #ifdef __cplusplus
 extern "C"
 {
@@ -60,7 +56,7 @@ struct module
 
 struct timerBlock
 {
-  xTimerHandle handle;
+  TimerHandle handle;
   OriginBool isActive;
   OriginWord refreshFreq;
 };
@@ -68,7 +64,7 @@ struct timerBlock
 struct ctlBlock
 {
   TimerBlock timer;
-  xSemaphoreHandle sem;
+  SysSemaphore sem;
   Module* starter;
 
   OriginBool stop;

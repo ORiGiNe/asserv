@@ -10,10 +10,7 @@ extern "C"
 {
 #endif
 
-#include "FreeRTOS.h"
-#include "task.h"
-#include "semphr.h"
-#include "timers.h"
+#include "sysInterface.h"
 #include "modules_group.h"
 
 ErrorCode createLauncher(CtlBlock*, Module*, 

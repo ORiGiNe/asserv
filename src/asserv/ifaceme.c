@@ -1,12 +1,10 @@
-#include "FreeRTOS/FreeRTOS.h"
 #include "ifaceme.h"
-
-
-#include "stringUtils.h"
+#include "sysInterface.h"
+#include <stdio.h>
 
 void *initIfaceME(Module *parent)
 {
-  IfaceME *ifaceme = pvPortMalloc(sizeof(IfaceME));
+  IfaceME *ifaceme = malloc (sizeof(IfaceME));
   if (ifaceme == 0)
   {
     return 0;
@@ -36,14 +34,10 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   ErrorCode error;
   IME ime = ((IfaceME*)parent->fun)->ime;
 
-  // On verifie si la sortie est à jour
-  if(port < parent->nbOutputs && parent->outputs[port].upToDate == true)
-  {
-    return NO_ERR;
-  }
   // Faire la mesure ssi la mesure n'est plus valable
   if (((IfaceME*)parent->fun)->measureUpToDate == 0)
   {
+printf("--- Début de timer ---\n");
     // On effectue la mesure
     ((IfaceME*)parent->fun)->measure = ime.getEncoderValue();
     ((IfaceME*)parent->fun)->measureUpToDate = 1;
@@ -56,7 +50,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
       return error;
     }
     command = parent->inputs[0].module->outputs[parent->inputs[0].port].value;
-
+printf("IfaceME (in) : %i\n", command);
     // On envoie la commande au système
     if(parent->ctl->stop == true)
     {
@@ -65,6 +59,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
 
     ((IfaceME*)parent->fun)->measureUpToDate = 0;
     ime.sendNewCommand(command);
+printf("--- Fin de timer ---\n");
   }
   else
   {
