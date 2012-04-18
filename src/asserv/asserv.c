@@ -51,15 +51,15 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   }
 
   /* On récupère les entrées */
-  kp = getInput(parent, AsservKp);
-  ki = getInput(parent, AsservKi);
-  kd = getInput(parent, AsservKd);
+  kp = getInput(parent, 0); //AsservKp);
+  ki = getInput(parent, 1); //AsservKi);
+  kd = getInput(parent, 2); //AsservKd);
 
   //accuracy = getInput(parent, inputEntry.accuracy); // FIXME
 
-  command = h.h1(getInput(parent, AsservCommand));
-  derivThreshold = getInput(parent, AsservDeriv);
-  measure = h.h2(getInput(parent, AsservMeasure));
+  command = h.h1(getInput(parent, 3)); // AsservCommand));
+  derivThreshold = getInput(parent, 4); // AsservDeriv);
+  measure = h.h2(getInput(parent, 5)); //AsservMeasure));
 
   /* Calcul de l'erreur (sortie - entrée)*/
   newError = command - measure;

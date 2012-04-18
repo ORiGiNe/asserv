@@ -19,13 +19,13 @@ typedef enum inputAsserv InputAsserv;
 
 enum inputAsserv
 {
-  AsservKp,
-  AsservKi,
-  AsservKd,
+  AsservKp = 0,
+  AsservKi = 1,
+  AsservKd = 2,
 //  AsservAccuracy,
-  AsservCommand,
-  AsservDeriv,
-  AsservMeasure
+  AsservCommand = 3,
+  AsservDeriv = 4,
+  AsservMeasure = 5
 };
 struct opFunc
 {
