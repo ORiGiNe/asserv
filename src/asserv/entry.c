@@ -33,32 +33,30 @@ void *initEntry(Module *parent)
  * \fn ErrorCode configureEntry(Module *parent, void* args)
  * \brief Fonction permettant la configuration d'un module Entry
  *
- * \param parent Entry à configurer, ne peut pas être NULL.
+ * \param parent Module Entry à configurer, ne peut pas être NULL.
+ * \param args Argument de type EntryConfig.
  * \return Entry configuré.
  */
 ErrorCode configureEntry(Module* parent, void* args)
 {
   EntryConfig *config = args;
-  uint16_t i;
+  OriginWord i;
 
   if(config->nbEntry > parent->nbOutputs)
   {
     return ERR_MODULE_UNKNOW_PORT;
   }
 
+  ((Entry*)parent->fun)->nbEntry = config->nbEntry;
   for(i=0; i < config->nbEntry; i++)
   {
-
-    setOutput(parent, i, config->value[i]);
+    ((Entry*)parent->fun)->value[i] = config->value[i];
   }
   return NO_ERR;
 }
 
-/*! \brief Permet de mettre à jour Entry entre deux appels de la fonction de
- *  callback du timer
- */
 /**
- * \fn ErrorCode configureEntry(Module *parent, void* args)
+ * \fn ErrorCode updateEntry(Module *parent, OriginWord port)
  * \brief Fonction permettant la configuration d'un module Entry
  *
  * \param parent Entry à configurer, ne peut pas être NULL.
@@ -66,9 +64,7 @@ ErrorCode configureEntry(Module* parent, void* args)
  */
 ErrorCode updateEntry(Module* parent, OriginWord port)
 {
-  (void) parent;
-  (void) port;
-
+  setOutput(parent, port, *((Entry*)parent->fun)->value[port]);
   return NO_ERR;
 }
 

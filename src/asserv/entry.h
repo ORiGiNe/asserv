@@ -19,12 +19,14 @@ typedef struct entryConfig EntryConfig;
 struct entryConfig
 {
   OriginWord nbEntry;
-  ModuleValue value[NB_MAX_ENTRIES];
+  ModuleValue *value[NB_MAX_ENTRIES];
 };
 
 struct entry
 {
   Module *parent;
+  OriginWord nbEntry;
+  ModuleValue *value[NB_MAX_ENTRIES];
 };
 
 void *initEntry(Module*);

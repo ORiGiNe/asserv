@@ -53,12 +53,6 @@ ErrorCode configureModule(Module* module, void* args)
   return module->configure(module, args);
 }
 
-/*
-ErrorCode configureModule(Module* module, OriginWord port)
-{
-  return module->update(module, port);
-}
-*/
 
 ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
               Module* module, OriginWord modulePort)

@@ -15,7 +15,7 @@ ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter,
   timerName[4] = id++;
   ctlBlock->timer.refreshFreq = refreshFreq;
   ctlBlock->timer.handle = timerCreate (
-    (signed char*)timerName,
+    (char*)timerName,
     refreshFreq,
     (void *)ctlBlock, vCallback //ctlBlock->timer.moduleCallback
   );

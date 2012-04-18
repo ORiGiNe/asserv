@@ -19,7 +19,7 @@ ErrorCode configureIfaceME(Module *parent, void* args)
 {
   IfaceME *ifaceme = (IfaceME*)parent->fun;
   IME* ime = (IME*)args;
-// TODO : ne pas s'engueuler avec FreeRTOS, on peut pas test /o\
+// TODO : ne pas s'engueuler avec FreeRTOS, on peut pas test /o\.
   parent->ctl->coveredDistance = 0;
 
   ime->resetEncoderValue();

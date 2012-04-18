@@ -79,7 +79,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   /* On passe aux choses serieuses : calcul de la commande à envoyer au moteur */
   command = (kp * newError // terme proportionnel
   	  + ki * asserv->integral // terme intégral
-	  + kd * derivError)/100; // terme dérivé
+	  + kd * derivError)/1000; // terme dérivé
 
 printf("\tAsserv -> kp       : %i\n", kp);
 printf("\tAsserv -> ki       : %i\n", ki);
