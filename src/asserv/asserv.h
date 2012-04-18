@@ -15,8 +15,18 @@ extern "C"
 
 typedef struct opFunc	 OpFunc;
 typedef struct asserv	 Asserv;
+typedef enum inputAsserv InputAsserv;
 
-
+enum inputAsserv
+{
+  AsservKp,
+  AsservKi,
+  AsservKd,
+//  AsservAccuracy,
+  AsservCommand,
+  AsservDeriv,
+  AsservMeasure
+};
 struct opFunc
 {
   ModuleValue (*h1)(ModuleValue);

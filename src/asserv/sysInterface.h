@@ -5,10 +5,14 @@
 #include "types.h"
 
 #define LINUX
+#define DEBUG 1
 
 /* Linux Configuration */
 #ifdef LINUX
 
+#if DEBUG == 1
+ #include <stdio.h>
+#endif
 
 #define pdTRUE ( 1 )
 #define pdFALSE ( 0 )
@@ -56,6 +60,10 @@ typedef long portTickType;
 
 /* FreeRTOS Configuration */
 #ifdef FREERTOS
+
+#if DEBUG == 1
+
+#endif
 
 // Includes
 #include "stringUtils.h"

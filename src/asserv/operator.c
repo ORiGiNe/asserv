@@ -1,0 +1,72 @@
+/**
+ * \file operator.c
+ * \brief Implémentation du module générique de calcul
+ * \author Johwn
+ * \date 14 avril 2012
+ *
+ * Permet de créer un module permettant d'effectuer des opérations sur un nombre
+ * d'entrée et de sortie variable
+ *
+ */
+
+#include "operator.h"
+#include "sysInterface.h"
+
+/**
+ * \fn void *initOperator(Module *parent)
+ * \brief Fonction permettant la création d'un module Operator
+ *
+ * \param parent Module auquel on doit donner la fonctionnalité Operator, ne peut pas être NULL.
+ * \return Module ayant été spécialisé en Operator.
+ */
+void *initOperator(Module *parent)
+{
+  Operator *operator = malloc (sizeof(Operator));
+  if (operator == 0)
+  {
+    return 0;
+  }
+  operator->parent = parent;
+  return (void*)operator;
+}
+
+/**
+ * \fn ErrorCode configureOperator(Module *parent, void* args)
+ * \brief Fonction permettant la configuration d'un module Operator
+ *
+ * \param parent Module contenant Operator à configurer, ne peut pas être NULL.
+ * \return Module Operator configuré.
+ */
+ErrorCode configureOperator(Module* parent, void* args)
+{
+  ((Operator*)parent->fun)->func  = (OperatorFunction)args;
+  return NO_ERR;
+}
+
+/*!
+ * \fn ErrorCode updateOperator(Module *parent, void* args)
+ * \brief Permet de mettre à jour Operator
+ *
+ * \param parent Module contenant Operator à mettre à jour, ne peut pas être NULL.
+ * \return ALREADY_UPTODATE si déjà à jour, NO_ERR si pas à jour, autre erreur sinon.
+ */
+ErrorCode updateOperator(Module* parent, OriginWord port)
+{
+  uint16_t i;
+  ModuleValue result;
+  ErrorCode error;
+
+  // On met à jour les entrées
+  for(i=0; i<parent->nbInputs; i++)
+  {
+    error = updateInput(parent, i);
+    if(error != NO_ERR)
+    {
+      return error;
+    }
+  }
+  result = (((Operator*)parent->fun)->func)(port, parent);
+  setOutput(parent, i, result);
+  return NO_ERR;
+}
+

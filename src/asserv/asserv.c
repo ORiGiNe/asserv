@@ -1,6 +1,5 @@
 #include "asserv.h"
 #include "sysInterface.h"
-#include <stdio.h>
 
 // Entrées du module : coef1, coef2, coef3, frequency, command, deriv, precision + mesure
 void *initAsserv (Module *parent)
@@ -27,55 +26,49 @@ ErrorCode configureAsserv(Module* parent, void* args)
 ErrorCode updateAsserv(Module* parent, OriginWord port)
 {
   ModuleValue kp, ki, kd;
-  ModuleValue accuracy, command, derivThreshold, measure;
+  ModuleValue command, derivThreshold, measure;
   ModuleValue newError, derivError;
   OpFunc h = ((Asserv*)parent->fun)->h;
   OriginWord i;
   ErrorCode error;
   Asserv *asserv = (Asserv*)parent->fun;
-  // MAJ des entrées
+
+
+  /* Si la sortie est à jour, pas besoin de refaire le calcul */
+  if( outputIsUpToDate(parent, port) )
+  {
+    return NO_ERR;
+  }
+
+  /* MAJ des entrées */
   for(i=0; i < parent->nbInputs; i++)
   {
-    error = parent->inputs[i].module->update(
-                     parent->inputs[i].module,
-                     parent->inputs[i].port
-    );
+    error = updateInput(parent, i);
     if(error != NO_ERR)
     {
       return error;
     }
   }
 
-  // On récupère les entrées
-  // TODO Faire une enum des noms des entrées
-  kp = getInput(parent, 0);
-  ki = getInput(parent, 1);
-  kd = getInput(parent, 2);
+  /* On récupère les entrées */
+  kp = getInput(parent, AsservKp);
+  ki = getInput(parent, AsservKi);
+  kd = getInput(parent, AsservKd);
 
-  accuracy = getInput(parent, 3); // FIXME
+  //accuracy = getInput(parent, inputEntry.accuracy); // FIXME
 
-  command = h.h1(getInput(parent, 4));
-  derivThreshold = getInput(parent, 5);
-  measure = h.h2(getInput(parent, 6));
+  command = h.h1(getInput(parent, AsservCommand));
+  derivThreshold = getInput(parent, AsservDeriv);
+  measure = h.h2(getInput(parent, AsservMeasure));
 
   /* Calcul de l'erreur (sortie - entrée)*/
   newError = command - measure;
 
-  /* On regarde si on est arrivé à destination */
-//  if(newError < accuracy && newError > -accuracy) // FIXME à mettre dans IFACEME !
-//  {
-//printf("DEST REACHED\n");
-//    return ERR_DEST_REACHED;
-//  }
-
-  /* Mise à jour de la dérivée de l'erreur */
+  /* Mise à jour de la dérivée de l'erreur, de l'intégrale de l'erreur, et de l'erreur elle meme */
   derivError = newError - asserv->oldError;
-
-  /* Mise à jour de l'integrale */
   asserv->integral += newError;
-
-  /* Mise à jour de l'erreur */
   asserv->oldError = newError;
+
   /* On passe aux choses serieuses : calcul de la commande à envoyer au moteur */
   command = (kp * newError // terme proportionnel
   	  + ki * asserv->integral // terme intégral
@@ -84,7 +77,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
 printf("\tAsserv -> kp       : %i\n", kp);
 printf("\tAsserv -> ki       : %i\n", ki);
 printf("\tAsserv -> kd       : %i\n", kd);
-printf("\tAsserv -> accuracy : %i\n", accuracy);
+//printf("\tAsserv -> accuracy : %i\n", accuracy);
 printf("\tAsserv -> command  : %i\n", command);
 printf("\tAsserv -> measure  : %i\n", measure);
 printf("\t newError          : %i\n", newError);
@@ -102,7 +95,7 @@ printf("\t command           : %i\n", command);
     command = -derivThreshold;
   }
 
-  /* On envoie la commande sur la sortie 0 */
+  /* On envoie la commande sur la sortie port */
   setOutput(parent, port, h.h3(command));
 
   return NO_ERR;

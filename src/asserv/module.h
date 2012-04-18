@@ -18,8 +18,11 @@ Module *initModule(CtlBlock*, OriginWord, OriginWord, ModuleType,
 ErrorCode configureModule(Module*, void*);
 ErrorCode linkModuleWithInput(Module*, OriginWord, Module*, OriginWord);
 
+ErrorCode updateInput(Module* module, OriginWord port);
+ModuleValue outputIsUpToDate(Module* module, OriginWord port);
 ModuleValue getInput(Module*, OriginWord);
 void setOutput(Module*, OriginWord, ModuleValue);
+
 
 #ifdef __cplusplus
 }

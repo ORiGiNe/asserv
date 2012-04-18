@@ -50,8 +50,10 @@ struct module
   ModuleType type;
   void *fun;
 
-  ErrorCode (*update)(Module*, OriginWord);
+  OriginWord nTic;
+
   ErrorCode (*configure)(Module*, void*);
+  ErrorCode (*update)(Module*, OriginWord);
 };
 
 struct timerBlock
@@ -71,6 +73,7 @@ struct ctlBlock
   ErrorCode lastError;
   OriginBool destReached;
   ModuleValue coveredDistance;
+  OriginWord nTic;
 };
 
 

@@ -1,7 +1,6 @@
 #include "launcher.h"
 #include "sysInterface.h"
 
-#include <stdio.h>
 
 void vCallback(Timer);
 
@@ -29,6 +28,7 @@ ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter,
   /* On indique le module dont l'update lance l'ensemble du schéma block */
   ctlBlock->starter = starter;
   ctlBlock->stop = false;
+  ctlBlock->nTic = 0;
   ctlBlock->lastError = NO_ERR;
 
   /* Création du sémaphore */
@@ -76,6 +76,9 @@ void vCallback(Timer pxTimer)
     ctlBlock->lastError = ERR_TIMER_NOT_ACTIVE;
     return;
   }
+
+  // On met à jour le nombre de tic
+  ctlBlock->nTic++;
 
   /* Lancement de l'update du systeme */
   error = ctlBlock->starter->update(ctlBlock->starter, 0);

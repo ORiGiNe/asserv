@@ -64,7 +64,10 @@ ErrorCode configureEntry(Module* parent, void* args)
  */
 ErrorCode updateEntry(Module* parent, OriginWord port)
 {
-  setOutput(parent, port, *((Entry*)parent->fun)->value[port]);
+  if ( ! outputIsUpToDate(parent, port) )
+  {
+    setOutput(parent, port, *((Entry*)parent->fun)->value[port]);
+  }
   return NO_ERR;
 }
 
