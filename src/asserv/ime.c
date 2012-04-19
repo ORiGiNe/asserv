@@ -5,7 +5,8 @@
 ModuleValue emulValuePos = 0;
 ModuleValue emulValueCel = 0;
 ModuleValue emulValueAcc = 10;
-ModuleValue delta = 6;
+ModuleValue delta1 = 1;
+ModuleValue delta2 = 6;
 ModuleValue test_getEncoderValue(void)
 {
 printf("getEncoderValue : %i\n", emulValuePos);
@@ -27,12 +28,12 @@ printf("sendNewCommand before : %i\n", val);
   {
     emulValueCel += val;
   }
-  emulValuePos += emulValueCel + delta;
+  emulValuePos += emulValueCel * delta1 + delta2;
 printf("sendNewCommand after (Position, vitesse) : %i %i\n", emulValuePos, emulValueCel);
 }
 
 void test_resetEncoderValue(void)
 {
   emulValuePos = 0;
-  emulValueCel = 0;
+  //emulValueCel = 0;
 }

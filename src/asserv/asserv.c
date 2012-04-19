@@ -69,6 +69,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   asserv->integral += newError;
   asserv->oldError = newError;
 
+printf("\tAsserv -> wanted   : %i\n", command);
   /* On passe aux choses serieuses : calcul de la commande à envoyer au moteur */
   command = (kp * newError // terme proportionnel
   	  + ki * asserv->integral // terme intégral

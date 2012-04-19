@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 
   ModuleValue posKp = 1000;
   ModuleValue posKi = 0;
-  ModuleValue posKd = 0;
+  ModuleValue posKd = 750;
   ModuleValue deriv = 1000;
 
   ModuleValue vitKp = 1000;
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
   ModuleValue accel = 1000;
   //ModuleValue accuracy = 0;
 
-  ModuleValue command = 100;
+  ModuleValue command = 1000;
 
   entryConfig.nbEntry = 9;
   entryConfig.value[0] = &posKp; // kp
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
-  if (createLauncher(&ctlBlock, ifaceME , 5) == ERR_TIMER_NOT_DEF)
+  if (createLauncher(&ctlBlock, ifaceME , 20) == ERR_TIMER_NOT_DEF)
   {
   }
 
@@ -169,8 +169,8 @@ int main(int argc, char* argv[])
   linkModuleWithInput(asservVit, 0, ifaceME, 0);
 #include <time.h>
 struct timespec tp;
-tp.tv_sec = 0;
-tp.tv_nsec = 500000000;
+tp.tv_sec = 4;
+tp.tv_nsec = 0;
   if (startLauncher(&ctlBlock) != NO_ERR)
   {
   }
@@ -178,6 +178,7 @@ tp.tv_nsec = 500000000;
   {
  //printf("Asserv\tcmd %i\treste %i\n", (int32_t)(entryConfig.value[4]), (int32_t)(entryConfig.value[4] - ctlBlock.coveredDistance));
  nanosleep(&tp, NULL);
+ command += 1000;
     //Cette fonction permet à la tache d'être périodique. La tache est bloquée pendant (500ms - son temps d'execution).
   //  vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
   }
