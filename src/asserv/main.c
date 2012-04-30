@@ -69,15 +69,15 @@ int main(int argc, char* argv[])
   IME ime;
   OpFunc hPos, hVit;
 
-  ModuleValue posKp = 1000;
+  ModuleValue posKp = 1200;
   ModuleValue posKi = 0;
-  ModuleValue posKd = 750;
-  ModuleValue deriv = 1000;
+  ModuleValue posKd = 10;
+  ModuleValue deriv = 32000;
 
   ModuleValue vitKp = 1000;
   ModuleValue vitKi = 0;
   ModuleValue vitKd = 0;
-  ModuleValue accel = 1000;
+  ModuleValue accel = 32000;
   //ModuleValue accuracy = 0;
 
   ModuleValue command = 1000;
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
-  if (createLauncher(&ctlBlock, ifaceME , 20) == ERR_TIMER_NOT_DEF)
+  if (createLauncher(&ctlBlock, ifaceME , 40) == ERR_TIMER_NOT_DEF)
   {
   }
 
@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
   linkModuleWithInput(asservVit, 0, ifaceME, 0);
 #include <time.h>
 struct timespec tp;
-tp.tv_sec = 4;
+tp.tv_sec = 20;
 tp.tv_nsec = 0;
   if (startLauncher(&ctlBlock) != NO_ERR)
   {

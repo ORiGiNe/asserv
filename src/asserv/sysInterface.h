@@ -4,7 +4,7 @@
 
 #include "types.h"
 
-#define LINUX
+#define FREERTOS
 #define DEBUG 1
 
 /* Linux Configuration */
@@ -88,6 +88,8 @@ typedef xTimerHandle TimerHandle;
 #define timerGetArg(timer) pvTimerGetTimerID( (timer) )
 #define timerStop(timer, waitTime) xTimerStop( (timer), (waitTime) )
 
+// Task management
+#define taskGetTickCount() xTaskGetTickCount()
 
 #endif
 

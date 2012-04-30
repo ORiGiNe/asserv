@@ -62,121 +62,178 @@ void vTaskLED (void* pvParameters)
 #include "asserv/ifaceme.h"
 #include "asserv/ime.h"
 
+ModuleValue average(OriginWord nbInputs, ModuleInput* inputs)
+{
+  OriginWord i;
+  ModuleValue accu = 0;
+
+  for(i=0; i<nbInputs; i++)
+  {
+    accu += inputs[i].module->outputs[inputs[i].port].value;
+  }
+  return accu / nbInputs;
+}
+
+ModuleValue diff(OriginWord nbInputs, ModuleInput* inputs)
+{
+  OriginWord i;
+  ModuleValue accu = 0;
+
+  for(i=0; i<nbInputs; i++)
+  {
+    if(i % 2 == 0)
+      accu += inputs[i].module->outputs[inputs[i].port].value;
+    else
+      accu -= inputs[i].module->outputs[inputs[i].port].value;
+  }
+  return accu / nbInputs;
+}
+
+ModuleValue funIdent(ModuleValue val)
+{
+  return val;
+}
+
+// TODO à cause des static, une fonction par module !!!
+ModuleValue funInteg(ModuleValue val)
+{
+  static ModuleValue accu = 0;
+  accu += val;
+  return val;
+}
+
+ModuleValue funDeriv(ModuleValue val)
+{
+  static ModuleValue old;
+  ModuleValue ret;
+  ret = val - old;
+  old = val;
+  return ret;
+}
+
+
 void vTaskSI (void* pvParameters)
 {
+
   portTickType xLastWakeTime;
   CtlBlock ctlBlock;
-  Module *entry, *ifaceME, *asserv;
+  Module *entry, *ifaceME, *asservPos, *asservVit;
   EntryConfig entryConfig;
   IME ime;
-  OpFunc h;
-  unsigned char string[50]; //37
+  OpFunc hPos, hVit;
 
-  // on cast pvParameters pour supprimer les warnings.
-  (void) pvParameters;
+  ModuleValue posKp = 1200;
+  ModuleValue posKi = 0;
+  ModuleValue posKd = 10;
+  ModuleValue deriv = 32000;
 
-  entryConfig.nbEntry = 6;
-  entryConfig.value[0] = 1; // kp
-  entryConfig.value[1] = 1; // ki
-  entryConfig.value[2] = 1; // kd
-  entryConfig.value[3] = 5; // accuracy
-  entryConfig.value[4] = 100; // command
-  entryConfig.value[5] = 10; // deriv
+  ModuleValue vitKp = 1000;
+  ModuleValue vitKi = 0;
+  ModuleValue vitKd = 0;
+  ModuleValue accel = 32000;
+  //ModuleValue accuracy = 0;
+
+  ModuleValue command = 1000;
+
+  entryConfig.nbEntry = 9;
+  entryConfig.value[0] = &posKp; // kp
+  entryConfig.value[1] = &posKi; // ki
+  entryConfig.value[2] = &posKd; // kd
+  entryConfig.value[3] = &deriv; // deriv
+  entryConfig.value[4] = &vitKp; // kp
+  entryConfig.value[5] = &vitKi; // ki
+  entryConfig.value[6] = &vitKd; // kd
+  entryConfig.value[7] = &accel; // accel
+  entryConfig.value[8] = &command; // command
 
   ime.getEncoderValue = test_getEncoderValue;
   ime.sendNewCommand = test_sendNewCommand;
   ime.resetEncoderValue = test_resetEncoderValue;
   ime.resetEncoderValue();
 
-  h.h1 = //TODO
-  h.h2 = //TODO
-  h.h3 = //TODO
+  hPos.h1 = funIdent;//TODO
+  hPos.h2 = funIdent;//TODO
+  hPos.h3 = funIdent;//TODO
+  hVit.h1 = funIdent;//TODO
+  hVit.h2 = funDeriv;//TODO
+  hVit.h3 = funInteg;//TODO
 
-  xLastWakeTime = xTaskGetTickCount ();
+  xLastWakeTime = taskGetTickCount ();
 
 
-  stderrPrintf ("BEGIN\r\n");
 
   // Création de l'Entry
-  entry = initModule(&ctlBlock, 0, 7, tEntry, initEntry, configureEntry, updateEntry);
+  entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, tEntry, initEntry, configureEntry, updateEntry);
   if (entry == 0)
   {
-    stderrPrintf ("err");
   }
-  //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)entry);
-  //stderrPrintf ((char*)string);
-  stderrPrintf ("A");
   // Création de l'interface systeme
-  ifaceME = initModule(&ctlBlock, 1, 1, tIfaceME, initIfaceME, configureIfaceME, updateIfaceME);
+  ifaceME = initModule(&ctlBlock, 1, 2, tIfaceME, initIfaceME, configureIfaceME, updateIfaceME);
   if (ifaceME == 0)
   {
-    stderrPrintf ("errA");
   }
   // Création de l'asserv 1
-  asserv = initModule(&ctlBlock, 7, 1, tAsserv, initAsserv, configureAsserv, updateAsserv);
-  if (asserv == 0)
+  asservPos = initModule(&ctlBlock, 6, 1, tAsserv, initAsserv, configureAsserv, updateAsserv);
+  if (asservPos == 0)
   {
-    stderrPrintf ("errA");
+  }
+  asservVit = initModule(&ctlBlock, 6, 1, tAsserv, initAsserv, configureAsserv, updateAsserv);
+  if (asservVit == 0)
+  {
   }
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
-  stderrPrintf ("B");
-  if (createLauncher(&ctlBlock, ifaceME , 50) == ERR_TIMER_NOT_DEF)
+  if (createLauncher(&ctlBlock, ifaceME , 40) == ERR_TIMER_NOT_DEF)
   {
-    usprintf(string, "%l", (uint32_t)(uint16_t)ctlBlock.timer.refreshFreq);
-    stderrPrintf ((char*)string);
-    stderrPrintf ("errB");
   }
-  stderrPrintf ("C");
 
   if (configureModule(entry, (void*)&entryConfig) != NO_ERR)
   {
-    stderrPrintf ("errC");
   }
-  stderrPrintf ("D");
-
   if (configureModule(ifaceME, (void*)&ime) != NO_ERR)
   {
-    stderrPrintf ("errD");
   }
-  stderrPrintf ("E\r\n");
-
-  if (configureModule(asserv, (void*)&opFunc) != NO_ERR)
+  if (configureModule(asservPos, (void*)&hPos) != NO_ERR)
   {
-    stderrPrintf ("errD");
   }
-  stderrPrintf ("E\r\n");
+  if (configureModule(asservVit, (void*)&hVit) != NO_ERR)
+  {
+  }
 
 
 
 
 
-  linkModuleWithInput(entry, 0, asserv, 0);
-  linkModuleWithInput(entry, 1, asserv, 1);
-  linkModuleWithInput(entry, 2, asserv, 2);
-  linkModuleWithInput(entry, 3, asserv, 3);
-  linkModuleWithInput(entry, 4, asserv, 4);
-  linkModuleWithInput(entry, 5, asserv, 5);
-  linkModuleWithInput(ifaceME, 4, asserv, 6);
+  linkModuleWithInput(entry, 0, asservPos, AsservKp);
+  linkModuleWithInput(entry, 1, asservPos, AsservKi);
+  linkModuleWithInput(entry, 2, asservPos, AsservKd);
+  linkModuleWithInput(entry, 3, asservPos, AsservDeriv);
+  linkModuleWithInput(entry, 8, asservPos, AsservCommand);
+  linkModuleWithInput(ifaceME, 0, asservPos, AsservMeasure);
 
-  linkModuleWithInput(asserv, 0, ifaceME, 0);
+  linkModuleWithInput(entry, 4, asservVit, AsservKp);
+  linkModuleWithInput(entry, 5, asservVit, AsservKi);
+  linkModuleWithInput(entry, 6, asservVit, AsservKd);
+  linkModuleWithInput(entry, 7, asservVit, AsservDeriv);
+  linkModuleWithInput(asservPos, 0, asservVit, AsservCommand);
+  linkModuleWithInput(ifaceME, 0, asservVit, AsservMeasure);
 
-  stderrPrintf ("NEXT\r\n");
-
+  linkModuleWithInput(asservVit, 0, ifaceME, 0);
+  
+  
   if (startLauncher(&ctlBlock) != NO_ERR)
   {
-    stderrPrintf ("errN");
   }
-  stderrPrintf ("NEXT2\r\n");
+
+
+
+    //stderrPrintf ("err");
+    //usprintf(string, "%l", (uint32_t)(uint16_t)ctlBlock.timer.refreshFreq);
 
   for (;;)
   {
 
-    usprintf(string, "Asserv\r\n\tcmd %l\r\n\treste %l\r\n\r\n", (int32_t)(entryConfig.value[0]), (int32_t)(entryConfig.value[0] - ctlBlock.coveredDistance));
-
-    stderrPrintf ("C\r\n");
-    stderrPrintf ((char*)string);
     //Cette fonction permet à la tache d'être périodique. La tache est bloquée pendant (500ms - son temps d'execution).
     vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
   }

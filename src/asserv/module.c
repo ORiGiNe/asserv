@@ -4,11 +4,12 @@
 Module *initModule(CtlBlock *ctlBlock,
                    OriginWord nbInputs, OriginWord nbOutputs,
                    ModuleType type,
-                   void* (*initFun)(Module*),
+                   ErrorCode (*initFun)(Module*),
                    ErrorCode (*configFun)(Module*,void*),
                    ErrorCode (*updateFun)(Module*, OriginWord))
 {
   OriginWord i;
+  ErrorCode error;
 
   // On réserve l'espace nécessaire pour un module
   Module *module = malloc (sizeof(Module));
@@ -47,8 +48,8 @@ Module *initModule(CtlBlock *ctlBlock,
   module->type = type;
  
   // On créé la fonctionnalité du module
-  module->fun = initFun(module);
-  if(module->fun == 0)
+  error = initFun(module);
+  if(error != NO_ERR)
   {
     return 0;
   }

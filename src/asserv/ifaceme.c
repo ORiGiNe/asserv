@@ -6,12 +6,12 @@ void *initIfaceME(Module *parent)
   IfaceME *ifaceme = malloc (sizeof(IfaceME));
   if (ifaceme == 0)
   {
-    return 0;
+    return ERR_NOMEM;
   }
 
   ifaceme->parent = parent;
-
-  return (void*)ifaceme;
+  parent->fun = (void*)ifaceme;
+  return NO_ERR;
 }
 
 ErrorCode configureIfaceME(Module *parent, void* args)
