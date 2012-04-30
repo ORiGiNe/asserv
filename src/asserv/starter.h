@@ -3,20 +3,27 @@
 
 #include "types.h"
 #include "defines.h"
-
+#include "sysInterface.h"
 #include "module.h"
+
+#define STARTER_NB_CONNECTION 2
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-typedef struct starter Starter;
+typedef struct {
+  ModuleValue val0;
+  ModuleValue val1;
+  ModuleValue val2;
+} ValHistory;
 
-struct starter
+typedef struct
 {
   Module *parent;
-};
+  ValHistory hist[STARTER_NB_CONNECTION];
+} Starter;
 
 
 void *initStarter(Module *parent);
