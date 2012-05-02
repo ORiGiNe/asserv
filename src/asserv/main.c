@@ -1,7 +1,7 @@
 #include "sysInterface.h"
 #include "modules_group.h"
 #include "module.h"
-#include "launcher.h"
+#include "system.h"
 #include "types.h"
 #include "defines.h"
 #include "entry.h"
@@ -110,28 +110,28 @@ int main(int argc, char* argv[])
 
 
   // Création de l'Entry
-  entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, tEntry, initEntry, configureEntry, updateEntry);
+  entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, entryType);
   if (entry == 0)
   {
   }
   // Création de l'interface systeme
-  ifaceME = initModule(&ctlBlock, 1, 2, tIfaceME, initIfaceME, configureIfaceME, updateIfaceME);
+  ifaceME = initModule(&ctlBlock, 1, 2, ifaceMEType);
   if (ifaceME == 0)
   {
   }
   // Création de l'asserv 1
-  asservPos = initModule(&ctlBlock, 6, 1, tAsserv, initAsserv, configureAsserv, updateAsserv);
+  asservPos = initModule(&ctlBlock, 6, 1, asservType);
   if (asservPos == 0)
   {
   }
-  asservVit = initModule(&ctlBlock, 6, 1, tAsserv, initAsserv, configureAsserv, updateAsserv);
+  asservVit = initModule(&ctlBlock, 6, 1, asservType);
   if (asservVit == 0)
   {
   }
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
-  if (createLauncher(&ctlBlock, ifaceME , 40) == ERR_TIMER_NOT_DEF)
+  if (createSystem(&ctlBlock, ifaceME , 40) == ERR_TIMER_NOT_DEF)
   {
   }
 
@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
 struct timespec tp;
 tp.tv_sec = 20;
 tp.tv_nsec = 0;
-  if (startLauncher(&ctlBlock) != NO_ERR)
+  if (startSystem(&ctlBlock) != NO_ERR)
   {
   }
   for (;;)

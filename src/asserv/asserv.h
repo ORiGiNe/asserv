@@ -68,35 +68,6 @@ typedef struct
 } Asserv;
 
 
-/**
- * \fn ErrorCode initAsserv(Module *parent)
- * \brief Fonction d'initialisation d'une fonctionnalité Asserv
- *
- * \param parent Module contenant la fonctionnalité Asserv
- * \return Retourne NO_ERR si le module a été spécialisé, ERR_NOMEM si plus de mémoire
- */
-ErrorCode initAsserv (Module *parent);
-
-/**
- * \fn ErrorCode configureAsserv(Module *parent, void *args)
- * \brief Fonction de configuration d'une fonctionnalité Asserv.
- *
- * \param parent Module contenant la fonctionnalité Asserv à configurer.
- * \param args pointeur vers une structure de type OpFunc.
- * \return Retourne NO_ERR si le module s'est bien configuré, l'erreur correspondante sinon.
- */
-ErrorCode configureAsserv (Module *parent, void *args);
-
-/**
- * \fn ErrorCode updateAsserv(Module *parent, OriginWord port)
- * \brief Fonction d'update d'une fonctionnalité Asserv
- *
- * \param parent Module contenant la fonctionnalité Asserv à mettre à jour
- * \param port Port du module à configurer
- * \return NO_ERR si le module s'est bien mis à jour, l'erreur correspondante sinon.
- */
-ErrorCode updateAsserv(Module *parent, OriginWord port);
-
 ModuleType asservType;
 
 #ifdef __cplusplus

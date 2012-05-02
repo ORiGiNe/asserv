@@ -1,10 +1,10 @@
-#include "launcher.h"
+#include "system.h"
 #include "sysInterface.h"
 
 
 void vCallback(Timer);
 
-ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter, 
+ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter, 
                          OriginWord refreshFreq)
 {
   unsigned char timerName[6] = "CTL_%";
@@ -43,7 +43,7 @@ ErrorCode createLauncher(CtlBlock *ctlBlock, Module* starter,
 
 }
 
-ErrorCode startLauncher(CtlBlock* ctlBlock)
+ErrorCode startSystem(CtlBlock* ctlBlock)
 {
   /* On verifie que le timer n'est pas déjà lancé */
   if (ctlBlock->timer.isActive != false)
@@ -107,7 +107,7 @@ void vCallback(Timer pxTimer)
   }
 }
 
-ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
+ErrorCode waitEndOfSystem(CtlBlock *ctlBlock, portTickType xBlockTime)
 {
   portTickType xLastWakeTime = taskGetTickCount();
   portTickType xDiffTime;
@@ -133,7 +133,7 @@ ErrorCode waitEndOfLauncher(CtlBlock *ctlBlock, portTickType xBlockTime)
 
 // Attend xBlockTime secondes apres avoir essayé de finir proprement
 // le launcher avant de l'arreter de force (et arreter le mvmt)
-ErrorCode forceStopLauncher(CtlBlock* ctlBlock)
+ErrorCode forceStopOfSystem(CtlBlock* ctlBlock)
 {
   ctlBlock->stop = true;
   return NO_ERR;

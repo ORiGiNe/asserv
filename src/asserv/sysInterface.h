@@ -4,7 +4,7 @@
 
 #include "types.h"
 
-#define FREERTOS
+#define LINUX
 #define DEBUG 1
 
 /* Linux Configuration */

@@ -1,11 +1,16 @@
 #include "starter.h"
 #include "sysInterface.h"
 
+ErrorCode initStarter(Module *parent);
+ErrorCode configureStarter(Module* parent, void* args);
+ErrorCode updateStarter(Module* parent, OriginWord port);
+void resetStarter(Module* parent);
+
 ModuleType starterType = {
-  init = initStarter;
-  config = configureStarter;
-  update = updateStarter;
-  reset = resetStarter;
+  .init = initStarter,
+  .config = configureStarter,
+  .update = updateStarter,
+  .reset = resetStarter
 };
 
 ErrorCode initStarter(Module *parent)
@@ -33,7 +38,7 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
   OriginByte i;
   ErrorCode error;
   (void) port;
-  ValHistory vHist;
+  ValHistory *vHist;
 
   vHist = ((Starter*)parent->fun)->hist;
   for(i=0; i<parent->nbInputs; i++)

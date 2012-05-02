@@ -13,14 +13,14 @@ extern "C"
 #include "sysInterface.h"
 #include "modules_group.h"
 
-ErrorCode createLauncher(CtlBlock*, Module*, 
+ErrorCode createSystem(CtlBlock*, Module*, 
                          OriginWord);
 
-ErrorCode startLauncher(CtlBlock*);
+ErrorCode startSystem(CtlBlock*);
 
-ErrorCode waitEndOfLauncher(CtlBlock*, portTickType);
+ErrorCode waitEndOfSystem(CtlBlock*, portTickType);
 
-ErrorCode forceStopLauncher(CtlBlock*);
+ErrorCode forceStopOfSystem(CtlBlock*);
 
 #ifdef __cplusplus
 }

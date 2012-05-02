@@ -11,6 +11,7 @@ extern "C"
 #define false			0
 
 #define NO_ERR			0x0000
+#define ERR_NOMEM		0x0100
 
 #define ERR_SEM_NOT_DEF		0x1000 // 0x10XX -> sémaphores
 #define ERR_SEM_NOT_TAKEN		0x1001

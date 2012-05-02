@@ -12,11 +12,15 @@
 #include "operator.h"
 #include "sysInterface.h"
 
+ErrorCode initOperator(Module*);
+ErrorCode configureOperator(Module*, void*);
+ErrorCode updateOperator(Module*, OriginWord);
+
 ModuleType operatorType = {
-  init = initOperator;
-  config = configureOperator;
-  update = updateOperator;
-  reset = resetIdle;
+  .init = initOperator,
+  .config = configureOperator,
+  .update = updateOperator,
+  .reset = resetIdle
 };
 
 

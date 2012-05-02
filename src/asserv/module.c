@@ -41,21 +41,18 @@ Module *initModule(CtlBlock *ctlBlock,
   // On indique quel bloc de controle utiliser
   module->ctl = ctlBlock;
 
-  // On indique le type de la fonctionnalité du module
-  module->type = type;
- 
   // On créé la fonctionnalité du module
-  error = modType->init(module);
+  error = modType.init(module);
   if(error != NO_ERR)
   {
     return 0;
   }
   // On indique la fonction de configuration de la fonctionnalité
-  module->configure = modType->config;
+  module->configure = modType.config;
   // On indique la fonction d'update de cette fonctionnalité
-  module->update = modType->update;
+  module->update = modType.update;
   // On indique la fonction de reset de la fonctionnalité
-  module->reset = modType->reset;
+  module->reset = modType.reset;
 
   // On retourne le module créé
   return module;
