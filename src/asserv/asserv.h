@@ -97,6 +97,8 @@ ErrorCode configureAsserv (Module *parent, void *args);
  */
 ErrorCode updateAsserv(Module *parent, OriginWord port);
 
+ModuleType asservType;
+
 #ifdef __cplusplus
 }
 #endif

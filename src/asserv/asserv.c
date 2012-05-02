@@ -1,6 +1,13 @@
 #include "asserv.h"
 #include "sysInterface.h"
 
+ModuleType asservType = {
+  init = initAsserv;
+  config = configureAsserv;
+  update = updateAsserv;
+  reset = resetAsserv;
+};
+
 ErrorCode initAsserv (Module *parent)
 {
   // On reserve la place pour la structure asserv
@@ -105,4 +112,11 @@ printf("\t command           : %i\n", output);
   setOutput(parent, port, h.h3(output));
 
   return NO_ERR;
+}
+
+void resetAsserv(Module* parent)
+{
+  Asserv *asserv = (Asserv*)parent->fun;
+  asserv->oldError = 0;
+  asserv->integral = 0;
 }

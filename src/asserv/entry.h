@@ -84,6 +84,8 @@ ErrorCode configureEntry(Module* parent, void* args);
  */
 ErrorCode updateEntry(Module* parent, OriginWord port);
 
+
+ModuleType entryType;
 #ifdef __cplusplus
 }
 #endif

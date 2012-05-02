@@ -1,6 +1,13 @@
 #include "ifaceme.h"
 #include "sysInterface.h"
 
+ModuleType ifaceMEType = {
+  init = initIfaceME;
+  config = configureIfaceME;
+  update = updateIfaceME;
+  reset = resetIfaceME;
+};
+
 void *initIfaceME(Module *parent)
 {
   IfaceME *ifaceme = malloc (sizeof(IfaceME));
@@ -67,4 +74,12 @@ printf("--- Fin de timer ---\n");
   }
 
   return NO_ERR;
+}
+
+ErrorCode resetIfaceME(Module* parent)
+{
+  IfaceME *ifaceME = (IfaceME*)parent->fun;
+  ifaceME->measure = 0;
+  ifaceME->measureUpToDate = false;
+  ifaceME->ime.resetEncoderValue();
 }

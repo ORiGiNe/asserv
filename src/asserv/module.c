@@ -3,10 +3,7 @@
 
 Module *initModule(CtlBlock *ctlBlock,
                    OriginWord nbInputs, OriginWord nbOutputs,
-                   ModuleType type,
-                   ErrorCode (*initFun)(Module*),
-                   ErrorCode (*configFun)(Module*,void*),
-                   ErrorCode (*updateFun)(Module*, OriginWord))
+                   ModuleType modType)
 {
   OriginWord i;
   ErrorCode error;
@@ -48,15 +45,17 @@ Module *initModule(CtlBlock *ctlBlock,
   module->type = type;
  
   // On créé la fonctionnalité du module
-  error = initFun(module);
+  error = modType->init(module);
   if(error != NO_ERR)
   {
     return 0;
   }
-  // On indique la fonction d'update de cette fonctionnalité
-  module->update = updateFun;
   // On indique la fonction de configuration de la fonctionnalité
-  module->configure = configFun;
+  module->configure = modType->config;
+  // On indique la fonction d'update de cette fonctionnalité
+  module->update = modType->update;
+  // On indique la fonction de reset de la fonctionnalité
+  module->reset = modType->reset;
 
   // On retourne le module créé
   return module;
@@ -68,7 +67,7 @@ ErrorCode configureModule(Module* module, void* args)
   return module->configure(module, args);
 }
 
-ErrorCode updateModule(Module* module, OriginWord port)
+void resetModule(Module* module)
 {
   OriginWord i;
   // On regarde si c'est la première fois que le module est appelé dans ce tic
@@ -76,15 +75,44 @@ ErrorCode updateModule(Module* module, OriginWord port)
   {
     // Si c'est le cas, on met à jour le nombre de tic
     module->nTic = module->ctl->nTic;
-    // Et on indique que les sorties sont pas à jour
-    for(i = 0; i < module->nbOutputs; i++)
+    // On reset le module
+    module->reset(module);
+    // Puis on reset les entrées du module
+    for(i = 0; i < module->nbInputs; i++)
     {
-      module->outputs[i].upToDate = false;
+      resetModule(module->inputs[i].module);
     }
+  }
+}
+
+ErrorCode updateModule(Module* module, OriginWord port)
+{
+  // On regarde si c'est la première fois que le module est appelé dans ce tic
+  if (module->nTic != module->ctl->nTic)
+  {
+    // Si c'est le cas, on met à jour le nombre de tic
+    module->nTic = module->ctl->nTic;
+    // Et on indique que les sorties ne sont pas upToDate
+    setOutputsState(module, false);
   }
 
   // On met à jour le module
   return module->update(module, port);
+}
+
+
+/****************************************
+ *           Fonctions utiles           *
+ ****************************************/
+
+void setOutputsState(Module* module, OriginBool state)
+{
+  OriginWord i;
+  // On indique pour toutes les sorties qu'elles sont dans l'etat state
+  for(i = 0; i < module->nbOutputs; i++)
+  {
+    module->outputs[i].upToDate = state;
+  }
 }
 
 ErrorCode linkModuleWithInput(Module* inputModule, OriginWord inputModulePort,
@@ -126,4 +154,9 @@ void setOutput(Module* module, OriginWord port, ModuleValue value)
 {
   module->outputs[port].value = value;
   module->outputs[port].upToDate = true;
+}
+
+void resetIdle(Module* module)
+{
+  (void) module;
 }

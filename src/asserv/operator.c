@@ -12,22 +12,31 @@
 #include "operator.h"
 #include "sysInterface.h"
 
+ModuleType operatorType = {
+  init = initOperator;
+  config = configureOperator;
+  update = updateOperator;
+  reset = resetIdle;
+};
+
+
 /**
- * \fn void *initOperator(Module *parent)
+ * \fn ErrorCode initOperator(Module *parent)
  * \brief Fonction permettant la création d'un module Operator
  *
  * \param parent Module auquel on doit donner la fonctionnalité Operator, ne peut pas être NULL.
- * \return Module ayant été spécialisé en Operator.
+ * \return NO_ERR si pas d'erreur, autre chose sinon.
  */
-void *initOperator(Module *parent)
+ErrorCode initOperator(Module *parent)
 {
   Operator *operator = malloc (sizeof(Operator));
   if (operator == 0)
   {
-    return 0;
+    return ERR_NOMEM;
   }
   operator->parent = parent;
-  return (void*)operator;
+  parent->fun = (void*)operator;
+  return NO_ERR;
 }
 
 /**

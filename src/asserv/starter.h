@@ -30,6 +30,8 @@ void *initStarter(Module *parent);
 ErrorCode configureStarter(Module* parent, void* args);
 ErrorCode updateStarter(Module* parent, OriginWord port);
 
+
+ModuleType starterType;
 #ifdef __cplusplus
 }
 #endif

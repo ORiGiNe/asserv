@@ -83,6 +83,9 @@ ErrorCode configureIfaceME(Module*, void*);
  */
 ErrorCode updateIfaceME(Module*, OriginWord);
 
+
+ModuleType ifaceMEType;
+
 #ifdef __cplusplus
 }
 #endif

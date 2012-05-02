@@ -9,7 +9,6 @@ extern "C"
 #endif
 
 typedef struct module       Module;
-typedef enum moduleType     ModuleType;
 typedef struct moduleInput  ModuleInput;
 typedef struct moduleOutput ModuleOutput;
 typedef OriginSWord         ModuleValue;
@@ -18,12 +17,13 @@ typedef struct timerBlock TimerBlock;
 typedef struct ctlBlock CtlBlock;
 
 
-enum moduleType
+typedef struct
 {
-  tEntry,
-  tAsserv,
-  tIfaceME
-};
+  ErrorCode (*init)(Module*);
+  ErrorCode (*config)(Module*, void*);
+  ErrorCode (*update)(Module*, OriginWord);
+  void      (*reset)(Module*);
+} ModuleType;
 
 struct moduleInput
 {
@@ -54,6 +54,7 @@ struct module
 
   ErrorCode (*configure)(Module*, void*);
   ErrorCode (*update)(Module*, OriginWord);
+  void (*reset)(Module*);
 };
 
 struct timerBlock

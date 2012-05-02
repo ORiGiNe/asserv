@@ -1,24 +1,24 @@
 #include "starter.h"
 #include "sysInterface.h"
 
-void *initStarter(Module *parent)
+ModuleType starterType = {
+  init = initStarter;
+  config = configureStarter;
+  update = updateStarter;
+  reset = resetStarter;
+};
+
+ErrorCode initStarter(Module *parent)
 {
-  uint8_t i;
   Starter *starter = malloc (sizeof(Starter));
   if(starter == 0)
   {
-    return 0;
+    return ERR_NOMEM;
   }
   starter->parent = parent;
+  parent->fun = starter;
 
-  // On initialise l'historique
-  for(i=0; i < STARTER_NB_CONNECTION; i++)
-  {
-    starter->hist[i].val0 = 0x7FFF;
-    starter->hist[i].val1 = 0x7FFF;
-    starter->hist[i].val2 = 0x7FFF;
-  }
-  return (void*)starter;
+  return NO_ERR;
 }
 
 ErrorCode configureStarter(Module* parent, void* args)
@@ -30,7 +30,7 @@ ErrorCode configureStarter(Module* parent, void* args)
 
 ErrorCode updateStarter(Module* parent, OriginWord port)
 {
-  uint8_t i;
+  OriginByte i;
   ErrorCode error;
   (void) port;
   ValHistory vHist;
@@ -63,8 +63,21 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
 	// TODO Reset des modules
       }
     }
-
   }
 
   return NO_ERR;
+}
+
+void resetStarter(Module* parent)
+{
+  OriginByte i;
+  Starter *starter = (Starter*)parent->fun;
+
+  // On initialise l'historique
+  for(i=0; i < STARTER_NB_CONNECTION; i++)
+  {
+    starter->hist[i].val0 = 0x7FFF;
+    starter->hist[i].val1 = 0x7FFF;
+    starter->hist[i].val2 = 0x7FFF;
+  }
 }

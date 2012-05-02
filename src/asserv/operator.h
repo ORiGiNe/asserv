@@ -24,6 +24,7 @@ void *initOperator(Module*);
 ErrorCode configureOperator(Module*, void*);
 ErrorCode updateOperator(Module*, OriginWord);
 
+ModuleType operatorType;
 #ifdef __cplusplus
 }
 #endif

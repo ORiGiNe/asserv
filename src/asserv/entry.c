@@ -1,6 +1,13 @@
 #include "entry.h"
 #include "sysInterface.h"
 
+ModuleType entryType = {
+  init = initEntry;
+  config = configureEntry;
+  update = updateEntry;
+  reset = resetIdle;
+};
+
 ErrorCode initEntry(Module *parent)
 {
   // On réserve la mémoire nécessaire
@@ -48,4 +55,3 @@ ErrorCode updateEntry(Module* parent, OriginWord port)
   }
   return NO_ERR;
 }
-
