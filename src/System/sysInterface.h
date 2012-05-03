@@ -58,7 +58,6 @@ typedef long portTickType;
 /* FreeRTOS Configuration */
 #ifdef FREERTOS
 
-#define printf()
 
 // Includes
 #include "stringUtils.h"
