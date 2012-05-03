@@ -255,7 +255,8 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
       {
         EFBuartGaopSendString ("TEST\r\n");
         freeTrame (t);
-      }else if (t->commande == UART_CDE_DEO)
+      }
+      else if (t->commande == UART_CDE_DEO)
       {
         EFBuartGaopSendString ("de0-nano : ");
         word wordOut = 0x1539;
@@ -277,39 +278,39 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
         }
         freeTrame (t);
       }
-	  else if (t->commande == UART_CDE_PTH)
-	  {
-		//sendCommandToHBridge (CommandHBridge command, byte data, portTickType xBlockTime)
-		//sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 30, 10);
-		//EFBuart2PushByteToBuffer(80);
-		EFBuart2PushByteToBuffer(80);
-		EFBuartGaopSendString ("PTH\r\n");
-	  }
-	  else if (t->commande == UART_CDE_PTH2)
-	  {
-		// sendCommandToHBridge (DRIVE_BACKWARD_MOTOR_1, 30, 10);
-		EFBuart2PushByteToBuffer(64);
-		EFBuartGaopSendString ("PTH2\r\n");
-	  }
-	  else if (t->commande == UART_CDE_PTH3)
-	  {
-		//sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 32, 10);
-		EFBuart2PushByteToBuffer(130);
-		EFBuart2PushByteToBuffer(0);
-		EFBuart2PushByteToBuffer(64);
-		EFBuart2PushByteToBuffer(66);
-		EFBuartGaopSendString ("PTH3\r\n");
-	  }
-	  else if (t->commande == UART_CDE_PTH4)
-	  {
-		sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 0, 10);
-		EFBuartGaopSendString ("PTH4\r\n");
-	  }
-	  else if (t->commande == UART_CDE_PTH5)
-	  {
-		EFBuart2PushByteToBuffer(0xAA);
-		EFBuartGaopSendString ("PTH5\r\n");
-	  }
+      else if (t->commande == UART_CDE_PTH)
+      {
+        //sendCommandToHBridge (CommandHBridge command, byte data, portTickType xBlockTime)
+        //sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 30, 10);
+        //EFBuart2PushByteToBuffer(80);
+        EFBuart2PushByteToBuffer(80);
+        EFBuartGaopSendString ("PTH\r\n");
+      }
+      else if (t->commande == UART_CDE_PTH2)
+      {
+        // sendCommandToHBridge (DRIVE_BACKWARD_MOTOR_1, 30, 10);
+        EFBuart2PushByteToBuffer(64);
+        EFBuartGaopSendString ("PTH2\r\n");
+      }
+      else if (t->commande == UART_CDE_PTH3)
+      {
+        //sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 32, 10);
+        EFBuart2PushByteToBuffer(130);
+        EFBuart2PushByteToBuffer(0);
+        EFBuart2PushByteToBuffer(64);
+        EFBuart2PushByteToBuffer(66);
+        EFBuartGaopSendString ("PTH3\r\n");
+      }
+      else if (t->commande == UART_CDE_PTH4)
+      {
+        sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 0, 10);
+        EFBuartGaopSendString ("PTH4\r\n");
+      }
+      else if (t->commande == UART_CDE_PTH5)
+      {
+        EFBuart2PushByteToBuffer(0xAA);
+        EFBuartGaopSendString ("PTH5\r\n");
+      }
       else
       {
         freeTrame (t);
