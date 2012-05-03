@@ -52,15 +52,15 @@ void vTaskLED (void* pvParameters)
  * ASSERVISSEMENT
  *
  */
-#include "asserv/modules_group.h"
-#include "asserv/module.h"
-#include "asserv/launcher.h"
-#include "asserv/types.h"
-#include "asserv/defines.h"
-#include "asserv/entry.h"
-#include "asserv/asserv.h"
-#include "asserv/ifaceme.h"
-#include "asserv/ime.h"
+#include "System/modules_group.h"
+#include "System/module.h"
+#include "System/system.h"
+#include "System/types.h"
+#include "System/defines.h"
+#include "System/entry.h"
+#include "System/asserv.h"
+#include "System/ifaceme.h"
+#include "System/ime.h"
 
 ModuleValue average(OriginWord nbInputs, ModuleInput* inputs)
 {

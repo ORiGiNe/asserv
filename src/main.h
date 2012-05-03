@@ -53,6 +53,7 @@ extern "C"
 #include "stringUtils.h"
 #include "efbFreeRTOSwrappers.h"
 #include "DE0nanoUart.h"
+#include "ponthuart.h"
 
 /* -----------------------------------------------------------------------------
  */
