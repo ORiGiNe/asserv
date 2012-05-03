@@ -52,9 +52,11 @@ int main (void)
   wdt_enable (WDTO_120MS);
 
   uartGaopInitialisation ();
+  uartHBridgeInit(9600); // init pontH
   DE0nanoUartInit (9600, pdFALSE);
-
-  xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
+	
+	EFBoutPort (PORT_LED13, MASK_LED13);
+  //xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
 
   vTaskStartScheduler ();
 
