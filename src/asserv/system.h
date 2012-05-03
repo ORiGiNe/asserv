@@ -4,19 +4,23 @@
 #include "types.h"
 #include "defines.h"
 
+#include "sysInterface.h"
+#include "modules_group.h"
+
+#include "module.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "sysInterface.h"
-#include "modules_group.h"
 
 ErrorCode createSystem(CtlBlock*, Module*, 
                          OriginWord);
 
 ErrorCode startSystem(CtlBlock*);
+
+void resetSystem(CtlBlock* ctlBlock);
 
 ErrorCode waitEndOfSystem(CtlBlock*, portTickType);
 

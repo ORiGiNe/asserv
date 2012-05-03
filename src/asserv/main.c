@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 {
   portTickType xLastWakeTime;
   CtlBlock ctlBlock;
-  Module *entry, *ifaceME, *asservPos, *asservVit;
+  Module *entry, *ifaceME, *asservPos, *asservVit, *starter;
   EntryConfig entryConfig;
   IME ime;
   OpFunc hPos, hVit;
@@ -109,43 +109,62 @@ int main(int argc, char* argv[])
 
 
 
+  // Création du starter
+  starter = initModule(&ctlBlock, 1, 0, starterType);
+  if (starter == 0)
+  {
+   return 0;
+  }
   // Création de l'Entry
   entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, entryType);
   if (entry == 0)
   {
+   return 0;
   }
   // Création de l'interface systeme
   ifaceME = initModule(&ctlBlock, 1, 2, ifaceMEType);
   if (ifaceME == 0)
   {
+   return 0;
   }
   // Création de l'asserv 1
   asservPos = initModule(&ctlBlock, 6, 1, asservType);
   if (asservPos == 0)
   {
+   return 0;
   }
   asservVit = initModule(&ctlBlock, 6, 1, asservType);
   if (asservVit == 0)
   {
+   return 0;
   }
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
-  if (createSystem(&ctlBlock, ifaceME , 40) == ERR_TIMER_NOT_DEF)
+  if (createSystem(&ctlBlock, starter , 2) == ERR_TIMER_NOT_DEF)
   {
+   return 0;
   }
 
   if (configureModule(entry, (void*)&entryConfig) != NO_ERR)
   {
+   return 0;
   }
   if (configureModule(ifaceME, (void*)&ime) != NO_ERR)
   {
+   return 0;
   }
   if (configureModule(asservPos, (void*)&hPos) != NO_ERR)
   {
+   return 0;
   }
   if (configureModule(asservVit, (void*)&hVit) != NO_ERR)
   {
+   return 0;
+  }
+  if (configureModule(starter, NULL) != NO_ERR)
+  {
+   return 0;
   }
 
 
@@ -167,9 +186,12 @@ int main(int argc, char* argv[])
   linkModuleWithInput(ifaceME, 0, asservVit, AsservMeasure);
 
   linkModuleWithInput(asservVit, 0, ifaceME, 0);
+
+  linkModuleWithInput(ifaceME, 0, starter, 0);
+
 #include <time.h>
 struct timespec tp;
-tp.tv_sec = 20;
+tp.tv_sec = 1;
 tp.tv_nsec = 0;
   if (startSystem(&ctlBlock) != NO_ERR)
   {
@@ -177,8 +199,12 @@ tp.tv_nsec = 0;
   for (;;)
   {
  //printf("Asserv\tcmd %i\treste %i\n", (int32_t)(entryConfig.value[4]), (int32_t)(entryConfig.value[4] - ctlBlock.coveredDistance));
+ waitEndOfSystem(&ctlBlock, 0);
+ resetSystem(&ctlBlock);
+ printf("fini ! :D\n");
  nanosleep(&tp, NULL);
- command += 1000;
+ startSystem(&ctlBlock);
+ command += 100;
     //Cette fonction permet à la tache d'être périodique. La tache est bloquée pendant (500ms - son temps d'execution).
   //  vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
   }

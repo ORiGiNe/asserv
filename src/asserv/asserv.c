@@ -147,6 +147,7 @@ printf("\t command           : %i\n", output);
 
 void resetAsserv(Module* parent)
 {
+  printf("chocolat\n");
   Asserv *asserv = (Asserv*)parent->fun;
   asserv->oldError = 0;
   asserv->integral = 0;

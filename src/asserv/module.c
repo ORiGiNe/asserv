@@ -60,8 +60,16 @@ Module *initModule(CtlBlock *ctlBlock,
 
 ErrorCode configureModule(Module* module, void* args)
 {
+  ErrorCode ret;
+
   module->nTic = 0;
-  return module->configure(module, args);
+  ret = module->configure(module, args);
+  if(ret != NO_ERR)
+  {
+    return ret;
+  }
+  module->reset(module);
+  return NO_ERR;
 }
 
 void resetModule(Module* module)

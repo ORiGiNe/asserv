@@ -15,6 +15,7 @@ Module *initModule(CtlBlock*, OriginWord, OriginWord, ModuleType);
 ErrorCode configureModule(Module*, void*);
 ErrorCode linkModuleWithInput(Module*, OriginWord, Module*, OriginWord);
 
+void resetModule(Module* module);
 ErrorCode updateModule(Module* module, OriginWord port);
 void setOutputsState(Module* module, OriginBool state);
 ErrorCode updateInput(Module* module, OriginWord port);

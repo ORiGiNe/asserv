@@ -71,6 +71,7 @@ struct ctlBlock
   Module* starter;
 
   OriginBool stop;
+  OriginBool reset;
   ErrorCode lastError;
   OriginBool destReached;
   ModuleValue coveredDistance;

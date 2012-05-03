@@ -28,6 +28,7 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
   /* On indique le module dont l'update lance l'ensemble du schéma block */
   ctlBlock->starter = starter;
   ctlBlock->stop = false;
+  ctlBlock->reset = false;
   ctlBlock->nTic = 0;
   ctlBlock->lastError = NO_ERR;
 
@@ -46,30 +47,38 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
 ErrorCode startSystem(CtlBlock* ctlBlock)
 {
   /* On verifie que le timer n'est pas déjà lancé */
-  if (ctlBlock->timer.isActive != false)
-  {
-    return ERR_TIMER_LAUNCHED;
-  }
+  //if (ctlBlock->timer.isActive != false)
+  //{
+  //  return ERR_TIMER_LAUNCHED;
+  //}
   
   /* On indique qu'il faut se bouger avant d'atteindre son but */
   ctlBlock->destReached = false;
-printf("timerReset\n");
-  /* On lance le timer */
-  if (timerReset (ctlBlock->timer.handle, ctlBlock->timer.refreshFreq) != pdPASS)
+  /* On lance le timer s'il n'est pas déja lancé */
+  if (ctlBlock->timer.isActive == false)
   {
-    ctlBlock->timer.isActive = false;
-    return ERR_TIMER_EPIC_FAIL;
+    if (timerReset (ctlBlock->timer.handle, ctlBlock->timer.refreshFreq) != pdPASS)
+    {
+      ctlBlock->timer.isActive = false;
+      return ERR_TIMER_EPIC_FAIL;
+    }
   }
   ctlBlock->timer.isActive = true;
+  ctlBlock->reset = false;
 
   return NO_ERR;
+}
+
+void resetSystem(CtlBlock* ctlBlock)
+{
+  ctlBlock->reset = true;
 }
 
 
 void vCallback(Timer pxTimer)
 {
   CtlBlock *ctlBlock = (CtlBlock*)timerGetArg(pxTimer);
-  ErrorCode error;
+  ErrorCode error = NO_ERR;
 
   if(ctlBlock->timer.isActive == 0)
   {
@@ -79,31 +88,35 @@ void vCallback(Timer pxTimer)
 
   // On met à jour le nombre de tic
   ctlBlock->nTic++;
-
-  /* Lancement de l'update du systeme */
-  error = ctlBlock->starter->update(ctlBlock->starter, 0);
-  if (error == ERR_DEST_REACHED)
+  if(ctlBlock->reset == true)
   {
-    ctlBlock->destReached = true;
-  }
-  else if (error == ERR_URGENT_STOP)
-  {
-    ctlBlock->destReached = false;
+    resetModule(ctlBlock->starter);
   }
   else
   {
-    ctlBlock->lastError = error;
-  }
+    /* Lancement de l'update du systeme */
+    error = updateModule(ctlBlock->starter, 0);
 
-  if(ctlBlock->destReached == true || error == ERR_URGENT_STOP)
-  {
-    if( timerStop( ctlBlock->timer.handle, (portTickType)0 MS ) == pdFAIL )
+    if (error == ERR_DEST_REACHED)
     {
-      ctlBlock->lastError = ERR_TIMER_NOT_STOPPED;
+      ctlBlock->destReached = true;
+    }
+    else
+    {
+      ctlBlock->destReached = false;
+      ctlBlock->lastError = error;
     }
 
-    /* On tente de rendre la sémaphore */
-    semaphoreGive( ctlBlock->sem );
+    if(ctlBlock->destReached == true || error == ERR_URGENT_STOP)
+    { /* FIXME ce n'est pas utile d'arreter le timer pour ça
+      if( timerStop( ctlBlock->timer.handle, (portTickType)0 MS ) == pdFAIL )
+      {
+        ctlBlock->lastError = ERR_TIMER_NOT_STOPPED;
+      }
+      */
+      /* On tente de rendre la sémaphore */
+      semaphoreGive( ctlBlock->sem );
+    }
   }
 }
 
