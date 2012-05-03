@@ -1,66 +1,87 @@
-/**
- * \file entry.c
- * \brief Implémentation du module d'entrée dans l'asservissement
- * \author Johwn
- * \date 14 avril 2012
- *
- * Permet de créer un module contenant des constantes envoyées sur ses sorties.
- *
- */
-
-#include "FreeRTOS/FreeRTOS.h"
 #include "entry.h"
+#include "sysInterface.h"
 
 /**
- * \fn void *initEntry(Module *parent)
+ * \fn ErrorCode initEntry(Module *parent)
  * \brief Fonction permettant la création d'un module Entry
  *
  * \param parent Module auquel on doit donner la fonctionnalité Entry, ne peut pas être NULL.
- * \return Module ayant été spécialisé en Entry.
+ * \return NO_ERR si le module a bien été spécialisé, ERR_NOMEM si plus de memoire.
  */
-void *initEntry(Module *parent)
-{
-  Entry *entry = pvPortMalloc(sizeof(Entry));
-
-  entry->parent = parent;
-  return (void*)entry;
-}
+ErrorCode initEntry(Module* parent);
 
 /**
  * \fn ErrorCode configureEntry(Module *parent, void* args)
  * \brief Fonction permettant la configuration d'un module Entry
  *
- * \param parent Entry à configurer, ne peut pas être NULL.
- * \return Entry configuré.
+ * \param parent Module Entry à configurer, ne peut pas être NULL.
+ * \param args Argument de type EntryConfig.
+ * \return NO_ERR si le module s'est bien configuré, un code d'erreur sinon.
  */
+ErrorCode configureEntry(Module* parent, void* args);
+
+/**
+ * \fn ErrorCode updateEntry(Module *parent, OriginWord port)
+ * \brief Fonction permettant la mise à jour d'un module Entry
+ *
+ * \param parent Entry à mettre à jour, ne peut pas être NULL.
+ * \param port Numéro du port par lequel la mise à jour doit se faire.
+ * \return NO_ERR si le module s'est bien mis à jour, un code d'erreur sinon.
+ */
+ErrorCode updateEntry(Module* parent, OriginWord port);
+
+
+ModuleType entryType = {
+  .init = initEntry,
+  .config = configureEntry,
+  .update = updateEntry,
+  .reset = resetIdle
+};
+
+ErrorCode initEntry(Module *parent)
+{
+  // On réserve la mémoire nécessaire
+  Entry *entry = malloc (sizeof(Entry));
+  if (entry == 0)
+  {
+    return ERR_NOMEM;
+  }
+
+  // On relie la fonctionnalité au module le contenant
+  entry->parent = parent;
+  parent->fun = (void*)entry;
+  return NO_ERR;
+}
+
 ErrorCode configureEntry(Module* parent, void* args)
 {
   EntryConfig *config = args;
-  uint16_t i;
+  OriginWord i;
 
+  // On verifie que la config comporte le bon nombre d'entrées
   if(config->nbEntry > parent->nbOutputs)
   {
     return ERR_MODULE_UNKNOW_PORT;
   }
+  if(config->nbEntry < parent->nbOutputs)
+  {
+    return ERR_MODULE_UNUSED_PORT;
+  }
+
+  // On enregistre les d'entrées dans Entry
   for(i=0; i < config->nbEntry; i++)
   {
-    setOutput(parent, i, config->value[i]);
+    ((Entry*)parent->fun)->value[i] = config->value[i];
   }
   return NO_ERR;
 }
 
-/*! \brief Permet de mettre à jour Entry entre deux appels de la fonction de
- *  callback du timer
- */
-/**
- * \fn ErrorCode configureEntry(Module *parent, void* args)
- * \brief Fonction permettant la configuration d'un module Entry
- *
- * \param parent Entry à configurer, ne peut pas être NULL.
- * \return Entry configuré.
- */
 ErrorCode updateEntry(Module* parent, OriginWord port)
 {
+  // On rafraichi la sortie si elle n'est plus à jour
+  if ( ! outputIsUpToDate(parent, port) )
+  {
+    setOutput(parent, port, *((Entry*)parent->fun)->value[port]);
+  }
   return NO_ERR;
 }
-

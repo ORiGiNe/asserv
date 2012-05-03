@@ -27,7 +27,7 @@ extern "C"
 
 #define EFBGENE_FREERTOS
 
-//#define DEBUGPRINTF
+#define DEBUGPRINTF
 
 /* -----------------------------------------------------------------------------
  * Generic Includes
@@ -53,7 +53,6 @@ extern "C"
 #include "stringUtils.h"
 #include "efbFreeRTOSwrappers.h"
 #include "DE0nanoUart.h"
-#include "asserv/asserv.h"
 
 /* -----------------------------------------------------------------------------
  */

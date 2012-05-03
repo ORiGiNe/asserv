@@ -1,20 +1,64 @@
-#include "FreeRTOS/FreeRTOS.h"
 #include "ifaceme.h"
+#include "sysInterface.h"
+
+/**
+ * \fn ErrorCode initIfaceME(Module *parent)
+ * \brief Fonction permettant la création d'un module IfaceME
+ *
+ * \param parent Module auquel on doit donner la fonctionnalité IfaceME, ne peut pas être NULL.
+ * \return retourne NO_ERR si le module s'est bien spécialisé en IfaceME, ERR_NOMEM sinon.
+ */
+ErrorCode initIfaceME(Module*);
+
+/**
+ * \fn ErrorCode configureIfaceME(Module *parent, void* args)
+ * \brief Fonction permettant la configuration d'un module IfaceME
+ *
+ * \param parent Module IfaceME à configurer, ne peut pas être NULL.
+ * \param args Argument de type IME.
+ * \return NO_ERR si le module s'est bien configuré, un code d'erreur sinon.
+ */
+ErrorCode configureIfaceME(Module*, void*);
+
+/**
+ * \fn ErrorCode updateIfaceME(Module *parent, OriginWord port)
+ * \brief Fonction permettant la mise à jour d'un module IfaceME
+ *
+ * \param parent IfaceME à mettre à jour, ne peut pas être NULL.
+ * \param port Numéro du port par lequel la mise à jour doit se faire.
+ * \return NO_ERR si le module s'est bien mis à jour, un code d'erreur sinon.
+ */
+ErrorCode updateIfaceME(Module*, OriginWord);
+
+void resetIfaceME(Module* parent);
 
 
-void *initIfaceME(Module *parent)
+ModuleType ifaceMEType = {
+  .init = initIfaceME,
+  .config = configureIfaceME,
+  .update = updateIfaceME,
+  .reset = resetIfaceME
+};
+
+ErrorCode initIfaceME(Module *parent)
 {
-  IfaceME *ifaceme = pvPortMalloc(sizeof(IfaceME));
+  IfaceME *ifaceme = malloc (sizeof(IfaceME));
+  if (ifaceme == 0)
+  {
+    return ERR_NOMEM;
+  }
 
   ifaceme->parent = parent;
-
-  return (void*)ifaceme;
+  parent->fun = (void*)ifaceme;
+  return NO_ERR;
 }
 
 ErrorCode configureIfaceME(Module *parent, void* args)
 {
   IfaceME *ifaceme = (IfaceME*)parent->fun;
   IME* ime = (IME*)args;
+
+  parent->ctl->coveredDistance = 0;
 
   ime->resetEncoderValue();
   ifaceme->ime = *ime;
@@ -28,40 +72,43 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   ErrorCode error;
   IME ime = ((IfaceME*)parent->fun)->ime;
 
-  // On verifie si la sortie est à jour
-  if(parent->outputs[port].upToDate == true)
-  {
-    return NO_ERR;
-  }
   // Faire la mesure ssi la mesure n'est plus valable
   if (((IfaceME*)parent->fun)->measureUpToDate == 0)
   {
     // On effectue la mesure
     ((IfaceME*)parent->fun)->measure = ime.getEncoderValue();
     ((IfaceME*)parent->fun)->measureUpToDate = 1;
-    parent->ctl->rest = ((IfaceME*)parent->fun)->measure;
+    parent->ctl->coveredDistance = ((IfaceME*)parent->fun)->measure;
 
     // On met à jour l'entrée
-    error = parent->inputs[0].module->update(parent->inputs[0].module, parent->inputs[0].port);
+    error = updateInput(parent, 0);
     if (error != NO_ERR)
     {
       return error;
     }
-    command = parent->inputs[0].module->outputs[parent->inputs[0].port].value;
-
+    command = getInput(parent, 0);
     // On envoie la commande au système
     if(parent->ctl->stop == true)
     {
       return ERR_URGENT_STOP;
     }
+
+    ((IfaceME*)parent->fun)->measureUpToDate = 0;
     ime.sendNewCommand(command);
   }
   else
   {
     // On met à jour la sortie ayant pour port <port>
-    parent->outputs[port].value = ((IfaceME*)parent->fun)->measure;
-    parent->outputs[port].upToDate = 1;
+    setOutput(parent, port, ((IfaceME*)parent->fun)->measure);
   }
 
   return NO_ERR;
+}
+
+void resetIfaceME(Module* parent)
+{
+  IfaceME *ifaceME = (IfaceME*)parent->fun;
+  ifaceME->measure = 0;
+  ifaceME->measureUpToDate = false;
+  ifaceME->ime.resetEncoderValue();
 }

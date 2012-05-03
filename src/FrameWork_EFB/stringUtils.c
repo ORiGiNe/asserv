@@ -1,4 +1,4 @@
-#include "StringUtils.h"
+#include "stringUtils.h"
 
 /* -----------------------------------------------------------------------------
  * byteToString

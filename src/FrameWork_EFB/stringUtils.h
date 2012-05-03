@@ -1,4 +1,4 @@
-#ifndef IN_STRINGUTILS
+#ifndef INC_STRINGUTILS
 #define INC_STRINGUTILS
 
 #ifdef __cplusplus

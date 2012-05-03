@@ -1,66 +1,16 @@
-#include "main.h"
+#include "sysInterface.h"
+#include "modules_group.h"
+#include "module.h"
+#include "system.h"
+#include "types.h"
+#include "defines.h"
+#include "entry.h"
+#include "asserv.h"
+#include "ifaceme.h"
+#include "ime.h"
+#include "starter.h"
+#include "operator.h"
 
-#ifdef GCC_MEGA_AVR
-	/* EEPROM routines used only with the WinAVR compiler. */
-	#include <avr/eeprom.h>
-#endif
-
-xTaskHandle xTaskLED;
-xTaskHandle xTaskSI;
-
-#define PORT_LED13 PORTB
-#define DDR_LED13 DDRB
-#define MASK_LED13 0x80
-#define BIT_LED13 7
-
-
-
-void vTaskLED (void* pvParameters );
-void vTaskSI (void* pvParameters);
-void portConfigure(void);
-
-/* -----------------------------------------------------------------------------
- * vTaskLED
- * -----------------------------------------------------------------------------
- */
-void vTaskLED (void* pvParameters)
-{
-  portTickType xLastWakeTime;
-  uint8_t lu8_Port;
-
-  // on cast pvParameters pour supprimer les warnings.
-  (void) pvParameters;
-  xLastWakeTime = xTaskGetTickCount ();
-
-  for (;;)
-  {
-    lu8_Port = PORT_LED13;
-    lu8_Port ^= MASK_LED13;
-    EFBoutPort (PORT_LED13, lu8_Port);
-
-    //stderrPrintf ("LED !\r\n");
-
-
-    //Cette fonction permet à la tache d'être périodique. La tache est bloquée pendant (500ms - son temps d'execution).
-    vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
-  }
-
-}
-
-/*
- *
- * ASSERVISSEMENT
- *
- */
-#include "asserv/modules_group.h"
-#include "asserv/module.h"
-#include "asserv/launcher.h"
-#include "asserv/types.h"
-#include "asserv/defines.h"
-#include "asserv/entry.h"
-#include "asserv/asserv.h"
-#include "asserv/ifaceme.h"
-#include "asserv/ime.h"
 
 ModuleValue average(OriginWord nbInputs, ModuleInput* inputs)
 {
@@ -94,14 +44,13 @@ ModuleValue funIdent(ModuleValue val)
   return val;
 }
 
-// TODO à cause des static, une fonction par module !!!
+// TODO Ã  cause des static, une fonction par module !!!
 ModuleValue funInteg(ModuleValue val)
 {
   static ModuleValue accu = 0;
   accu += val;
   return val;
 }
-
 ModuleValue funDeriv(ModuleValue val)
 {
   static ModuleValue old;
@@ -111,13 +60,11 @@ ModuleValue funDeriv(ModuleValue val)
   return ret;
 }
 
-
-void vTaskSI (void* pvParameters)
+int main(int argc, char* argv[])
 {
-
   portTickType xLastWakeTime;
   CtlBlock ctlBlock;
-  Module *entry, *ifaceME, *asservPos, *asservVit;
+  Module *entry, *ifaceME, *asservPos, *asservVit, *starter;
   EntryConfig entryConfig;
   IME ime;
   OpFunc hPos, hVit;
@@ -162,43 +109,62 @@ void vTaskSI (void* pvParameters)
 
 
 
-  // Création de l'Entry
-  entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, tEntry, initEntry, configureEntry, updateEntry);
+  // CrÃ©ation du starter
+  starter = initModule(&ctlBlock, 1, 0, starterType);
+  if (starter == 0)
+  {
+   return 0;
+  }
+  // CrÃ©ation de l'Entry
+  entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, entryType);
   if (entry == 0)
   {
+   return 0;
   }
-  // Création de l'interface systeme
-  ifaceME = initModule(&ctlBlock, 1, 2, tIfaceME, initIfaceME, configureIfaceME, updateIfaceME);
+  // CrÃ©ation de l'interface systeme
+  ifaceME = initModule(&ctlBlock, 1, 2, ifaceMEType);
   if (ifaceME == 0)
   {
+   return 0;
   }
-  // Création de l'asserv 1
-  asservPos = initModule(&ctlBlock, 6, 1, tAsserv, initAsserv, configureAsserv, updateAsserv);
+  // CrÃ©ation de l'asserv 1
+  asservPos = initModule(&ctlBlock, 6, 1, asservType);
   if (asservPos == 0)
   {
+   return 0;
   }
-  asservVit = initModule(&ctlBlock, 6, 1, tAsserv, initAsserv, configureAsserv, updateAsserv);
+  asservVit = initModule(&ctlBlock, 6, 1, asservType);
   if (asservVit == 0)
   {
+   return 0;
   }
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
-  if (createLauncher(&ctlBlock, ifaceME , 40) == ERR_TIMER_NOT_DEF)
+  if (createSystem(&ctlBlock, starter , 2) == ERR_TIMER_NOT_DEF)
   {
+   return 0;
   }
 
   if (configureModule(entry, (void*)&entryConfig) != NO_ERR)
   {
+   return 0;
   }
   if (configureModule(ifaceME, (void*)&ime) != NO_ERR)
   {
+   return 0;
   }
   if (configureModule(asservPos, (void*)&hPos) != NO_ERR)
   {
+   return 0;
   }
   if (configureModule(asservVit, (void*)&hVit) != NO_ERR)
   {
+   return 0;
+  }
+  if (configureModule(starter, NULL) != NO_ERR)
+  {
+   return 0;
   }
 
 
@@ -220,48 +186,29 @@ void vTaskSI (void* pvParameters)
   linkModuleWithInput(ifaceME, 0, asservVit, AsservMeasure);
 
   linkModuleWithInput(asservVit, 0, ifaceME, 0);
-  
-  
-  if (startLauncher(&ctlBlock) != NO_ERR)
+
+  linkModuleWithInput(ifaceME, 0, starter, 0);
+
+#include <time.h>
+struct timespec tp;
+tp.tv_sec = 1;
+tp.tv_nsec = 0;
+  if (startSystem(&ctlBlock) != NO_ERR)
   {
   }
-
-
-
-    //stderrPrintf ("err");
-    //usprintf(string, "%l", (uint32_t)(uint16_t)ctlBlock.timer.refreshFreq);
-
   for (;;)
   {
-
-    //Cette fonction permet à la tache d'être périodique. La tache est bloquée pendant (500ms - son temps d'execution).
-    vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
+ //printf("Asserv\tcmd %i\treste %i\n", (int32_t)(entryConfig.value[4]), (int32_t)(entryConfig.value[4] - ctlBlock.coveredDistance));
+ waitEndOfSystem(&ctlBlock, 0);
+ resetSystem(&ctlBlock);
+ printf("fini ! :D\n");
+ nanosleep(&tp, NULL);
+ startSystem(&ctlBlock);
+ command += 100;
+    //Cette fonction permet Ã  la tache d'Ãªtre pÃ©riodique. La tache est bloquÃ©e pendant (500ms - son temps d'execution).
+  //  vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
   }
 
-}
 
-
-int main (void)
-{
-  portConfigure();
-  //Init du watchdog timer: reset toutes les 120ms s'il n'y a pas d'appel à wdt_reset().
-  wdt_enable (WDTO_120MS);
-
-  uartGaopInitialisation ();
-  uartHBridgeInit(9600); // init pontH
-  DE0nanoUartInit (9600, pdFALSE);
-	
-	EFBoutPort (PORT_LED13, MASK_LED13);
-  //xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
-  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 2, NULL, 1, &xTaskSI);
-
-  vTaskStartScheduler ();
-
-  return 0;
-}
-
-void portConfigure(void)
-{
-	// LED 13 (correspond au pin B5) en out.
-  EFBsetBit (DDR_LED13, BIT_LED13);
+ return 0;
 }

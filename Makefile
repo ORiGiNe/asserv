@@ -62,7 +62,7 @@ ASRC =
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
-INCLUDE_DIRS +=
+INCLUDE_DIRS += /usr/avr/include/avr /usr/lib64/binutils/avr/2.22/
 
 #---------------- Library Options ----------------
 # Minimalistic printf version
@@ -100,7 +100,7 @@ EXTRALIBDIRS =
 #    -Map:      create map file
 #    --cref:    add cross reference to  map file
 LDFLAGS += $(patsubst %,-L%,$(EXTRALIBDIRS))
-LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
+LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB) 
 
 #---------------- Debugging Options ----------------
 # For simulavr only - target MCU frequency.

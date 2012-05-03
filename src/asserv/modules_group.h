@@ -2,17 +2,13 @@
 #define ASSERV_MODULES_GROUP_H
 
 #include "types.h"
-#include "task.h"
-#include "timers.h"
-#include "semphr.h"
-
+#include "sysInterface.h"
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
 typedef struct module       Module;
-typedef enum moduleType     ModuleType;
 typedef struct moduleInput  ModuleInput;
 typedef struct moduleOutput ModuleOutput;
 typedef OriginSWord         ModuleValue;
@@ -21,12 +17,13 @@ typedef struct timerBlock TimerBlock;
 typedef struct ctlBlock CtlBlock;
 
 
-enum moduleType
+typedef struct
 {
-  tentry,
-  tasserv,
-  tifaceme
-};
+  ErrorCode (*init)(Module*);
+  ErrorCode (*config)(Module*, void*);
+  ErrorCode (*update)(Module*, OriginWord);
+  void      (*reset)(Module*);
+} ModuleType;
 
 struct moduleInput
 {
@@ -53,13 +50,16 @@ struct module
   ModuleType type;
   void *fun;
 
-  ErrorCode (*update)(Module*, OriginWord);
+  OriginWord nTic;
+
   ErrorCode (*configure)(Module*, void*);
+  ErrorCode (*update)(Module*, OriginWord);
+  void (*reset)(Module*);
 };
 
 struct timerBlock
 {
-  xTimerHandle handle;
+  TimerHandle handle;
   OriginBool isActive;
   OriginWord refreshFreq;
 };
@@ -67,13 +67,15 @@ struct timerBlock
 struct ctlBlock
 {
   TimerBlock timer;
-  xSemaphoreHandle sem;
+  SysSemaphore sem;
   Module* starter;
 
   OriginBool stop;
+  OriginBool reset;
   ErrorCode lastError;
   OriginBool destReached;
-  ModuleValue rest;
+  ModuleValue coveredDistance;
+  OriginWord nTic;
 };
 
 
