@@ -70,7 +70,6 @@ extern "C"
  * Structures
  * -----------------------------------------------------------------------------
  */
-
 typedef struct
 {
   byte aBuffer[UART0_RX_BUFFER_SIZE]; // $$$ Unify buffer sizes
