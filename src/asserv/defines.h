@@ -8,12 +8,14 @@ extern "C"
 #endif
 
 #define DEBUG 1
+
+#define debug(message) debug1(__FILE__, __LINE__, message )
+
 #if DEBUG == 1
- #define debug1(file, line, ...)  printf( file ":" #line ":" __VA_ARGS__ )
+ #define debug1(file, line, message)  printf("(" file ":%d)  %s\n", line, message);
 #else
- #define debug1(file, line, ...)
+ #define debug1(file, line, message)
 #endif
-#define debug(...) debug1(__FILE__, __LINE__, __VA_ARGS__ )
 
 
 #define true			1
