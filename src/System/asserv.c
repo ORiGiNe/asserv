@@ -118,12 +118,12 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
 	  + kd * derivError)/1000; // terme dérivé
 
 // debug
-printf("\tAsserv -> wanted   : %i\n", command);
-printf("\tAsserv -> measure  : %i\n", measure);
-printf("\t newError          : %i\n", newError);
-printf("\t integrale         : %i\n", asserv->integral);
-printf("\t derivee           : %i\n", derivError);
-printf("\tAsserv -> output            : %i\n", output);
+debug("\tAsserv -> wanted   : %l\n", (uint32_t)command);
+debug("\tAsserv -> measure  : %l\n", (uint32_t)measure);
+debug("\t newError          : %l\n", (uint32_t)newError);
+debug("\t integrale         : %l\n", (uint32_t)asserv->integral);
+debug("\t derivee           : %l\n", (uint32_t)derivError);
+debug("\tAsserv -> output   : %l\n", (uint32_t)output);
 
   /* On ecrete si trop grand avec la derivée maximale */
   if(output > derivThreshold)
@@ -143,7 +143,6 @@ printf("\tAsserv -> output            : %i\n", output);
 
 void resetAsserv(Module* parent)
 {
-  printf("chocolat\n");
   Asserv *asserv = (Asserv*)parent->fun;
   asserv->oldError = 0;
   asserv->integral = 0;
