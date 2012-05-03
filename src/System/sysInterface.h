@@ -67,6 +67,8 @@ typedef long portTickType;
 #include "semphr.h"
 #include "timers.h"
 
+#define printf(...)
+
 // Memory management
 #define malloc( size ) pvPortMalloc( (size) )
 
