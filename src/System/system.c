@@ -2,19 +2,19 @@
 #include "sysInterface.h"
 
 
-void vCallback(Timer);
+void vCallback(TimerHandle);
 
 ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter, 
                          OriginWord refreshFreq)
 {
-  unsigned char timerName[6] = "CTL_%";
+  signed char timerName[6] = "CTL_%";
   static unsigned char id = 'a';
 
   /* Création et init du timer */
   timerName[4] = id++;
   ctlBlock->timer.refreshFreq = refreshFreq;
   ctlBlock->timer.handle = timerCreate (
-    (char*)timerName,
+    (const signed char*)timerName,
     refreshFreq,
     (void *)ctlBlock, vCallback //ctlBlock->timer.moduleCallback
   );
@@ -75,7 +75,7 @@ void resetSystem(CtlBlock* ctlBlock)
 }
 
 
-void vCallback(Timer pxTimer)
+void vCallback(TimerHandle pxTimer)
 {
   CtlBlock *ctlBlock = (CtlBlock*)timerGetArg(pxTimer);
   ErrorCode error = NO_ERR;

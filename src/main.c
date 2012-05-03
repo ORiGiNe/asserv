@@ -121,6 +121,7 @@ void vTaskLED (void* pvParameters)
 
 void vTaskSI (void* pvParameters)
 {
+  (void) pvParameters;
   portTickType xLastWakeTime;
   CtlBlock ctlBlock;
   Module *entry, *ifaceME, *asservPos, *asservVit, *starter;
@@ -172,58 +173,58 @@ void vTaskSI (void* pvParameters)
   starter = initModule(&ctlBlock, 1, 0, starterType);
   if (starter == 0)
   {
-   return 0;
+   return;
   }
   // Création de l'Entry
   entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, entryType);
   if (entry == 0)
   {
-   return 0;
+   return;
   }
   // Création de l'interface systeme
   ifaceME = initModule(&ctlBlock, 1, 2, ifaceMEType);
   if (ifaceME == 0)
   {
-   return 0;
+   return;
   }
   // Création de l'asserv 1
   asservPos = initModule(&ctlBlock, 6, 1, asservType);
   if (asservPos == 0)
   {
-   return 0;
+   return;
   }
   asservVit = initModule(&ctlBlock, 6, 1, asservType);
   if (asservVit == 0)
   {
-   return 0;
+   return;
   }
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
   if (createSystem(&ctlBlock, starter , 2) == ERR_TIMER_NOT_DEF)
   {
-   return 0;
+   return;
   }
 
   if (configureModule(entry, (void*)&entryConfig) != NO_ERR)
   {
-   return 0;
+   return;
   }
   if (configureModule(ifaceME, (void*)&ime) != NO_ERR)
   {
-   return 0;
+   return;
   }
   if (configureModule(asservPos, (void*)&hPos) != NO_ERR)
   {
-   return 0;
+   return;
   }
   if (configureModule(asservVit, (void*)&hVit) != NO_ERR)
   {
-   return 0;
+   return;
   }
   if (configureModule(starter, NULL) != NO_ERR)
   {
-   return 0;
+   return;
   }
 
 
