@@ -62,7 +62,6 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
       // Si les valeurs n'ont pas évoluées
       if(vHist[i].val0 == vHist[i].val1 && vHist[i].val1 == vHist[i].val2)
       {
-      printf("zazazazazazazazazazazaza\n");
         // On indique que le mouvement est fini
 	semaphoreGive(parent->ctl->sem);
       }

@@ -119,15 +119,11 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
 
 // debug
 printf("\tAsserv -> wanted   : %i\n", command);
-printf("\tAsserv -> kp       : %i\n", kp);
-printf("\tAsserv -> ki       : %i\n", ki);
-printf("\tAsserv -> kd       : %i\n", kd);
-printf("\tAsserv -> command  : %i\n", command);
 printf("\tAsserv -> measure  : %i\n", measure);
 printf("\t newError          : %i\n", newError);
 printf("\t integrale         : %i\n", asserv->integral);
 printf("\t derivee           : %i\n", derivError);
-printf("\t command           : %i\n", output);
+printf("\tAsserv -> output            : %i\n", output);
 
   /* On ecrete si trop grand avec la derivée maximale */
   if(output > derivThreshold)

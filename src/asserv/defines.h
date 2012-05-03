@@ -7,6 +7,15 @@ extern "C"
 {
 #endif
 
+#define DEBUG 1
+#if DEBUG == 1
+ #define debug1(file, line, ...)  printf( file ":" #line ":" __VA_ARGS__ )
+#else
+ #define debug1(file, line, ...)
+#endif
+#define debug(...) debug1(__FILE__, __LINE__, __VA_ARGS__ )
+
+
 #define true			1
 #define false			0
 
@@ -14,7 +23,7 @@ extern "C"
 #define ERR_NOMEM		0x0100
 
 #define ERR_SEM_NOT_DEF		0x1000 // 0x10XX -> sémaphores
-#define ERR_SEM_NOT_TAKEN		0x1001
+#define ERR_SEM_NOT_TAKEN	0x1001
 #define ERR_SEM_EPIC_FAIL	0x10FF
 
 #define ERR_TIMER_LAUNCHED      0x1100

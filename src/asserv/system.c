@@ -90,12 +90,16 @@ void vCallback(Timer pxTimer)
   ctlBlock->nTic++;
   if(ctlBlock->reset == true)
   {
+    debug("--------------|  Début de reset  |--------------\n");
     resetModule(ctlBlock->starter);
+    debug("--------------|   Fin de reset   |--------------\n");
   }
   else
   {
     /* Lancement de l'update du systeme */
+    debug("--------------| Début de update  |--------------\n");
     error = updateModule(ctlBlock->starter, 0);
+    debug("--------------|  Fin de update   |--------------\n");
 
     if (error == ERR_DEST_REACHED)
     {

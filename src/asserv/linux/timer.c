@@ -19,23 +19,19 @@ void* timerFun(void* args)
   // gestion de timer.frequency
   baseWaitTime.tv_sec = (timer->frequency == 1) ? 1 : 0;
   baseWaitTime.tv_nsec = (timer->frequency == 1) ? 0 : 1000000000/(long)timer->frequency;
-printf("asserv lancé \\o/\n");
 launch_timer:
   timer->end = 0;
   sem_wait(&timer->sem);
-printf("asserv lancé \\o/\n");
 
   for(;;)
   {
     // Si on termine le timer
     if(timer->end == 1)
     {
-      printf("End of timer\n");
       goto launch_timer;
     }
     clock_gettime(CLOCK_MONOTONIC_RAW, &clockTimeOld); // On prend le nouveau temps
     // On lance la fonction
-printf("update\n");
     timer->vCallback(timer);
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &clockTime); // On prend le nouveau temps

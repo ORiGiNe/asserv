@@ -75,7 +75,6 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   // Faire la mesure ssi la mesure n'est plus valable
   if (((IfaceME*)parent->fun)->measureUpToDate == 0)
   {
-printf("--- Début de timer ---\n");
     // On effectue la mesure
     ((IfaceME*)parent->fun)->measure = ime.getEncoderValue();
     ((IfaceME*)parent->fun)->measureUpToDate = 1;
@@ -88,7 +87,6 @@ printf("--- Début de timer ---\n");
       return error;
     }
     command = getInput(parent, 0);
-printf("IfaceME (in) : %i\n", command);
     // On envoie la commande au système
     if(parent->ctl->stop == true)
     {
@@ -97,7 +95,6 @@ printf("IfaceME (in) : %i\n", command);
 
     ((IfaceME*)parent->fun)->measureUpToDate = 0;
     ime.sendNewCommand(command);
-printf("--- Fin de timer ---\n");
   }
   else
   {
