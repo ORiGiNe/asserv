@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef ASSERV_IFACEME_H
-#define ASSERV_IFACEME_H
+#ifndef SYSTEM_IFACEME_H
+#define SYSTEM_IFACEME_H
 
 #include "types.h"
 #include "defines.h"
