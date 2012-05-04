@@ -12,7 +12,6 @@ extern "C"
 #define fl_debug(message) fl_debug1(__FILE__, __LINE__, (message) )
 #define debug(...) debug1(__VA_ARGS__)
 #ifdef DEBUG
- #warning "debug actif"
  #define fl_debug1(file, line, message)  printf( file ":%d:%s\n", (line), (message))
  #define debug1(...)  printf(__VA_ARGS__)
 #else
