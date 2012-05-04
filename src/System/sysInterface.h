@@ -67,7 +67,7 @@ typedef long portTickType;
 #include "timers.h"
 char debugStr[100];
 
-#define printf(...) usprintf(debugStr, __VA_ARGS__);EFBuartGaopSendString(debugStr)
+#define printf(...) usprintf((unsigned char *)debugStr, __VA_ARGS__);EFBuartGaopSendString(debugStr)
 
 // Memory management
 #define malloc( size ) pvPortMalloc( (size) )

@@ -61,6 +61,7 @@ tEFBerrCode uartHBridgeInit (uint32_t baudRate)
 	{ 
 		return 1;
 	}
+	return 0;
 } // uartHBridgeInit
 
 /* -----------------------------------------------------------------------------

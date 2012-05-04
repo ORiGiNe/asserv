@@ -1,6 +1,6 @@
 
 ifeq ($(strip $(DIR_BASE_WINAVR)),)
-	DIR_BASE_WINAVR = C:/Util/WinAVR
+	DIR_BASE_WINAVR = G:/
 endif
 
 ifeq ($(strip $(SystemDrive)),)

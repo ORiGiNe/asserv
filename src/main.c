@@ -169,8 +169,6 @@ void vTaskSI (void* pvParameters)
 
   xLastWakeTime = taskGetTickCount ();
 
-
-
   // Création du starter
   starter = initModule(&ctlBlock, 1, 0, starterType);
   if (starter == 0)
@@ -203,7 +201,7 @@ void vTaskSI (void* pvParameters)
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
-  if (createSystem(&ctlBlock, starter , 2) == ERR_TIMER_NOT_DEF)
+  if (createSystem(&ctlBlock, starter , 3000) == ERR_TIMER_NOT_DEF)
   {
    return;
   }
@@ -232,7 +230,6 @@ void vTaskSI (void* pvParameters)
 
 
 
-
   linkModuleWithInput(entry, 0, asservPos, AsservKp);
   linkModuleWithInput(entry, 1, asservPos, AsservKi);
   linkModuleWithInput(entry, 2, asservPos, AsservKd);
@@ -251,18 +248,17 @@ void vTaskSI (void* pvParameters)
 
   linkModuleWithInput(ifaceME, 0, starter, 0);
 
-  if (startSystem(&ctlBlock) != NO_ERR)
-  {
-  }
   for (;;)
   {
-    waitEndOfSystem(&ctlBlock, 0);
-    resetSystem(&ctlBlock);
+    if (startSystem(&ctlBlock) == NO_ERR)
+	{
+		command += 100;
+		if(waitEndOfSystem(&ctlBlock, 20000) == NO_ERR)
+			resetSystem(&ctlBlock); 
+	}
     // Cette fonction permet à la tache d'être périodique.
     // La tache est bloquée pendant (500ms - son temps d'execution).
-    vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
-    startSystem(&ctlBlock);
-    command += 100;
+    // vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
   }
 
 }
@@ -280,7 +276,7 @@ int main (void)
 	
 	EFBoutPort (PORT_LED13, MASK_LED13);
   xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
-  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 2, NULL, 1, &xTaskSI);
+  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
 
   vTaskStartScheduler ();
 

@@ -98,8 +98,9 @@ void vCallback(TimerHandle pxTimer)
   {
     /* Lancement de l'update du systeme */
     //debug("--------------| Début de update  |--------------\n");
-    error = updateModule(ctlBlock->starter, 0);
-    //debug("--------------|  Fin de update   |--------------\n");
+    debug("\04");
+	error = updateModule(ctlBlock->starter, 0);
+	//debug("--------------|  Fin de update   |--------------\n");
 
     if (error == ERR_DEST_REACHED)
     {

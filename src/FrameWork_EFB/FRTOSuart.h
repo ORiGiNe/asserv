@@ -12,7 +12,8 @@ extern "C"
 #endif
 
 #include "main.h"
-
+#include "System/sysInterface.h"
+#include "System/defines.h"
 
 #define UART0_BAUD_RATE 38400     // baud rate
 

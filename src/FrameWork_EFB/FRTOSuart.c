@@ -155,31 +155,24 @@ void vTaskGaopCommunicationUART (void* pvParameters)
           case UART_GAOP_ADRESSE:
             if (octetRecu == ADDR_MINE)
             {
-              stderrPrintf ("A");
               /*on creer une nouvelle trame. La trame précédente n'est pas effacé, t pointe vers la position de la nouvelle trame.
               L'ancienne trame sera free dans la tache de gestion des commandes quand elle aura été analysé */
               t = nouvelleTrame();
-              stderrPrintf ("B");
               t->adresse = octetRecu;
-              stderrPrintf ("C");
               statusUartgaop = UART_GAOP_COMMANDE;
               xTimerReset (gaopTimeOut, 50 MS); // Si au bout de 10ms, la tache des timers n'est pas disponible, c'est qu'il y a un gros soucis.
             }
             break;
 
           case UART_GAOP_COMMANDE:
-            stderrPrintf ("D");
             t->commande = octetRecu;
-            stderrPrintf ("D");
             if (statusUartgaop != UART_GAOP_TIMEOUT) //Au cas où le timeout s'est déclenché à l'instant.
             {
-              stderrPrintf ("E");
               statusUartgaop = UART_GAOP_DONNEES;
             }
             break;
 
           case UART_GAOP_DONNEES:
-            stderrPrintf ("F");
             t->donnee[(int)compteurDonnees] = octetRecu;
             compteurDonnees++;
             if (compteurDonnees >= TAILLE_DONNEES_TRAME)
@@ -203,7 +196,6 @@ void vTaskGaopCommunicationUART (void* pvParameters)
           case UART_GAOP_QUEUE:
             if (octetRecu == UART_TRAME_QUEUE)
             {
-              stderrPrintf ("T");
               xTimerStop (gaopTimeOut, 10 MS);
               if (t->checksum == calculChecksum(t))
               {
@@ -283,8 +275,9 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
         //sendCommandToHBridge (CommandHBridge command, byte data, portTickType xBlockTime)
         //sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 30, 10);
         //EFBuart2PushByteToBuffer(80);
-        EFBuart2PushByteToBuffer(80);
+        //EFBuart2PushByteToBuffer(80);
         EFBuartGaopSendString ("PTH\r\n");
+		debug("test: %l\r\n", (uint32_t)64);
       }
       else if (t->commande == UART_CDE_PTH2)
       {
