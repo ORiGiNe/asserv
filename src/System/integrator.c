@@ -1,4 +1,4 @@
-#include "ifaceme.h"
+#include "integrator.h"
 #include "sysInterface.h"
 
 /**
@@ -64,7 +64,7 @@ ErrorCode initIntegrator(Module *parent)
 ErrorCode configureIntegrator(Module *parent, void* args)
 {
   (void) parent;
-  (void) args
+  (void) args;
   return NO_ERR;
 }
 
@@ -82,7 +82,7 @@ ErrorCode updateIntegrator(Module* parent, OriginWord port){
   // On met à jour l'integrale
   ((Integrator*)parent->fun)->integrale += value;
   // On met à jour la sortie ayant pour port <port>
-  setOutput(parent, port, ((Integrator*)parent->fun)->accu);
+  setOutput(parent, port, ((Integrator*)parent->fun)->integrale);
 
   return NO_ERR;
 }
