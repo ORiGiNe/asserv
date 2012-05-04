@@ -4,8 +4,8 @@
 
 #include "types.h"
 
-//#define FREERTOS
-#define LINUX
+#define FREERTOS
+//#define LINUX
 
 /* Linux Configuration */
 #ifdef LINUX
