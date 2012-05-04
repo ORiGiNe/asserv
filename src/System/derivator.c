@@ -56,7 +56,7 @@ ErrorCode initDerivator(Module *parent)
     return ERR_NOMEM;
   }
 
-  integrator->parent = parent;
+  derivator->parent = parent;
   parent->fun = (void*)derivator;
   return NO_ERR;
 }

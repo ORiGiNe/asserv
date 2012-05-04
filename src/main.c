@@ -12,8 +12,10 @@
 #include "System/asserv.h"
 #include "System/ifaceme.h"
 #include "System/ime.h"
-#include "starter.h"
-#include "operator.h"
+#include "System/starter.h"
+#include "System/operator.h"
+#include "System/derivator.h"
+#include "System/integator.h"
 
 
 #ifdef GCC_MEGA_AVR
