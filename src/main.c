@@ -15,7 +15,7 @@
 #include "System/starter.h"
 #include "System/operator.h"
 #include "System/derivator.h"
-#include "System/integator.h"
+#include "System/integrator.h"
 
 
 #ifdef GCC_MEGA_AVR
