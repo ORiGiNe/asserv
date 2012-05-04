@@ -64,7 +64,7 @@ ErrorCode initDerivator(Module *parent)
 ErrorCode configureDerivator(Module *parent, void* args)
 {
   (void) parent;
-  (void) args
+  (void) args;
   return NO_ERR;
 }
 
