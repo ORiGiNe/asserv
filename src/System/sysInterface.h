@@ -66,7 +66,7 @@ typedef long portTickType;
 #include "semphr.h"
 #include "timers.h"
 char debugStr[100];
-inline printf(
+
 #define printf(...) usprintf(debugStr, __VA_ARGS__);EFBuartGaopSendString(debugStr)
 
 // Memory management
