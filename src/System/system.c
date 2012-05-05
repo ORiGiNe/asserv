@@ -130,7 +130,7 @@ ErrorCode waitEndOfSystem(CtlBlock *ctlBlock, portTickType xBlockTime)
   portTickType xLastWakeTime = taskGetTickCount();
   portTickType xDiffTime;
   /* On attend la fin de la sémaphore */
-  if( semaphoreTake( ctlBlock->sem, xBlockTime ) )
+  if( semaphoreTake( ctlBlock->sem, xBlockTime ) == pdFALSE )
   {
     debug("---------| ERR_SEM_NOT_TAKEN |---------\n");
     return ERR_SEM_NOT_TAKEN;
@@ -149,6 +149,7 @@ ErrorCode waitEndOfSystem(CtlBlock *ctlBlock, portTickType xBlockTime)
     debug("---------| ERR_URGENT_STOP |---------\n");
     return ERR_URGENT_STOP;
   }
+  debug("---------| NO_ERR |---------\n");
   return NO_ERR;
 }
 
