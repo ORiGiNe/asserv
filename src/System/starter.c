@@ -62,6 +62,7 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
       // Si les valeurs n'ont pas évoluées
       if(vHist[i].val0 == vHist[i].val1 && vHist[i].val1 == vHist[i].val2)
       {
+        debug("-----------| MOUVEMENT FINI :D |----------\n");
         // On indique que le mouvement est fini
 	parent->ctl->destReached = true;
 	semaphoreGive(parent->ctl->semReached);
