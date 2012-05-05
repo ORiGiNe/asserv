@@ -248,6 +248,7 @@ void vTaskSI (void* pvParameters)
 
   linkModuleWithInput(ifaceME, 0, starter, 0);
 
+  resetSystem(&ctlBlock);
   for (;;)
   {
     if (startSystem(&ctlBlock) == NO_ERR)
