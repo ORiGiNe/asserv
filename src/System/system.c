@@ -101,7 +101,7 @@ void vCallback(TimerHandle pxTimer)
   {
     /* Lancement de l'update du systeme */
     debug("--------------| Début de update  |--------------\n");
-    //debug("\04");
+    debug("\04");
     error = updateModule(ctlBlock->starter, 0);
     debug("--------------|  Fin de update   |--------------\n");
   }
