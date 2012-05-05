@@ -113,9 +113,11 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   asserv->oldError = newError;
 
   /* On passe aux choses serieuses : calcul de la commande à envoyer au moteur */
-  output = (kp * newError) / 1000 // terme proportionnel
-  	  + (ki * asserv->integral) / 1000 // terme intégral
-	  + (kd * derivError) / 1000; // terme dérivé
+  output = (ModuleValue)((
+            (int32_t)kp * (int32_t)newError // terme proportionnel
+          + (int32_t)ki * (int32_t)asserv->integral // terme intégral
+          + (int32_t)kd * (int32_t)derivError
+	   ) / 1000); // terme dérivé
 
 // debug
 debug("\tAsserv -> wanted   : %l\n", (uint32_t)command);
