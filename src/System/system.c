@@ -30,11 +30,11 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
   ctlBlock->stop = false;
   ctlBlock->reset = false;
   ctlBlock->nTic = 0;
-  ctlBlock->nReset = 0;
   ctlBlock->lastError = NO_ERR;
 
   /* Création du sémaphore */
-  semaphoreCreate(ctlBlock->sem);
+  semaphoreCreate(ctlBlock->semReached);
+  semaphoreCreate(ctlBlock->semReset);
 
   /* On regarde si le sémaphore a été initialisé */
   //if(ctlBlock->sem == 0)
@@ -72,10 +72,8 @@ ErrorCode startSystem(CtlBlock* ctlBlock)
 
 void resetSystem(CtlBlock* ctlBlock)
 {
-  OriginWord nReset = ctlBlock->nReset;
   ctlBlock->reset = true;
-  // FIXME truc dégueu à refaire
-  while(ctlBlock->nReset == nReset);
+  while(semaphoreTake(ctlBlock->semReset, 100) == pdFALSE);
 }
 
 
@@ -96,7 +94,7 @@ void vCallback(TimerHandle pxTimer)
   {
     debug("--------------|  Début de reset  |--------------\n");
     resetModule(ctlBlock->starter);
-    ctlBlock->nReset++;
+    semaphoreGive(ctlBlock->semReset);
     debug("--------------|   Fin de reset   |--------------\n");
   }
   else
@@ -114,7 +112,7 @@ ErrorCode waitEndOfSystem(CtlBlock *ctlBlock, portTickType xBlockTime)
   portTickType xLastWakeTime = taskGetTickCount();
   portTickType xDiffTime;
   /* On attend la fin de la sémaphore */
-  if( semaphoreTake( ctlBlock->sem, xBlockTime ) == pdFALSE )
+  if( semaphoreTake( ctlBlock->semReached, xBlockTime ) == pdFALSE )
   {
     debug("---------| ERR_SEM_NOT_TAKEN |---------\n");
     return ERR_SEM_NOT_TAKEN;
