@@ -111,17 +111,19 @@ void vCallback(TimerHandle pxTimer)
       ctlBlock->destReached = false;
       ctlBlock->lastError = error;
     }
-*/
+
     if(ctlBlock->destReached == true || error == ERR_URGENT_STOP)
-    { /* FIXME ce n'est pas utile d'arreter le timer pour ça
-      if( timerStop( ctlBlock->timer.handle, (portTickType)0 MS ) == pdFAIL )
-      {
-        ctlBlock->lastError = ERR_TIMER_NOT_STOPPED;
-      }
-      */
-      /* On tente de rendre la sémaphore */
+    { 
+      // FIXME ce n'est pas utile d'arreter le timer pour ça
+      //if( timerStop( ctlBlock->timer.handle, (portTickType)0 MS ) == pdFAIL )
+      //{
+      //  ctlBlock->lastError = ERR_TIMER_NOT_STOPPED;
+      //}
+      
+      // On tente de rendre la sémaphore
       semaphoreGive( ctlBlock->sem );
     }
+*/
   }
 }
 
