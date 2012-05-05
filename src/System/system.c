@@ -94,6 +94,7 @@ void vCallback(TimerHandle pxTimer)
   {
     debug("--------------|  Début de reset  |--------------\n");
     resetModule(ctlBlock->starter);
+    debug("--------| resetModule |------------\n");
     semaphoreGive(ctlBlock->semReset);
     debug("--------------|   Fin de reset   |--------------\n");
   }
