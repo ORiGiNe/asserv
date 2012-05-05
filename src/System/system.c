@@ -101,7 +101,7 @@ void vCallback(TimerHandle pxTimer)
     debug("\04");
 	error = updateModule(ctlBlock->starter, 0);
 	debug("--------------|  Fin de update   |--------------\n");
-
+/*
     if (error == ERR_DEST_REACHED)
     {
       ctlBlock->destReached = true;
@@ -111,7 +111,7 @@ void vCallback(TimerHandle pxTimer)
       ctlBlock->destReached = false;
       ctlBlock->lastError = error;
     }
-
+*/
     if(ctlBlock->destReached == true || error == ERR_URGENT_STOP)
     { /* FIXME ce n'est pas utile d'arreter le timer pour ça
       if( timerStop( ctlBlock->timer.handle, (portTickType)0 MS ) == pdFAIL )
