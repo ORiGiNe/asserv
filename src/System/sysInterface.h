@@ -4,8 +4,8 @@
 
 #include "types.h"
 
-#define FREERTOS
-//#define LINUX
+//#define FREERTOS
+#define LINUX
 
 /* Linux Configuration */
 #ifdef LINUX
@@ -29,9 +29,12 @@
 
 // Semaphore management
 // TODO : trouver une solution non bloquante pour semaphoreTake (sem_trywait ne convient pas)
+int semaphoreTake_linux(sem_t *sem, int timeOut);
 typedef sem_t SysSemaphore;
 #define semaphoreCreate( sem ) sem_init( &(sem), 0, 0 )
-#define semaphoreTake( sem, xBlockTime ) sem_wait( &(sem) )
+
+#define semaphoreTake( sem, xBlockTime ) semaphoreTake_linux( &(sem), (xBlockTime) * 1000000 )
+
 #define semaphoreGive( sem ) sem_post( &(sem) )
 
 // Timer management

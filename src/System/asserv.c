@@ -120,14 +120,14 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
 	   ) / 1000); // terme dérivé
 
 // debug
-debug("\tAsserv -> wanted   : %l\n", (uint32_t)command);
-debug("\tAsserv -> measure  : %l\n", (uint32_t)measure);
-debug("\t newError          : %l\n", (uint32_t)newError);
-debug("\t integrale         : %l\n", (uint32_t)asserv->integral);
-debug("\t derivee           : %l\n", (uint32_t)derivError);
-debug("\tAsserv -> output   : %l\n", (uint32_t)output);
-debug("\tAsserv -> vi1      : %l\n", (uint32_t)((kp * newError) / 1000 + (ki * asserv->integral) / 1000 + (kd * derivError) / 1000));
-debug("\tAsserv -> vi2      : %l\n", (uint32_t)((kp * newError + ki * asserv->integral + kd * derivError) / 1000));
+debug("\tAsserv -> wanted   : %i\n", (uint32_t)command);
+debug("\tAsserv -> measure  : %i\n", (uint32_t)measure);
+debug("\t newError          : %i\n", (uint32_t)newError);
+//debug("\t integrale         : %l\n", (uint32_t)asserv->integral);
+//debug("\t derivee           : %l\n", (uint32_t)derivError);
+//debug("\tAsserv -> output   : %l\n", (uint32_t)output);
+//debug("\tAsserv -> vi1      : %l\n", (uint32_t)((kp * newError) / 1000 + (ki * asserv->integral) / 1000 + (kd * derivError) / 1000));
+//debug("\tAsserv -> vi2      : %l\n", (uint32_t)((kp * newError + ki * asserv->integral + kd * derivError) / 1000));
 debug("\t ---- Autre asserv ---- \n");
   /* On ecrete si trop grand avec la derivée maximale */
   if(output > derivThreshold)

@@ -30,6 +30,7 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
   ctlBlock->stop = false;
   ctlBlock->reset = false;
   ctlBlock->nTic = 0;
+  ctlBlock->nReset = 0;
   ctlBlock->lastError = NO_ERR;
 
   /* Création du sémaphore */
@@ -71,7 +72,10 @@ ErrorCode startSystem(CtlBlock* ctlBlock)
 
 void resetSystem(CtlBlock* ctlBlock)
 {
+  OriginWord nReset = ctlBlock->nReset;
   ctlBlock->reset = true;
+  // FIXME truc dégueu à refaire
+  while(ctlBlock->nReset == nReset);
 }
 
 
@@ -92,6 +96,7 @@ void vCallback(TimerHandle pxTimer)
   {
     debug("--------------|  Début de reset  |--------------\n");
     resetModule(ctlBlock->starter);
+    ctlBlock->nReset++;
     debug("--------------|   Fin de reset   |--------------\n");
   }
   else
@@ -99,31 +104,8 @@ void vCallback(TimerHandle pxTimer)
     /* Lancement de l'update du systeme */
     debug("--------------| Début de update  |--------------\n");
     debug("\04");
-	error = updateModule(ctlBlock->starter, 0);
-	debug("--------------|  Fin de update   |--------------\n");
-/*
-    if (error == ERR_DEST_REACHED)
-    {
-      ctlBlock->destReached = true;
-    }
-    else
-    {
-      ctlBlock->destReached = false;
-      ctlBlock->lastError = error;
-    }
-
-    if(ctlBlock->destReached == true || error == ERR_URGENT_STOP)
-    { 
-      // FIXME ce n'est pas utile d'arreter le timer pour ça
-      //if( timerStop( ctlBlock->timer.handle, (portTickType)0 MS ) == pdFAIL )
-      //{
-      //  ctlBlock->lastError = ERR_TIMER_NOT_STOPPED;
-      //}
-      
-      // On tente de rendre la sémaphore
-      semaphoreGive( ctlBlock->sem );
-    }
-*/
+    error = updateModule(ctlBlock->starter, 0);
+    debug("--------------|  Fin de update   |--------------\n");
   }
 }
 

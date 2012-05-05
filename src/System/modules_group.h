@@ -66,16 +66,21 @@ struct timerBlock
 
 struct ctlBlock
 {
+  // Variables définissant le systeme
   TimerBlock timer;
-  SysSemaphore sem;
   Module* starter;
+  SysSemaphore sem;
 
+  // Variables servant à controler le systeme
   OriginBool stop;
   OriginBool reset;
+
+  // Variables servant à avoir des infos sur le systeme
+  OriginWord nReset;
+  OriginWord nTic;
   ErrorCode lastError;
   OriginBool destReached;
   ModuleValue coveredDistance;
-  OriginWord nTic;
 };
 
 

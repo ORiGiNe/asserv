@@ -18,7 +18,7 @@ void* timerFun(void* args)
 
   // gestion de timer.frequency
   baseWaitTime.tv_sec = (timer->frequency == 1) ? 1 : 0;
-  baseWaitTime.tv_nsec = (timer->frequency == 1) ? 0 : 1000000000/(long)timer->frequency;
+  baseWaitTime.tv_nsec = (timer->frequency == 1) ? 0 : (long)timer->frequency * 1000000;
 launch_timer:
   timer->end = 0;
   sem_wait(&timer->sem);
