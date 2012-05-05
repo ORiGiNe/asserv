@@ -201,7 +201,7 @@ void vTaskSI (void* pvParameters)
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
-  if (createSystem(&ctlBlock, starter , 3000) == ERR_TIMER_NOT_DEF)
+  if (createSystem(&ctlBlock, starter , 300) == ERR_TIMER_NOT_DEF)
   {
    return;
   }
@@ -252,7 +252,7 @@ void vTaskSI (void* pvParameters)
   {
     if (startSystem(&ctlBlock) == NO_ERR)
     {
-      if(waitEndOfSystem(&ctlBlock, 500) == NO_ERR)
+      if(waitEndOfSystem(&ctlBlock, 300) == NO_ERR)
       {
         command += 100;
         resetSystem(&ctlBlock);
