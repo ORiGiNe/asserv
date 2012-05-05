@@ -252,7 +252,7 @@ void vTaskSI (void* pvParameters)
   {
     if (startSystem(&ctlBlock) == NO_ERR)
     {
-      if(waitEndOfSystem(&ctlBlock, 200) == NO_ERR)
+      if(waitEndOfSystem(&ctlBlock, 500) == NO_ERR)
       {
         command += 100;
         resetSystem(&ctlBlock);
