@@ -33,8 +33,8 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
   ctlBlock->lastError = NO_ERR;
 
   /* Création du sémaphore */
-  semaphoreCreate(ctlBlock->semReached);
   semaphoreCreate(ctlBlock->semReset);
+  semaphoreCreate(ctlBlock->semReached);
 
   /* On regarde si le sémaphore a été initialisé */
   //if(ctlBlock->sem == 0)
@@ -94,7 +94,6 @@ void vCallback(TimerHandle pxTimer)
   {
     debug("--------------|  Début de reset  |--------------\n");
     resetModule(ctlBlock->starter);
-    debug("--------| resetModule |------------\n");
     semaphoreGive(ctlBlock->semReset);
     debug("--------------|   Fin de reset   |--------------\n");
   }

@@ -254,8 +254,8 @@ void vTaskSI (void* pvParameters)
     {
       if(waitEndOfSystem(&ctlBlock, 300) == NO_ERR)
       {
-        command += 100;
         resetSystem(&ctlBlock);
+        command += 100;
       }
     }
     // Cette fonction permet à la tache d'être périodique.
