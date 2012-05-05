@@ -251,11 +251,13 @@ void vTaskSI (void* pvParameters)
   for (;;)
   {
     if (startSystem(&ctlBlock) == NO_ERR)
-	{
-		command += 100;
-		if(waitEndOfSystem(&ctlBlock, 20000) == NO_ERR)
-			resetSystem(&ctlBlock); 
-	}
+    {
+      if(waitEndOfSystem(&ctlBlock, 200) == NO_ERR)
+      {
+        command += 100;
+        resetSystem(&ctlBlock);
+      }
+    }
     // Cette fonction permet à la tache d'être périodique.
     // La tache est bloquée pendant (500ms - son temps d'execution).
     // vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
