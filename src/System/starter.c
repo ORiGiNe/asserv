@@ -63,6 +63,7 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
       if(vHist[i].val0 == vHist[i].val1 && vHist[i].val1 == vHist[i].val2)
       {
         // On indique que le mouvement est fini
+	parent->ctl->destReached = true;
 	semaphoreGive(parent->ctl->sem);
       }
     }
