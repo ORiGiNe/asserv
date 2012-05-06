@@ -217,10 +217,10 @@ SIGNAL (UART1_RECEIVE_INTERRUPT)
       {
         pulseFlowControl (PORT_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2);
       }
-    }
-    else if (gDe0NanoCommStep == UART_WAITFORSECONDBYTE)
-    {
-      response += ((word) lData) * 0xff;
+  //  }
+  //  else if (gDe0NanoCommStep == UART_WAITFORSECONDBYTE)
+  //  {
+  //    response += ((word) lData) * 0xff;
       gDe0NanoCommStep = UART_SUCCESS;
       xSemaphoreGiveFromISR (de0NanoCommSynchro, &xHigherPriorityTaskWoken);
       // On desactive l'interruption sur reception
