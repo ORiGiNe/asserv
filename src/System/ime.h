@@ -12,7 +12,7 @@ typedef struct
   OriginByte id;
   OriginByte mask;
   OriginWord blockTime; 
-  OriginWord encoderValue;
+  ModuleValue encoderValue;
   void* data;
 } MotorData;
 

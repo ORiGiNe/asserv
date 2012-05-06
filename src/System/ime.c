@@ -35,7 +35,7 @@ IME motor1 = {
 
 ModuleValue getEncoderValue(MotorData *motor)
 {
-  OriginWord result;
+  OriginSWord result;
   getWordFromDE0nano(motor->id+1, &result, motor->blockTime);
   motor->encoderValue += result;
   return motor->encoderValue;
