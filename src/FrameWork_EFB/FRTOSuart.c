@@ -235,7 +235,7 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
 {
   trame t;
   static tEFBerrCode errCode;
-
+	int curseur = 0;
   (void) pvParameters;
 
   for (;;)
@@ -274,15 +274,33 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
       {
         //sendCommandToHBridge (CommandHBridge command, byte data, portTickType xBlockTime)
         //sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 30, 10);
-        //EFBuart2PushByteToBuffer(80);
-        //EFBuart2PushByteToBuffer(80);
-        EFBuartGaopSendString ("PTH\r\n");
-		debug("test: %l\r\n", (uint32_t)64);
+
+        //EFBuart2PushByteToBuffer(128);
+		//EFBuart2PushByteToBuffer(1);
+		/*int i = 0;
+		unsigned char sortie[20];
+		for(i = 0; i < 256; i++)
+		{
+			EFBuart2PushByteToBuffer(i);
+			//debug("Test : %i", (uint32_t)i);
+			usprintf (sortie,  "Test : %l\r\n", (uint32_t)i);
+			EFBuartGaopSendString ((char*)sortie);
+			vTaskDelay(1000/portTICK_RATE_MS);
+		}*/
+		EFBuart2PushByteToBuffer(125);
+		EFBuartGaopSendString ("253\r\n");
+		vTaskDelay(1000/portTICK_RATE_MS);
+		EFBuart2PushByteToBuffer(126);
+		EFBuartGaopSendString ("254\r\n");
+		vTaskDelay(1000/portTICK_RATE_MS);
+		EFBuart2PushByteToBuffer(127);
+		EFBuartGaopSendString ("255\r\n");
       }
       else if (t->commande == UART_CDE_PTH2)
       {
         // sendCommandToHBridge (DRIVE_BACKWARD_MOTOR_1, 30, 10);
-        EFBuart2PushByteToBuffer(64);
+        EFBuart2PushByteToBuffer(0b01000000);
+		EFBuart2PushByteToBuffer(0b11000000);
         EFBuartGaopSendString ("PTH2\r\n");
       }
       else if (t->commande == UART_CDE_PTH3)
