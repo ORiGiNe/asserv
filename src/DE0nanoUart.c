@@ -131,7 +131,7 @@ tEFBerrCode getWordFromDE0nano(uint8_t flowControlNum, word * wordOut, portTickT
     pulseFlowControl (PORT_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2);
   }
 
-  //  Améliorer la gestion du timeout
+  // Améliorer la gestion du timeout
   // On attend la réponse de la de0nano.
   // C'est l'interuption qui va faire tout le travail.
   EFBcall (EFBwrappedSemaphoreTake (de0NanoCommSynchro, xBlockTime), timeOut);
@@ -207,8 +207,8 @@ SIGNAL (UART1_RECEIVE_INTERRUPT)
       // On récupère l'octet
       response = (word) lData;
       // on prépare la suite
-      /* gDe0NanoCommStep = UART_WAITFORSECONDBYTE;
-         On pulse la pin flow control.
+      /*  gDe0NanoCommStep = UART_WAITFORSECONDBYTE;
+      //  On pulse la pin flow control.
       if (gflowControlNum == 1)
       {
         pulseFlowControl (PORT_ARDUINOFLOWCONTROL1, BIT_ARDUINOFLOWCONTROL1);

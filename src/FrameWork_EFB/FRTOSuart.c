@@ -250,22 +250,19 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
       }
       else if (t->commande == UART_CDE_DEO)
       {
-        EFBuartGaopSendString ("de0-nano : ");
+        EFBuartGaopSendString ("de0-nano : \n");
         word wordOut = 0x1539;
         unsigned char sortie[20];
         tEFBerrCode retCode = getWordFromDE0nano(1, &wordOut, 10);
-        usprintf (sortie,  "%l\r\n", (uint32_t)retCode);
+        usprintf (sortie,  "Code : 0x%l\r\n", (uint32_t)retCode);
         EFBuartGaopSendString ((char*)sortie);
         if (retCode == EFB_OK)
         {
-          byte a = wordOut % 0xff;
-          byte b = (byte) ((wordOut - a) / 0xff);
-          usprintf (sortie,  "%h %h\r\n", b, a);
-          EFBuartGaopSendString ((char*)sortie);
+			usprintf (sortie,  "WordOut : 0x%l\r\n", (uint32_t)wordOut);
+			EFBuartGaopSendString ((char*)sortie);
         }
         else
         {
-
           EFBuartGaopSendString ("FAIL\r\n");
         }
         freeTrame (t);
@@ -287,20 +284,14 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
 			EFBuartGaopSendString ((char*)sortie);
 			vTaskDelay(1000/portTICK_RATE_MS);
 		}*/
-		EFBuart2PushByteToBuffer(125);
-		EFBuartGaopSendString ("253\r\n");
-		vTaskDelay(1000/portTICK_RATE_MS);
-		EFBuart2PushByteToBuffer(126);
-		EFBuartGaopSendString ("254\r\n");
-		vTaskDelay(1000/portTICK_RATE_MS);
-		EFBuart2PushByteToBuffer(127);
-		EFBuartGaopSendString ("255\r\n");
+		EFBuart2PushByteToBuffer(192);
+		EFBuartGaopSendString ("test : \r\n");
       }
       else if (t->commande == UART_CDE_PTH2)
       {
         // sendCommandToHBridge (DRIVE_BACKWARD_MOTOR_1, 30, 10);
         EFBuart2PushByteToBuffer(0b01000000);
-		EFBuart2PushByteToBuffer(0b11000000);
+		EFBuart2PushByteToBuffer(0b10111111);
         EFBuartGaopSendString ("PTH2\r\n");
       }
       else if (t->commande == UART_CDE_PTH3)

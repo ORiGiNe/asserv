@@ -7,7 +7,7 @@ extern "C"
 {
 #endif
 
-//#define DEBUG
+#define DEBUG
 
 #define fl_debug(message) fl_debug1(__FILE__, __LINE__, (message) )
 #define debug(...) debug1(__VA_ARGS__)
