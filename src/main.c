@@ -155,11 +155,6 @@ void vTaskSI (void* pvParameters)
   entryConfig.value[7] = &accel; // accel
   entryConfig.value[8] = &command; // command
 
-  ime.getEncoderValue = test_getEncoderValue;
-  ime.sendNewCommand = test_sendNewCommand;
-  ime.resetEncoderValue = test_resetEncoderValue;
-  ime.resetEncoderValue();
-
   hPos.h1 = funIdent;//TODO
   hPos.h2 = funIdent;//TODO
   hPos.h3 = funIdent;//TODO
