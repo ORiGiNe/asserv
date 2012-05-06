@@ -38,7 +38,7 @@ ModuleValue getEncoderValue(MotorData *motor)
 {
   OriginSWord result;
   // FIXME Verifier que result doit bien etre signé avec Izzy
-  getWordFromDE0nano(motor->id+1, (OriginWord*)&result, motor->blockTime);
+  getWordFromDE0nano(motor->id+1, (unsigned short*)&result, motor->blockTime);
   motor->encoderValue += result;
   return motor->encoderValue;
 }
