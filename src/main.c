@@ -128,7 +128,7 @@ void vTaskSI (void* pvParameters)
   CtlBlock ctlBlock;
   Module *entry, *ifaceME, *asservPos, *asservVit, *starter;
   EntryConfig entryConfig;
-  IME ime;
+  IME ime0 = motor0;
   OpFunc hPos, hVit;
 
   ModuleValue posKp = 1200;
@@ -210,7 +210,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  if (configureModule(ifaceME, (void*)&ime) != NO_ERR)
+  if (configureModule(ifaceME, (void*)&ime0) != NO_ERR)
   {
    return;
   }

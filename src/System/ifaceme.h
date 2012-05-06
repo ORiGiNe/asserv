@@ -15,7 +15,7 @@
 #include "defines.h"
 
 #include "module.h"
-
+#include "ime.h"
 #ifdef __cplusplus
 extern "C"
 {
