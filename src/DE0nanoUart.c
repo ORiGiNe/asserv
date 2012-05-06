@@ -207,8 +207,8 @@ SIGNAL (UART1_RECEIVE_INTERRUPT)
       // On récupère l'octet
       response = (word) lData;
       // on prépare la suite
-      gDe0NanoCommStep = UART_WAITFORSECONDBYTE;
-      // On pulse la pin flow control.
+      /* gDe0NanoCommStep = UART_WAITFORSECONDBYTE;
+         On pulse la pin flow control.
       if (gflowControlNum == 1)
       {
         pulseFlowControl (PORT_ARDUINOFLOWCONTROL1, BIT_ARDUINOFLOWCONTROL1);
@@ -217,10 +217,10 @@ SIGNAL (UART1_RECEIVE_INTERRUPT)
       {
         pulseFlowControl (PORT_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2);
       }
-  //  }
-  //  else if (gDe0NanoCommStep == UART_WAITFORSECONDBYTE)
-  //  {
-  //    response += ((word) lData) * 0xff;
+      }
+      else if (gDe0NanoCommStep == UART_WAITFORSECONDBYTE)
+      {
+      response += ((word) lData) * 0xff;*/
       gDe0NanoCommStep = UART_SUCCESS;
       xSemaphoreGiveFromISR (de0NanoCommSynchro, &xHigherPriorityTaskWoken);
       // On desactive l'interruption sur reception
