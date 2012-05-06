@@ -60,7 +60,7 @@ ErrorCode configureIfaceME(Module *parent, void* args)
 
   parent->ctl->coveredDistance = 0;
 
-  ime->resetEncoderValue();
+  ime->resetEncoderValue(ime->motor);
   ifaceme->ime = ime;
   ifaceme->measureUpToDate = 0;
   ifaceme->measure = 0;
@@ -110,6 +110,6 @@ void resetIfaceME(Module* parent)
   IfaceME *ifaceME = (IfaceME*)parent->fun;
   ifaceME->measure = 0;
   ifaceME->measureUpToDate = false;
-  ifaceME->ime->resetEncoderValue(ime->motor);
+  ifaceME->ime->resetEncoderValue(ifaceME->ime->motor);
   debug("---------| reset de l'encodeur |----------\n");
 }
