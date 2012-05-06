@@ -1,39 +1,53 @@
 #include "ime.h"
-#include <stdio.h>
-#define ACCEL 1;
 
-ModuleValue emulValuePos = 0;
-ModuleValue emulValueCel = 0;
-ModuleValue emulValueAcc = 10;
-ModuleValue delta1 = 1;
-ModuleValue delta2 = 6;
-ModuleValue test_getEncoderValue(void)
+
+IME motor0 = {
+  .motor = {
+    .id = 0,
+    .mask = 0x00,
+    .blockTime = 10,
+    .encoderValue = 0,
+    .data = 0
+  },
+  .getEncoderValue = getEncoderValue,
+  .sendNewCommand = sendNewCommand,
+  .resetEncoderValue = resetEncoderValue
+};
+
+IME motor1 = {
+  .motor = {
+    .id = 1,
+    .mask = 0x80,
+    .blockTime = 10,
+    .encoderValue = 0,
+    .data = 0
+  },
+  .getEncoderValue = getEncoderValue,
+  .sendNewCommand = sendNewCommand,
+  .resetEncoderValue = resetEncoderValue
+};
+
+
+
+ModuleValue getEncoderValue(MotorData *motor)
 {
-//printf("getEncoderValue : %i\n", emulValuePos);
-  return emulValuePos;
+  OriginWord result;
+  getWordFromDE0nano(motor->motor.id+1, &result, motor->motor.blockTime);
+  motor->motor.encoderValue += result;
+  return motor->motor.encoderValue;
 }
 
-void test_sendNewCommand(ModuleValue val) // On suppose cette vois que val = vitesse
+void sendNewCommand(MotorData *motor, OriginSByte cmd)
 {
-//printf("sendNewCommand before : %i\n", val);
-  if(val - emulValueCel > emulValueAcc)
-  {
-    emulValueCel += emulValueAcc;
-  }
-  else if(val - emulValueCel < -emulValueAcc)
-  {
-    emulValueCel -= emulValueAcc;
-  }
-  else
-  {
-    emulValueCel += val;
-  }
-  emulValuePos += emulValueCel * delta1 + delta2;
-//printf("sendNewCommand after (Position, vitesse) : %i %i\n", emulValuePos, emulValueCel);
+  // cmd comprise entre -127 et 127 en entrée
+  ModuleValue val = cmd < 0 ? -((-cmd) >> 1) : cmd >> 1;
+  // val comprise entre -63 et 63
+  val = val + 64 - motor->motor.id;
+  // 1000 0000 & val entre -127 et 127
+  sendByteToBuffer( val | motor->motor.mask );
 }
 
-void test_resetEncoderValue(void)
+void resetEncoderValue(MotorData *motor)
 {
-  emulValuePos = 0;
-  //emulValueCel = 0;
+  motor->motor.encoderValue = 0;
 }

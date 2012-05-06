@@ -30,13 +30,13 @@ extern "C"
  *   - sendNewCommand permet d'envoyer une commande au moteur
  *   - resetEncoderValue permet de réinitialiser l'encodeur du moteur
  */
-typedef struct
+/*typedef struct
 {
   ModuleValue (*getEncoderValue)(void);
   void (*sendNewCommand)(ModuleValue);
   void (*resetEncoderValue)(void);
 } IME;
-
+*/
 /**
  * \struct IfaceME
  * \brief Structure contenant la fonctionnalité IfaceME
@@ -51,7 +51,7 @@ typedef struct
   ModuleValue measure;
   OriginBool measureUpToDate;
 
-  IME ime;
+  IME *ime;
 } IfaceME;
 
 

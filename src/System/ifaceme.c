@@ -61,7 +61,7 @@ ErrorCode configureIfaceME(Module *parent, void* args)
   parent->ctl->coveredDistance = 0;
 
   ime->resetEncoderValue();
-  ifaceme->ime = *ime;
+  ifaceme->ime = ime;
   ifaceme->measureUpToDate = 0;
   ifaceme->measure = 0;
   return NO_ERR;
@@ -70,13 +70,13 @@ ErrorCode configureIfaceME(Module *parent, void* args)
 ErrorCode updateIfaceME(Module* parent, OriginWord port){
   ModuleValue command;
   ErrorCode error;
-  IME ime = ((IfaceME*)parent->fun)->ime;
+  IME *ime = ((IfaceME*)parent->fun)->ime;
 
   // Faire la mesure ssi la mesure n'est plus valable
   if (((IfaceME*)parent->fun)->measureUpToDate == 0)
   {
     // On effectue la mesure
-    ((IfaceME*)parent->fun)->measure = ime.getEncoderValue();
+    ((IfaceME*)parent->fun)->measure = ime->getEncoderValue(ime->motor);
     ((IfaceME*)parent->fun)->measureUpToDate = 1;
     parent->ctl->coveredDistance = ((IfaceME*)parent->fun)->measure;
 
@@ -94,7 +94,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     }
 
     ((IfaceME*)parent->fun)->measureUpToDate = 0;
-    ime.sendNewCommand(command);
+    ime->sendNewCommand(ime->motor, command);
   }
   else
   {
@@ -110,6 +110,6 @@ void resetIfaceME(Module* parent)
   IfaceME *ifaceME = (IfaceME*)parent->fun;
   ifaceME->measure = 0;
   ifaceME->measureUpToDate = false;
-  ifaceME->ime.resetEncoderValue();
+  ifaceME->ime->resetEncoderValue(ime->motor);
   debug("---------| reset de l'encodeur |----------\n");
 }

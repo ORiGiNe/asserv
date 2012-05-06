@@ -1,17 +1,30 @@
-#ifndef EMUL_IME_H
-#define EMUL_IME_H
+#ifndef SYSTEM_IME_H
+#define SYSTEM_IME_H
 
 #include "modules_group.h"
-// TODO regarder pour lambda
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+typedef struct
+{
+  OriginByte id;
+  OriginByte mask;
+  OriginWord blockTime; 
+  OriginWord encoderValue;
+  void* data;
+} MotorData;
 
+typedef struct {
+  MotorData motor;
+  ModuleValue (*getEncoderValue)(MotorData*);
+  void (*sendNewCommand)(MotorData*, ModuleValue);
+  void (*resetEncoderValue)(MotorData*);
+} IME;
 
-ModuleValue test_getEncoderValue(void);
-void test_sendNewCommand(ModuleValue val);
-void test_resetEncoderValue(void);
+IME motor0;
+IME motor1;
 
 #ifdef __cplusplus
 }
