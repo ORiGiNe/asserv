@@ -3,8 +3,9 @@
 #include "DE0nanoUart.h"
 
 ModuleValue getEncoderValue(MotorData *motor);
-void sendNewCommand(MotorData *motor, OriginSByte cmd);
+void sendNewCommand(MotorData *motor, ModuleValue cmd);
 void resetEncoderValue(MotorData *motor);
+
 IME motor0 = {
   .motor = {
     .id = 0,
@@ -36,7 +37,8 @@ IME motor1 = {
 ModuleValue getEncoderValue(MotorData *motor)
 {
   OriginSWord result;
-  getWordFromDE0nano(motor->id+1, &result, motor->blockTime);
+  // FIXME Verifier que result doit bien etre signé avec Izzy
+  getWordFromDE0nano(motor->id+1, (OriginWord*)&result, motor->blockTime);
   motor->encoderValue += result;
   return motor->encoderValue;
 }
