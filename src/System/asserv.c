@@ -120,9 +120,9 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
 	   ) / 1000); // terme dérivé
 
 // debug
-debug("\tAsserv -> wanted   : \02%l\03\n", (uint32_t)command);
-debug("\tAsserv -> measure  : \02%l\03\n", (uint32_t)measure);
-debug("\t newError          : \02%l\03\n", (uint32_t)newError);
+debug("\tAsserv -> wanted   : 0x%l\n", (uint32_t)command);
+debug("\tAsserv -> measure  : 0x%l\n", (uint32_t)measure);
+debug("\t newError          : 0x%l\n", (uint32_t)newError);
 //debug("\t integrale         : %l\n", (uint32_t)asserv->integral);
 //debug("\t derivee           : %l\n", (uint32_t)derivError);
 //debug("\tAsserv -> output   : %l\n", (uint32_t)output);
