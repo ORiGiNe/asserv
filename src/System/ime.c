@@ -1,6 +1,9 @@
 #include "ime.h"
 
 
+ModuleValue getEncoderValue(MotorData *motor);
+void sendNewCommand(MotorData *motor, OriginSByte cmd);
+void resetEncoderValue(MotorData *motor);
 IME motor0 = {
   .motor = {
     .id = 0,
