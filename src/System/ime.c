@@ -35,9 +35,9 @@ IME motor1 = {
 ModuleValue getEncoderValue(MotorData *motor)
 {
   OriginWord result;
-  getWordFromDE0nano(motor->motor.id+1, &result, motor->motor.blockTime);
-  motor->motor.encoderValue += result;
-  return motor->motor.encoderValue;
+  getWordFromDE0nano(motor->id+1, &result, motor->blockTime);
+  motor->encoderValue += result;
+  return motor->encoderValue;
 }
 
 void sendNewCommand(MotorData *motor, OriginSByte cmd)
@@ -45,12 +45,12 @@ void sendNewCommand(MotorData *motor, OriginSByte cmd)
   // cmd comprise entre -127 et 127 en entrée
   ModuleValue val = cmd < 0 ? -((-cmd) >> 1) : cmd >> 1;
   // val comprise entre -63 et 63
-  val = val + 64 - motor->motor.id;
+  val = val + 64 - motor->id;
   // 1000 0000 & val entre -127 et 127
-  sendByteToBuffer( val | motor->motor.mask );
+  sendByteToBuffer( val | motor->mask );
 }
 
 void resetEncoderValue(MotorData *motor)
 {
-  motor->motor.encoderValue = 0;
+  motor->encoderValue = 0;
 }
