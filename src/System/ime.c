@@ -1,5 +1,6 @@
 #include "ime.h"
-
+#include "ponthuart.h"
+#include "DE0nanoUart.h"
 
 ModuleValue getEncoderValue(MotorData *motor);
 void sendNewCommand(MotorData *motor, OriginSByte cmd);
@@ -47,7 +48,7 @@ void sendNewCommand(MotorData *motor, OriginSByte cmd)
   // val comprise entre -63 et 63
   val = val + 64 - motor->id;
   // 1000 0000 & val entre -127 et 127
-  sendByteToBuffer( val | motor->mask );
+  EFBuart2PushByteToBuffer( val | motor->mask );
 }
 
 void resetEncoderValue(MotorData *motor)
