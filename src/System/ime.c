@@ -41,7 +41,7 @@ ModuleValue getEncoderValue(MotorData *motor)
   return motor->encoderValue;
 }
 
-void sendNewCommand(MotorData *motor, OriginSByte cmd)
+void sendNewCommand(MotorData *motor, ModuleValue cmd)
 {
   // cmd comprise entre -127 et 127 en entrée
   ModuleValue val = cmd < 0 ? -((-cmd) >> 1) : cmd >> 1;
