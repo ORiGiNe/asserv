@@ -278,7 +278,7 @@ int main (void)
   DE0nanoUartInit (9600, pdFALSE);
 	
 	EFBoutPort (PORT_LED13, MASK_LED13);
-  xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
+ //GUI // xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
   xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
 
   vTaskStartScheduler ();
