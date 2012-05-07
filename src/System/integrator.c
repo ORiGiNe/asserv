@@ -10,15 +10,6 @@
  */
 ErrorCode initIntegrator(Module*);
 
-/**
- * \fn ErrorCode configureIntegrator(Module *parent, void* args)
- * \brief Fonction permettant la configuration d'un module Integrator
- *
- * \param parent Module IfaceME à configurer, ne peut pas être NULL.
- * \param args Argument inutilisé.
- * \return NO_ERR si le module s'est bien configuré, un code d'erreur sinon.
- */
-ErrorCode configureIntegrator(Module*, void*);
 
 /**
  * \fn ErrorCode updateIntegrator(Module *parent, OriginWord port)
@@ -43,7 +34,7 @@ void resetIntegrator(Module* parent);
 
 ModuleType integratorType = {
   .init = initIntegrator,
-  .config = configureIntegrator,
+  .config = configureIdle,
   .update = updateIntegrator,
   .reset = resetIntegrator
 };
@@ -58,13 +49,6 @@ ErrorCode initIntegrator(Module *parent)
 
   integrator->parent = parent;
   parent->fun = (void*)integrator;
-  return NO_ERR;
-}
-
-ErrorCode configureIntegrator(Module *parent, void* args)
-{
-  (void) parent;
-  (void) args;
   return NO_ERR;
 }
 

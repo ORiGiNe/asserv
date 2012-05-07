@@ -34,7 +34,7 @@ void resetAsserv(Module* parent);
 
 ModuleType asservType = {
   .init = initAsserv,
-  .config = configureAsserv,
+  .config = configureIdle,
   .update = updateAsserv,
   .reset = resetAsserv
 };
@@ -48,14 +48,6 @@ ErrorCode initAsserv (Module *parent)
   asserv->parent = parent;
   parent->fun = (void*)asserv;
 
-  return NO_ERR;
-}
-
-ErrorCode configureAsserv(Module* parent, void* args)
-{
-  (void) args;
-  Asserv* asserv = (Asserv*) parent->fun;
-  // On initialise l'erreur et l'intégrale
   return NO_ERR;
 }
 

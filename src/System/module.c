@@ -161,6 +161,13 @@ void setOutput(Module* module, OriginWord port, ModuleValue value)
   module->outputs[port].upToDate = true;
 }
 
+ErrorCode configureIdle(Module* parent, void* args)
+{
+  (void) parent;
+  (void) args;
+  return NO_ERR;
+}
+
 void resetIdle(Module* module)
 {
   (void) module;

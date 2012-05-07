@@ -43,7 +43,7 @@ void resetDerivator(Module* parent);
 
 ModuleType derivatorType = {
   .init = initDerivator,
-  .config = configureDerivator,
+  .config = configureIdle,
   .update = updateDerivator,
   .reset = resetDerivator
 };
@@ -58,13 +58,6 @@ ErrorCode initDerivator(Module *parent)
 
   derivator->parent = parent;
   parent->fun = (void*)derivator;
-  return NO_ERR;
-}
-
-ErrorCode configureDerivator(Module *parent, void* args)
-{
-  (void) parent;
-  (void) args;
   return NO_ERR;
 }
 

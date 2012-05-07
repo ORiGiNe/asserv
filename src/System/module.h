@@ -23,6 +23,7 @@ ModuleValue outputIsUpToDate(Module* module, OriginWord port);
 ModuleValue getInput(Module*, OriginWord);
 void setOutput(Module*, OriginWord, ModuleValue);
 
+ErrorCode configureIdle(Module* parent, void* args)
 void resetIdle(Module* module);
 
 #ifdef __cplusplus
