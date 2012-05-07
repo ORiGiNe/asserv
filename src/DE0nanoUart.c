@@ -220,7 +220,8 @@ SIGNAL (UART1_RECEIVE_INTERRUPT)
       }
       else if (gDe0NanoCommStep == UART_WAITFORSECONDBYTE)
       {
-      response += ((word) lData) * 0xff;
+      //response += ((word) lData) * 0xff;
+	  response += ((word) lData) << 8; // FIXME !
       gDe0NanoCommStep = UART_SUCCESS;
       xSemaphoreGiveFromISR (de0NanoCommSynchro, &xHigherPriorityTaskWoken);
       // On desactive l'interruption sur reception
