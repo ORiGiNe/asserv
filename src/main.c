@@ -129,7 +129,6 @@ void vTaskSI (void* pvParameters)
   Module *entry, *ifaceME, *asservPos, *asservVit, *starter;
   EntryConfig entryConfig;
   IME ime0 = motor0;
-  OpFunc hPos, hVit;
 
   ModuleValue posKp = 1200;
   ModuleValue posKi = 0;
@@ -155,16 +154,9 @@ void vTaskSI (void* pvParameters)
   entryConfig.value[7] = &accel; // accel
   entryConfig.value[8] = &command; // command
 
-  hPos.h1 = funIdent;//TODO
-  hPos.h2 = funIdent;//TODO
-  hPos.h3 = funIdent;//TODO
-  hVit.h1 = funIdent;//TODO
-  hVit.h2 = funDeriv;//TODO
-  hVit.h3 = funInteg;//TODO
-
   xLastWakeTime = taskGetTickCount ();
 
-  // Création du starter
+  // Création du Starter
   starter = initModule(&ctlBlock, 1, 0, starterType);
   if (starter == 0)
   {
@@ -176,13 +168,13 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  // Création de l'interface systeme
+  // Création de l'interface systeme (IfaceME)
   ifaceME = initModule(&ctlBlock, 1, 2, ifaceMEType);
   if (ifaceME == 0)
   {
    return;
   }
-  // Création de l'asserv 1
+  // Création de l'asserv 1 (Asserv)
   asservPos = initModule(&ctlBlock, 6, 1, asservType);
   if (asservPos == 0)
   {
@@ -209,11 +201,11 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  if (configureModule(asservPos, (void*)&hPos) != NO_ERR)
+  if (configureModule(asservPos, NULL) != NO_ERR)
   {
    return;
   }
-  if (configureModule(asservVit, (void*)&hVit) != NO_ERR)
+  if (configureModule(asservVit, NULL) != NO_ERR)
   {
    return;
   }

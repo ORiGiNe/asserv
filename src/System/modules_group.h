@@ -79,7 +79,6 @@ struct ctlBlock
   SysSemaphore semReset;
   OriginWord nTic;
   volatile ErrorCode lastError;
-  volatile OriginBool destReached;
   volatile ModuleValue coveredDistance;
 };
 

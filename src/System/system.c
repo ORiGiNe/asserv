@@ -115,23 +115,6 @@ ErrorCode waitEndOfSystem(CtlBlock *ctlBlock, portTickType xBlockTime)
     debug("---------| ERR_SEM_NOT_TAKEN |---------\n");
     return ERR_SEM_NOT_TAKEN;
   }
-  /*
-  if(ctlBlock->lastError == ERR_TIMER_NOT_STOPPED)
-  {
-    xDiffTime = taskGetTickCount() - xLastWakeTime;
-    if( timerStop( ctlBlock->timer.handle, xBlockTime - xDiffTime ) == pdFAIL )
-    {
-      debug("---------| ERR_TIMER_NOT_STOPPED |---------\n");
-      return ERR_TIMER_NOT_STOPPED;
-    }
-  }
-  *//*
-  if (ctlBlock->destReached == false)
-  {
-    debug("---------| ERR_URGENT_STOP |---------\n");
-    return ERR_URGENT_STOP;
-  }
-  */
   debug("---------| NO_ERR |---------\n");
   return NO_ERR;
 }

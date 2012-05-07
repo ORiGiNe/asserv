@@ -38,21 +38,6 @@ typedef enum
 } InputAsserv;
 
 /**
- * \struct OpFunc
- * \brief Structure permettant la configuration d'un asservissement via configureModule
- * 
- * OpFunc contient trois pointeurs de fonctions permettant de faire des conversions sur
- * les deux entrées variables de l'asservissement et la sortie (commande : h1, measure : h2,
- * sortie : h3).
- */
-typedef struct
-{
-  ModuleValue (*h1)(ModuleValue);
-  ModuleValue (*h2)(ModuleValue);
-  ModuleValue (*h3)(ModuleValue);
-} OpFunc;
-
-/**
  * \struct Asserv
  * \brief Structure contenant la fonctionnalité Asserv
  *
@@ -64,7 +49,7 @@ typedef struct
   Module *parent;
   ModuleValue oldError; // Erreur 
   ModuleValue integral; // Permet de connaitre l'intégrale de l'erreur
-  OpFunc h; // fonctions remplissant le role des blocs H1, H2, et H3
+//  OpFunc h; // fonctions remplissant le role des blocs H1, H2, et H3
 } Asserv;
 
 

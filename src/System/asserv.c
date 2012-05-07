@@ -53,13 +53,9 @@ ErrorCode initAsserv (Module *parent)
 
 ErrorCode configureAsserv(Module* parent, void* args)
 {
+  (void) args;
   Asserv* asserv = (Asserv*) parent->fun;
-  OpFunc* opFunc = (OpFunc*) args;
   // On initialise l'erreur et l'intégrale
-  asserv->oldError = 0;
-  asserv->integral = 0;
-  // On enregistre le bloc OpFunc
-  asserv->h = *opFunc;
   return NO_ERR;
 }
 
@@ -98,11 +94,11 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   kd = getInput(parent, AsservKd);
 
   /* L'entrée de commande auquelle on applique la boite H1*/
-  command = h.h1(getInput(parent, AsservCommand));
+  command = getInput(parent, AsservCommand);
   /* La dérivée maximale */
   derivThreshold = getInput(parent, AsservDeriv);
   /* La mesure du moteur auquel on applique la boite H2 */
-  measure = h.h2(getInput(parent, AsservMeasure));
+  measure = getInput(parent, AsservMeasure);
 
   /* Calcul de l'erreur (sortie - entrée)*/
   newError = command - measure;
@@ -140,7 +136,7 @@ debug("\t ---- Autre asserv ---- \n");
   }
 
   /* On envoie la commande sur la sortie port */
-  setOutput(parent, port, h.h3(output));
+  setOutput(parent, port, output);
 
   return NO_ERR;
 }
