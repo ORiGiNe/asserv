@@ -253,18 +253,24 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
         EFBuartGaopSendString ("de0-nano : \n");
         word wordOut = 0x1539;
         unsigned char sortie[20];
-        tEFBerrCode retCode = getWordFromDE0nano(1, &wordOut, 10);
-        usprintf (sortie,  "Code : 0x%l\r\n", (uint32_t)retCode);
-        EFBuartGaopSendString ((char*)sortie);
-        if (retCode == EFB_OK)
-        {
-			usprintf (sortie,  "WordOut : 0x%l\r\n", (uint32_t)wordOut);
+		uint8_t ilod = 0;
+		uint8_t i = 0;
+		for(i=0; i<100;i++)
+		{
+			tEFBerrCode retCode = getWordFromDE0nano(1, &wordOut, 10);
+			usprintf (sortie,  "Code : 0x%l\r\nILOD : 0x%l\r\n", (uint32_t)retCode, (uint32_t)ilod);
 			EFBuartGaopSendString ((char*)sortie);
-        }
-        else
-        {
-          EFBuartGaopSendString ("FAIL\r\n");
-        }
+			if (retCode == EFB_OK)
+			{
+				usprintf (sortie,  "WordOut : 0x%l\r\n", (uint32_t)wordOut);
+				EFBuartGaopSendString ((char*)sortie);
+			}
+			else
+			{
+			  EFBuartGaopSendString ("FAIL\r\n");
+			  ilod++;
+			}
+		}
         freeTrame (t);
       }
       else if (t->commande == UART_CDE_PTH)
