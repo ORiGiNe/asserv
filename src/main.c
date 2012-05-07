@@ -243,14 +243,14 @@ void vTaskSI (void* pvParameters)
 
   linkModuleWithInput(ifaceME, 0, starter, 0);
 
-  resetSystem(&ctlBlock);
+  //resetSystem(&ctlBlock, portMAX_DELAY);
   for (;;)
   {
     if (startSystem(&ctlBlock) == NO_ERR)
     {
       if(waitEndOfSystem(&ctlBlock, 300) == NO_ERR)
       {
-        resetSystem(&ctlBlock);
+        resetSystem(&ctlBlock, portMAX_DELAY);
         command += 100;
       }
     }

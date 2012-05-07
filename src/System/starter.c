@@ -64,7 +64,6 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
       {
         debug("-----------| MOUVEMENT FINI :D |----------\n");
         // On indique que le mouvement est fini
-	parent->ctl->destReached = true;
 	semaphoreGive(parent->ctl->semReached);
       }
     }

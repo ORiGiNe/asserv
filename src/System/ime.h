@@ -9,11 +9,11 @@ extern "C"
 #endif
 typedef struct
 {
-  OriginByte id;
-  OriginByte mask;
-  OriginWord blockTime; 
-  ModuleValue encoderValue;
-  void* data;
+  const OriginByte id;
+  const OriginByte mask;
+  const OriginWord blockTime; 
+  volatile ModuleValue encoderValue;
+  // volatile void* data;
 } MotorData;
 
 typedef struct {

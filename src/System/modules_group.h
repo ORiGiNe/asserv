@@ -60,7 +60,7 @@ struct module
 struct timerBlock
 {
   TimerHandle handle;
-  OriginBool isActive;
+  volatile OriginBool isActive;
   OriginWord refreshFreq;
 };
 
@@ -71,16 +71,16 @@ struct ctlBlock
   Module* starter;
 
   // Variables servant à controler le systeme
-  OriginBool stop;
-  OriginBool reset;
+  volatile OriginBool stop;
+  volatile OriginBool reset;
 
   // Variables servant à avoir des infos sur le systeme
   SysSemaphore semReached;
   SysSemaphore semReset;
   OriginWord nTic;
-  ErrorCode lastError;
-  OriginBool destReached;
-  ModuleValue coveredDistance;
+  volatile ErrorCode lastError;
+  volatile OriginBool destReached;
+  volatile ModuleValue coveredDistance;
 };
 
 

@@ -35,7 +35,9 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
   /* Création du sémaphore */
   semaphoreCreate(ctlBlock->semReset);
   semaphoreCreate(ctlBlock->semReached);
-
+  // Il faut prendre ce que l'on ne possede pas pour le posseder :D
+  semaphoreTake(ctlBlock->semReset, 0);
+  semaphoreTake(ctlBlock->semReached, 0);
   /* On regarde si le sémaphore a été initialisé */
   //if(ctlBlock->sem == 0)
   //{
@@ -53,8 +55,6 @@ ErrorCode startSystem(CtlBlock* ctlBlock)
   //  return ERR_TIMER_LAUNCHED;
   //}
   
-  /* On indique qu'il faut se bouger avant d'atteindre son but */
-  ctlBlock->destReached = false;
   /* On lance le timer s'il n'est pas déja lancé */
   if (ctlBlock->timer.isActive == false)
   {
@@ -70,10 +70,14 @@ ErrorCode startSystem(CtlBlock* ctlBlock)
   return NO_ERR;
 }
 
-void resetSystem(CtlBlock* ctlBlock)
+ErrorCode resetSystem(CtlBlock* ctlBlock, portTickType blockTime)
 {
   ctlBlock->reset = true;
-  while(semaphoreTake(ctlBlock->semReset, 100) == pdFALSE);
+  if(semaphoreTake(ctlBlock->semReset, blockTime) == pdFALSE);
+  {
+    return ERR_SEM_NOT_TAKEN;
+  }
+  return NO_ERR;
 }
 
 
@@ -81,12 +85,6 @@ void vCallback(TimerHandle pxTimer)
 {
   CtlBlock *ctlBlock = (CtlBlock*)timerGetArg(pxTimer);
   ErrorCode error = NO_ERR;
-
-  if(ctlBlock->timer.isActive == 0)
-  {
-    ctlBlock->lastError = ERR_TIMER_NOT_ACTIVE;
-    return;
-  }
 
   // On met à jour le nombre de tic
   ctlBlock->nTic++;
@@ -102,7 +100,7 @@ void vCallback(TimerHandle pxTimer)
     /* Lancement de l'update du systeme */
     debug("--------------| Début de update  |--------------\n");
     debug("\04");
-    error = updateModule(ctlBlock->starter, 0);
+    updateModule(ctlBlock->starter, 0);
     debug("--------------|  Fin de update   |--------------\n");
   }
 }
@@ -117,6 +115,7 @@ ErrorCode waitEndOfSystem(CtlBlock *ctlBlock, portTickType xBlockTime)
     debug("---------| ERR_SEM_NOT_TAKEN |---------\n");
     return ERR_SEM_NOT_TAKEN;
   }
+  /*
   if(ctlBlock->lastError == ERR_TIMER_NOT_STOPPED)
   {
     xDiffTime = taskGetTickCount() - xLastWakeTime;
@@ -126,11 +125,13 @@ ErrorCode waitEndOfSystem(CtlBlock *ctlBlock, portTickType xBlockTime)
       return ERR_TIMER_NOT_STOPPED;
     }
   }
+  *//*
   if (ctlBlock->destReached == false)
   {
     debug("---------| ERR_URGENT_STOP |---------\n");
     return ERR_URGENT_STOP;
   }
+  */
   debug("---------| NO_ERR |---------\n");
   return NO_ERR;
 }

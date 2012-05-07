@@ -10,7 +10,7 @@ IME motor0 = {
   .motor = {
     .id = 0,
     .mask = 0x00,
-    .blockTime = 10,
+    .blockTime = 1,
     .encoderValue = 0,
     .data = 0
   },
@@ -18,12 +18,14 @@ IME motor0 = {
   .sendNewCommand = sendNewCommand,
   .resetEncoderValue = resetEncoderValue
 };
+
+
 
 IME motor1 = {
   .motor = {
     .id = 1,
     .mask = 0x80,
-    .blockTime = 10,
+    .blockTime = 1,
     .encoderValue = 0,
     .data = 0
   },
@@ -32,15 +34,47 @@ IME motor1 = {
   .resetEncoderValue = resetEncoderValue
 };
 
+IME *motors[3] = {
+  &motor1,
+  &motor2,
+  0
+};
 
+void taskEncoderValueCallback(void* pvParameters)
+{
+  portTickType xLastWakeTime;
+  IME** motor = motors;
+  // on cast pvParameters pour supprimer les warnings.
+  (void) pvParameters;
+  xLastWakeTime = xTaskGetTickCount ();
+
+  for (;;)
+  {
+    for(motor = motors; *motor != 0;  motor++)
+    {
+      if(getWordFromDE0nano((*motor)->id+1, (unsigned short*)&result, (*motor)->blockTime) == EFB_OK)
+      {
+        taskENTER_CRITICAL();
+	{
+          (*motor)->encoderValue += result;
+	}
+	taskEXIT_CRITICAL();
+      }
+    }
+    vTaskDelayUntil(&xLastWakeTime, 5/portTICK_RATE_MS);
+  }
+}
 
 ModuleValue getEncoderValue(MotorData *motor)
 {
-  OriginSWord result;
   // FIXME Verifier que result doit bien etre signé avec Izzy
-  getWordFromDE0nano(motor->id+1, (unsigned short*)&result, motor->blockTime);
-  motor->encoderValue += result;
-  return motor->encoderValue;
+  ModuleValue returnValue;
+  taskENTER_CRITICAL();
+  {
+    returnValue = motor->encoderValue;
+  }
+  taskEXIT_CRITICAL();
+  return returnValue;
 }
 
 void sendNewCommand(MotorData *motor, ModuleValue cmd)

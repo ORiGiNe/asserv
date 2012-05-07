@@ -20,9 +20,9 @@ ErrorCode createSystem(CtlBlock*, Module*,
 
 ErrorCode startSystem(CtlBlock*);
 
-void resetSystem(CtlBlock* ctlBlock);
+ErrorCode resetSystem(CtlBlock* ctlBlock, portTickType blockTime);
 
-ErrorCode waitEndOfSystem(CtlBlock*, portTickType);
+ErrorCode waitEndOfSystem(CtlBlock*, portTickType blockTime);
 
 ErrorCode forceStopOfSystem(CtlBlock*);
 
