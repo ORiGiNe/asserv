@@ -57,7 +57,7 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
     vHist[i].val0 = getInput(parent, i);
 
     // Si suffisament de tours ont eu lieu
-    if(vHist[i].val1 != 0x7FFF && vHist[i].val2 != 0x7FFF)
+    if(vHist[i].val1 != 0x7FFFFFFF && vHist[i].val2 != 0x7FFFFFFF)
     {
       // Si les valeurs n'ont pas évoluées
       if(vHist[i].val0 == vHist[i].val1 && vHist[i].val1 == vHist[i].val2)
@@ -81,8 +81,8 @@ void resetStarter(Module* parent)
   // On initialise l'historique
   for(i=0; i < STARTER_NB_CONNECTION; i++)
   {
-    starter->hist[i].val0 = 0x7FFF;
-    starter->hist[i].val1 = 0x7FFF;
-    starter->hist[i].val2 = 0x7FFF;
+    starter->hist[i].val0 = 0x7FFFFFFF;
+    starter->hist[i].val1 = 0x7FFFFFFF;
+    starter->hist[i].val2 = 0x7FFFFFFF;
   }
 }

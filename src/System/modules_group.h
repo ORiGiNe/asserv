@@ -11,7 +11,7 @@ extern "C"
 typedef struct module       Module;
 typedef struct moduleInput  ModuleInput;
 typedef struct moduleOutput ModuleOutput;
-typedef OriginSWord         ModuleValue;
+typedef OriginSDWord         ModuleValue;
 
 typedef struct timerBlock TimerBlock;
 typedef struct ctlBlock CtlBlock;
