@@ -28,6 +28,8 @@ typedef struct {
 IME motor0;
 IME motor1;
 
+void vTaskIME(void* pvParameters);
+
 #ifdef __cplusplus
 }
 #endif

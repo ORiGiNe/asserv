@@ -42,7 +42,7 @@ IME *motors[3] = {
   0
 };
 
-void taskEncoderValueCallback(void* pvParameters)
+void vTaskIME(void* pvParameters)
 {
   portTickType xLastWakeTime;
   IME** motor = motors;

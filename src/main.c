@@ -25,64 +25,12 @@
 
 xTaskHandle xTaskLED;
 xTaskHandle xTaskSI;
+xTaskHandle xTaskIME;
 
 #define PORT_LED13 PORTB
 #define DDR_LED13 DDRB
 #define MASK_LED13 0x80
 #define BIT_LED13 7
-
-
-
-
-// Définition des fonctions des blocks H
-ModuleValue average(OriginWord nbInputs, ModuleInput* inputs)
-{
-  OriginWord i;
-  ModuleValue accu = 0;
-
-  for(i=0; i<nbInputs; i++)
-  {
-    accu += inputs[i].module->outputs[inputs[i].port].value;
-  }
-  return accu / nbInputs;
-}
-
-ModuleValue diff(OriginWord nbInputs, ModuleInput* inputs)
-{
-  OriginWord i;
-  ModuleValue accu = 0;
-
-  for(i=0; i<nbInputs; i++)
-  {
-    if(i % 2 == 0)
-      accu += inputs[i].module->outputs[inputs[i].port].value;
-    else
-      accu -= inputs[i].module->outputs[inputs[i].port].value;
-  }
-  return accu / nbInputs;
-}
-
-ModuleValue funIdent(ModuleValue val)
-{
-  return val;
-}
-
-// TODO à cause des static, une fonction par module !!!
-ModuleValue funInteg(ModuleValue val)
-{
-  static ModuleValue accu = 0;
-  accu += val;
-  return val;
-}
-ModuleValue funDeriv(ModuleValue val)
-{
-  static ModuleValue old;
-  ModuleValue ret;
-  ret = val - old;
-  old = val;
-  return ret;
-}
-
 
 
 
@@ -276,7 +224,8 @@ int main (void)
 	
 	EFBoutPort (PORT_LED13, MASK_LED13);
  //GUI // xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
-  //xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
+  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
+  xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE+40, NULL, 1, &xTaskIME);
 
   vTaskStartScheduler ();
 
