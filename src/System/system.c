@@ -49,12 +49,6 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
 
 ErrorCode startSystem(CtlBlock* ctlBlock)
 {
-  /* On verifie que le timer n'est pas déjà lancé */
-  //if (ctlBlock->timer.isActive != false)
-  //{
-  //  return ERR_TIMER_LAUNCHED;
-  //}
-  
   /* On lance le timer s'il n'est pas déja lancé */
   if (ctlBlock->timer.isActive == false)
   {
@@ -90,18 +84,18 @@ void vCallback(TimerHandle pxTimer)
   ctlBlock->nTic++;
   if(ctlBlock->reset == true)
   {
-    debug("--------------|  Début de reset  |--------------\n");
+  //  debug("--------------|  Début de reset  |--------------\n");
     resetModule(ctlBlock->starter);
     semaphoreGive(ctlBlock->semReset);
-    debug("--------------|   Fin de reset   |--------------\n");
+  //  debug("--------------|   Fin de reset   |--------------\n");
   }
   else
   {
     /* Lancement de l'update du systeme */
-    debug("--------------| Début de update  |--------------\n");
-    debug("\04");
+  //  debug("--------------| Début de update  |--------------\n");
+  //  debug("\04");
     updateModule(ctlBlock->starter, 0);
-    debug("--------------|  Fin de update   |--------------\n");
+  //  debug("--------------|  Fin de update   |--------------\n");
   }
 }
 
@@ -112,10 +106,10 @@ ErrorCode waitEndOfSystem(CtlBlock *ctlBlock, portTickType xBlockTime)
   /* On attend la fin de la sémaphore */
   if( semaphoreTake( ctlBlock->semReached, xBlockTime ) == pdFALSE )
   {
-    debug("---------| ERR_SEM_NOT_TAKEN |---------\n");
+  //  debug("---------| ERR_SEM_NOT_TAKEN |---------\n");
     return ERR_SEM_NOT_TAKEN;
   }
-  debug("---------| NO_ERR |---------\n");
+  //debug("---------| NO_ERR |---------\n");
   return NO_ERR;
 }
 

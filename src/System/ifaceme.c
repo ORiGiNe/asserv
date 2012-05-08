@@ -111,5 +111,4 @@ void resetIfaceME(Module* parent)
   ifaceME->measure = 0;
   ifaceME->measureUpToDate = false;
   ifaceME->ime->resetEncoderValue(&ifaceME->ime->motor);
-  debug("---------| reset de l'encodeur |----------\n");
 }
