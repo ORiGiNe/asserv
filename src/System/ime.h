@@ -13,6 +13,8 @@ typedef struct
   const OriginByte mask;
   const OriginWord blockTime; 
   volatile ModuleValue encoderValue;
+  volatile ModuleValue derivValue;
+  volatile OriginByte nbError;
   // volatile void* data;
 } MotorData;
 

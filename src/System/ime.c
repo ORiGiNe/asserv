@@ -27,7 +27,9 @@ IME motor1 = {
     .mask = 0x80,
     .blockTime = 1,
     .encoderValue = 0,
-    .data = 0
+    .derivValue = 0,
+    .data = 0,
+    .nbError = 0
   },
   .getEncoderValue = getEncoderValue,
   .sendNewCommand = sendNewCommand,
@@ -44,23 +46,37 @@ void taskEncoderValueCallback(void* pvParameters)
 {
   portTickType xLastWakeTime;
   IME** motor = motors;
-  // on cast pvParameters pour supprimer les warnings.
+  ModuleValue oldValue;
+ModuleValue debugDeriv;
   (void) pvParameters;
+
   xLastWakeTime = xTaskGetTickCount ();
 
   for (;;)
   {
     for(motor = motors; *motor != 0;  motor++)
     {
-      if(getWordFromDE0nano((*motor)->id+1, (unsigned short*)&result, (*motor)->blockTime) == EFB_OK)
+      if(getWordFromDE0nano((*motor)->id+1, (unsigned short*)&result, (*motor)->blockTime) != EFB_OK)
       {
+        // S'il y a une erreur d'envoie, plus sensé arrivé
         taskENTER_CRITICAL();
-	{
-          (*motor)->encoderValue += result;
-	}
-	taskEXIT_CRITICAL();
+        {
+	  (*motor)->nbError++;
+        }
+        taskEXIT_CRITICAL();
+        continue;
       }
+      taskENTER_CRITICAL();
+      {
+        oldValue = (*motor)->encoderValue;
+        (*motor)->encoderValue += result;
+        (*motor)->derivValue = (10 * ((*motor)->encoderValue - oldValue)) / ((*motor)->nbError + 1);
+	(*motor)->nbError = 0;
+	debugDeriv = (*motor)->derivValue;
+      }
+      taskEXIT_CRITICAL();
     }
+    debug("Vitesse : %l\n", (uint32_t)debugDeriv);
     vTaskDelayUntil(&xLastWakeTime, 5/portTICK_RATE_MS);
   }
 }
