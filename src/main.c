@@ -126,7 +126,7 @@ void vTaskSI (void* pvParameters)
   (void) pvParameters;
   portTickType xLastWakeTime;
   CtlBlock ctlBlock;
-  Module *entry, *ifaceME, *asservPos, *asservVit, *starter;
+  Module *entry, *ifaceME, *asservPos, *asservVit, *starter, *derivator;
   EntryConfig entryConfig;
   IME ime0 = motor0;
 
@@ -185,6 +185,11 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
+  derivator = initModule(&ctlBlock, 1, 1, derivatorType);
+  if (derivator == 0)
+  {
+   return;
+  }
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
@@ -213,6 +218,10 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
+  if (configureModule(derivator, NULL) != NO_ERR)
+  {
+   return;
+  }
 
 
 
@@ -229,7 +238,8 @@ void vTaskSI (void* pvParameters)
   linkModuleWithInput(entry, 6, asservVit, AsservKd);
   linkModuleWithInput(entry, 7, asservVit, AsservDeriv);
   linkModuleWithInput(asservPos, 0, asservVit, AsservCommand);
-  linkModuleWithInput(ifaceME, 0, asservVit, AsservMeasure);
+  linkModuleWithInput(derivator, 0, asservVit, AsservMeasure);
+  linkModuleWithInput(ifaceME, 0, derivator, 0);
 
   linkModuleWithInput(asservVit, 0, ifaceME, 0);
 
