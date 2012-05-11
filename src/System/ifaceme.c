@@ -60,7 +60,7 @@ ErrorCode configureIfaceME(Module *parent, void* args)
 
   parent->ctl->coveredDistance = 0;
 
-  ime->resetEncoderValue(&ime->motor);
+ // ime->resetEncoderValue(&ime->motor); TODO Pour test, à rajouter !
   ifaceme->ime = ime;
   ifaceme->measureUpToDate = 0;
   ifaceme->measure = 0;
