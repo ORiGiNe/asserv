@@ -49,7 +49,6 @@ typedef struct
   Module *parent;
   ModuleValue oldError; // Erreur 
   ModuleValue integral; // Permet de connaitre l'intégrale de l'erreur
-//  OpFunc h; // fonctions remplissant le role des blocs H1, H2, et H3
 } Asserv;
 
 

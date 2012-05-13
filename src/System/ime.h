@@ -13,9 +13,6 @@ typedef struct
   const OriginByte mask;
   const OriginWord blockTime; 
   volatile ModuleValue encoderValue;
-  volatile ModuleValue derivValue;
-  volatile OriginByte nbError;
-  // volatile void* data;
 } MotorData;
 
 typedef struct {
@@ -25,8 +22,9 @@ typedef struct {
   void (*resetEncoderValue)(MotorData*);
 } IME;
 
-IME motor0;
 IME motor1;
+IME motor2;
+IME perfectMotor;
 
 void vTaskIME(void* pvParameters);
 

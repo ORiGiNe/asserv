@@ -10,7 +10,7 @@
 #define activateRxInterrupt() EFBsetBit(UCSR1B, RXCIE1)
 #define stopRxInterrupt() EFBclearBit(UCSR1B, RXCIE1)
 
-#define FPGA_SIGNAL_INVERTE
+//#define FPGA_SIGNAL_INVERTE
 
 #ifndef FPGA_SIGNAL_INVERTED
 
@@ -25,8 +25,8 @@
   { \
     EFBsetBit (DDR_ARDUINOFLOWCONTROL1, BIT_ARDUINOFLOWCONTROL1); \
     EFBsetBit (DDR_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2); \
-    EFBclearBit(PORT_ARDUINOFLOWCONTROL1, BIT_ARDUINOFLOWCONTROL1); \
-    EFBclearBit(PORT_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2); \
+    EFBclearBit (PORT_ARDUINOFLOWCONTROL1, BIT_ARDUINOFLOWCONTROL1); \
+    EFBclearBit (PORT_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2); \
   }
 
 #else
@@ -41,8 +41,8 @@
   { \
     EFBsetBit (DDR_ARDUINOFLOWCONTROL1, BIT_ARDUINOFLOWCONTROL1); \
     EFBsetBit (DDR_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2); \
-    EFBsetBit(PORT_ARDUINOFLOWCONTROL1, BIT_ARDUINOFLOWCONTROL1); \
-    EFBsetBit(PORT_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2); \
+    EFBsetBit (PORT_ARDUINOFLOWCONTROL1, BIT_ARDUINOFLOWCONTROL1); \
+    EFBsetBit (PORT_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2); \
   }
 #endif
 
@@ -104,15 +104,18 @@ void DE0nanoUartInit (uint32_t baudRate, tEFBboolean doubleTransmissionSpeed)
  */
 tEFBerrCode getWordFromDE0nano(uint8_t flowControlNum, word * wordOut, portTickType xBlockTime)
 {
-  tEFBerrCode retCode = EFB_OK;
-  tEFBerrCase badArgs, timeOut, mutexUnavailable, setIn retCode;
 
-  EFBcheck (wordOut != NULL && xBlockTime != 0, badArgs);
-  EFBcheck (flowControlNum == 1 || flowControlNum == 2, badArgs);
+  if (wordOut == NULL || xBlockTime == 0 || (flowControlNum != 1 && flowControlNum != 2))
+  {
+    return EFBERR_BADARGS;
+  }
 
   // ! Améliorer la gestion du timeout !
   // On prend le mutex
-  EFBcall (EFBwrappedSemaphoreTake (de0NanoCommMutex, xBlockTime), mutexUnavailable);
+  if (EFBwrappedSemaphoreTake (de0NanoCommMutex, xBlockTime) != EFB_OK)
+  {
+    return EFBERR_UART1_BUSY;
+  }
 
   gDe0NanoCommStep = UART_WAITFORFIRSTBYTE;
   gflowControlNum = flowControlNum;
@@ -134,40 +137,26 @@ tEFBerrCode getWordFromDE0nano(uint8_t flowControlNum, word * wordOut, portTickT
   // Améliorer la gestion du timeout
   // On attend la réponse de la de0nano.
   // C'est l'interuption qui va faire tout le travail.
-  EFBcall (EFBwrappedSemaphoreTake (de0NanoCommSynchro, xBlockTime), timeOut);
+  if (EFBwrappedSemaphoreTake (de0NanoCommSynchro, xBlockTime) != EFB_OK)
+  {
+    EFBwrappedSemaphoreGive(de0NanoCommMutex);
+    return EFBERR_UART1_REP_FAIL2;
+  }
 
   if (gDe0NanoCommStep == UART_SUCCESS)
   {
     *wordOut = response;
+    // On rend le mutex
+    EFBwrappedSemaphoreGive(de0NanoCommMutex);
+    gDe0NanoCommStep = UART_STOP;
+    return EFB_OK;
   }
   else
   {
-    retCode = EFBERR_UART1_REP_FAIL;
+    EFBwrappedSemaphoreGive(de0NanoCommMutex);
+    gDe0NanoCommStep = UART_STOP;
+    return EFBERR_UART1_REP_FAIL;
   }
-  gDe0NanoCommStep = UART_STOP;
-
-  // On rend le mutex
-  EFBwrappedSemaphoreGive(de0NanoCommMutex);
-
-  EFBerrorSwitch
-  {
-    case badArgs:
-      retCode = EFBERR_BADARGS;
-      break;
-
-    case mutexUnavailable:
-      retCode = EFBERR_UART1_BUSY;
-      break;
-
-    case timeOut:
-      EFBwrappedSemaphoreGive(de0NanoCommMutex);
-      retCode = EFBERR_UART1_REP_FAIL2;
-      break;
-
-    default:
-      break;
-  }
-  return retCode;
 } // getWordFromDE0nano
 
 
@@ -217,11 +206,11 @@ SIGNAL (UART1_RECEIVE_INTERRUPT)
       {
         pulseFlowControl (PORT_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2);
       }
-      }
-      else if (gDe0NanoCommStep == UART_WAITFORSECONDBYTE)
-      {
+    }
+    else if (gDe0NanoCommStep == UART_WAITFORSECONDBYTE)
+    {
       //response += ((word) lData) * 0xff;
-	  response += ((word) lData) << 8; // FIXME !
+      response += ((word) lData) << 8; // FIXME !
       gDe0NanoCommStep = UART_SUCCESS;
       xSemaphoreGiveFromISR (de0NanoCommSynchro, &xHigherPriorityTaskWoken);
       // On desactive l'interruption sur reception

@@ -3,7 +3,8 @@
 
 Module *initModule(CtlBlock *ctlBlock,
                    OriginWord nbInputs, OriginWord nbOutputs,
-                   ModuleType modType)
+                   ModuleType modType,
+                   OriginBool isVerbose)
 {
   OriginWord i;
   ErrorCode error;
@@ -53,7 +54,9 @@ Module *initModule(CtlBlock *ctlBlock,
   module->update = modType.update;
   // On indique la fonction de reset de la fonctionnalité
   module->reset = modType.reset;
-
+  // On indique si on veut que le module envoit des informations de debug.
+  module->isVerbose = isVerbose;
+  
   // On retourne le module créé
   return module;
 }

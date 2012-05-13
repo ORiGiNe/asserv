@@ -10,7 +10,7 @@ extern "C"
 {
 #endif
 
-Module *initModule(CtlBlock*, OriginWord, OriginWord, ModuleType);
+Module *initModule(CtlBlock*, OriginWord, OriginWord, ModuleType, OriginBool);
 
 ErrorCode configureModule(Module*, void*);
 ErrorCode linkModuleWithInput(Module*, OriginWord, Module*, OriginWord);
@@ -23,7 +23,7 @@ ModuleValue outputIsUpToDate(Module* module, OriginWord port);
 ModuleValue getInput(Module*, OriginWord);
 void setOutput(Module*, OriginWord, ModuleValue);
 
-ErrorCode configureIdle(Module* parent, void* args)
+ErrorCode configureIdle(Module* parent, void* args);
 void resetIdle(Module* module);
 
 #ifdef __cplusplus

@@ -27,8 +27,10 @@ extern "C"
 #define UART_TRAME_QUEUE 0xCD
 #define UART_CDE_TEST 0x74 // 0x74='t'
 #define UART_CDE_DEO 0x75 // 0x75='u'
-#define UART_CDE_PTH 'v' // 0x76='v'
-#define UART_CDE_PTH2 'w' // 0x77='w'
+#define UART_CDE_DEO_1 'i'
+#define UART_CDE_DEO_2 'o'
+#define UART_CDE_PTH 'v'
+#define UART_CDE_PTH2 'w'
 #define UART_CDE_PTH3 'x'
 #define UART_CDE_PTH4 'y'
 #define UART_CDE_PTH5 'z'

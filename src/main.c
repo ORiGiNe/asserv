@@ -67,29 +67,33 @@ void vTaskLED (void* pvParameters)
 }
 
 
-
+static ModuleValue vitKp = 0;
 
 void vTaskSI (void* pvParameters)
 {
   (void) pvParameters;
   portTickType xLastWakeTime;
   CtlBlock ctlBlock;
-  Module *entry, *ifaceME, *asservPos, *asservVit, *starter, *derivator;
+  Module *entry, *ifaceME, *asservPos, *asservVit, *starter, *encoderValueDerivator, *motorCommandIntegrator;
   EntryConfig entryConfig;
-  IME ime0 = motor0;
+  IME ime0 = motor2;
 
-  ModuleValue posKp = 1200;
+  //ModuleValue posKp = 1200;
+  ModuleValue posKp = 1000;
   ModuleValue posKi = 0;
-  ModuleValue posKd = 10;
-  ModuleValue deriv = 32000;
+  ModuleValue posKd = 0;
+  ModuleValue deriv = 100;
+  //ModuleValue deriv = 32000;
 
-  ModuleValue vitKp = 1000;
+  vitKp = 1000;
   ModuleValue vitKi = 0;
   ModuleValue vitKd = 0;
-  ModuleValue accel = 32000;
+  ModuleValue accel = 50;
+  //ModuleValue accel = 32000;
   //ModuleValue accuracy = 0;
 
-  ModuleValue command = 1000;
+  //ModuleValue command = 1000;
+  ModuleValue command = 600;
 
   entryConfig.nbEntry = 9;
   entryConfig.value[0] = &posKp; // kp
@@ -105,43 +109,48 @@ void vTaskSI (void* pvParameters)
   xLastWakeTime = taskGetTickCount ();
 
   // Création du Starter
-  starter = initModule(&ctlBlock, 1, 0, starterType);
+  starter = initModule(&ctlBlock, 1, 0, starterType, 0);
   if (starter == 0)
   {
    return;
   }
   // Création de l'Entry
-  entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, entryType);
+  entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, entryType, 0);
   if (entry == 0)
   {
    return;
   }
   // Création de l'interface systeme (IfaceME)
-  ifaceME = initModule(&ctlBlock, 1, 2, ifaceMEType);
+  ifaceME = initModule(&ctlBlock, 1, 2, ifaceMEType, 0);
   if (ifaceME == 0)
   {
    return;
   }
   // Création de l'asserv 1 (Asserv)
-  asservPos = initModule(&ctlBlock, 6, 1, asservType);
+  asservPos = initModule(&ctlBlock, 6, 1, asservType, 0);
   if (asservPos == 0)
   {
    return;
   }
-  asservVit = initModule(&ctlBlock, 6, 1, asservType);
+  asservVit = initModule(&ctlBlock, 6, 1, asservType, 1);
   if (asservVit == 0)
   {
    return;
   }
-  derivator = initModule(&ctlBlock, 1, 1, derivatorType);
-  if (derivator == 0)
+  encoderValueDerivator = initModule(&ctlBlock, 1, 1, derivatorType, 0);
+  if (encoderValueDerivator == 0)
+  {
+   return;
+  }
+  motorCommandIntegrator = initModule(&ctlBlock, 1, 1, integratorType, 0);
+  if (motorCommandIntegrator == 0)
   {
    return;
   }
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
-  if (createSystem(&ctlBlock, starter , 300) == ERR_TIMER_NOT_DEF)
+  if (createSystem(&ctlBlock, starter , 500) == ERR_TIMER_NOT_DEF)
   {
    return;
   }
@@ -166,7 +175,11 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  if (configureModule(derivator, NULL) != NO_ERR)
+  if (configureModule(encoderValueDerivator, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(motorCommandIntegrator, NULL) != NO_ERR)
   {
    return;
   }
@@ -186,11 +199,13 @@ void vTaskSI (void* pvParameters)
   linkModuleWithInput(entry, 6, asservVit, AsservKd);
   linkModuleWithInput(entry, 7, asservVit, AsservDeriv);
   linkModuleWithInput(asservPos, 0, asservVit, AsservCommand);
-  linkModuleWithInput(derivator, 0, asservVit, AsservMeasure);
-  linkModuleWithInput(ifaceME, 0, derivator, 0);
+  linkModuleWithInput(encoderValueDerivator, 0, asservVit, AsservMeasure);
+  linkModuleWithInput(ifaceME, 0, encoderValueDerivator, 0);
 
-  linkModuleWithInput(asservVit, 0, ifaceME, 0);
-
+  //linkModuleWithInput(asservVit, 0, ifaceME, 0);
+  linkModuleWithInput(asservVit, 0, motorCommandIntegrator, 0);
+  linkModuleWithInput(motorCommandIntegrator, 0, ifaceME, 0);
+  
   linkModuleWithInput(ifaceME, 0, starter, 0);
 
   //resetSystem(&ctlBlock, portMAX_DELAY);
@@ -198,10 +213,10 @@ void vTaskSI (void* pvParameters)
   {
     if (startSystem(&ctlBlock) == NO_ERR)
     {
-      if(waitEndOfSystem(&ctlBlock, 300) == NO_ERR)
+      if(waitEndOfSystem(&ctlBlock, 10000) == NO_ERR)
       {
-        resetSystem(&ctlBlock, portMAX_DELAY);
-        command += 100;
+        //resetSystem(&ctlBlock, portMAX_DELAY);
+        //command += 500;
       }
     }
     // Cette fonction permet à la tache d'être périodique.
@@ -220,12 +235,12 @@ int main (void)
 
   uartGaopInitialisation ();
   uartHBridgeInit(9600); // init pontH
-  DE0nanoUartInit (9600, pdFALSE);
+  DE0nanoUartInit (38400, pdFALSE);
 	
-	EFBoutPort (PORT_LED13, MASK_LED13);
- //GUI // xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
+	//EFBoutPort (PORT_LED13, MASK_LED13);
+  xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
   xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
-  xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE+40, NULL, 1, &xTaskIME);
+  xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 3, NULL, 1, &xTaskIME);
 
   vTaskStartScheduler ();
 

@@ -52,16 +52,20 @@ struct module
 
   OriginWord nTic;
 
+  // Fixme: Ces fonctions sont deja dans l'attribut type.
   ErrorCode (*configure)(Module*, void*);
   ErrorCode (*update)(Module*, OriginWord);
   void (*reset)(Module*);
+  
+  // Rend le module verbose.
+  OriginBool isVerbose;
 };
 
 struct timerBlock
 {
   TimerHandle handle;
   volatile OriginBool isActive;
-  OriginWord refreshFreq;
+  OriginWord refreshPeriod;
 };
 
 struct ctlBlock

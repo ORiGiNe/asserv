@@ -5,17 +5,17 @@
 void vCallback(TimerHandle);
 
 ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter, 
-                         OriginWord refreshFreq)
+                         OriginWord refreshPeriod)
 {
   signed char timerName[6] = "CTL_%";
   static unsigned char id = 'a';
 
   /* Création et init du timer */
   timerName[4] = id++;
-  ctlBlock->timer.refreshFreq = refreshFreq;
+  ctlBlock->timer.refreshPeriod = refreshPeriod;
   ctlBlock->timer.handle = timerCreate (
     (const signed char*)timerName,
-    refreshFreq,
+    refreshPeriod,
     (void *)ctlBlock, vCallback //ctlBlock->timer.moduleCallback
   );
   ctlBlock->timer.isActive = false;
@@ -52,7 +52,7 @@ ErrorCode startSystem(CtlBlock* ctlBlock)
   /* On lance le timer s'il n'est pas déja lancé */
   if (ctlBlock->timer.isActive == false)
   {
-    if (timerReset (ctlBlock->timer.handle, ctlBlock->timer.refreshFreq) != pdPASS)
+    if (timerReset (ctlBlock->timer.handle, ctlBlock->timer.refreshPeriod) != pdPASS)
     {
       ctlBlock->timer.isActive = false;
       return ERR_TIMER_EPIC_FAIL;
