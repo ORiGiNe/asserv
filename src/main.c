@@ -76,24 +76,24 @@ void vTaskSI (void* pvParameters)
   CtlBlock ctlBlock;
   Module *entry, *ifaceME, *asservPos, *asservVit, *starter, *encoderValueDerivator, *motorCommandIntegrator;
   EntryConfig entryConfig;
-  IME ime0 = motor2;
+  IME ime0 = motor1;
 
   //ModuleValue posKp = 1200;
-  ModuleValue posKp = 1000;
+  ModuleValue posKp = 300;
   ModuleValue posKi = 0;
   ModuleValue posKd = 0;
-  ModuleValue deriv = 100;
+  ModuleValue deriv = 1500;
   //ModuleValue deriv = 32000;
 
-  vitKp = 1000;
+  vitKp = 300;
   ModuleValue vitKi = 0;
   ModuleValue vitKd = 0;
-  ModuleValue accel = 50;
+  ModuleValue accel = 1000;
   //ModuleValue accel = 32000;
   //ModuleValue accuracy = 0;
 
   //ModuleValue command = 1000;
-  ModuleValue command = 600;
+  ModuleValue command = 100000;
 
   entryConfig.nbEntry = 9;
   entryConfig.value[0] = &posKp; // kp
@@ -127,7 +127,7 @@ void vTaskSI (void* pvParameters)
    return;
   }
   // Création de l'asserv 1 (Asserv)
-  asservPos = initModule(&ctlBlock, 6, 1, asservType, 0);
+  asservPos = initModule(&ctlBlock, 6, 1, asservType, 1);
   if (asservPos == 0)
   {
    return;
@@ -142,7 +142,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  motorCommandIntegrator = initModule(&ctlBlock, 1, 1, integratorType, 0);
+  motorCommandIntegrator = initModule(&ctlBlock, 1, 1, integratorType, 1);
   if (motorCommandIntegrator == 0)
   {
    return;
@@ -150,7 +150,7 @@ void vTaskSI (void* pvParameters)
 
   //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
   //stderrPrintf ((char*)string);
-  if (createSystem(&ctlBlock, starter , 500) == ERR_TIMER_NOT_DEF)
+  if (createSystem(&ctlBlock, starter , 50) == ERR_TIMER_NOT_DEF)
   {
    return;
   }
@@ -207,7 +207,8 @@ void vTaskSI (void* pvParameters)
   linkModuleWithInput(motorCommandIntegrator, 0, ifaceME, 0);
   
   linkModuleWithInput(ifaceME, 0, starter, 0);
-
+  
+  
   //resetSystem(&ctlBlock, portMAX_DELAY);
   for (;;)
   {
@@ -239,7 +240,7 @@ int main (void)
 	
 	//EFBoutPort (PORT_LED13, MASK_LED13);
   xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
-  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
+  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE *4, NULL, 1, &xTaskSI);
   xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 3, NULL, 1, &xTaskIME);
 
   vTaskStartScheduler ();

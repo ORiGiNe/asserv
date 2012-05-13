@@ -67,7 +67,7 @@ ErrorCode startSystem(CtlBlock* ctlBlock)
 ErrorCode resetSystem(CtlBlock* ctlBlock, portTickType blockTime)
 {
   ctlBlock->reset = true;
-  if(semaphoreTake(ctlBlock->semReset, blockTime) == pdFALSE);
+  if(semaphoreTake(ctlBlock->semReset, blockTime) == pdFALSE)
   {
     return ERR_SEM_NOT_TAKEN;
   }

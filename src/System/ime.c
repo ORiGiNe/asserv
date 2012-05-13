@@ -8,8 +8,8 @@ void resetEncoderValue(MotorData *motor);
 
 IME motor1 = {
   .motor = {
-    .id = 0,
-    .mask = 0x00,
+    .id = 1,
+    .mask = 0x80,
     .blockTime = 2, // 1ms c'est trop court!
     .encoderValue = 0
   },
@@ -17,7 +17,7 @@ IME motor1 = {
   .sendNewCommand = sendNewCommand,
   .resetEncoderValue = resetEncoderValue
 };
-
+/*
 IME motor2 = {
   .motor = {
     .id = 1,
@@ -29,65 +29,70 @@ IME motor2 = {
   .sendNewCommand = sendNewCommand,
   .resetEncoderValue = resetEncoderValue
 };
-
-IME *imes[3] = {
+*/
+IME *imes[2] = {
   &motor1,
-  &motor2,
+  //&motor2,
   0
 };
 
+ModuleValue encoderValueTest = 0 ;
 void vTaskIME(void* pvParameters)
 {
   portTickType xLastWakeTime;
   IME** ime;
   MotorData* motor;
-  ModuleValue oldValue;
   //int16_t car à besoin d'etre un signé sur 16 bits!
   int16_t result = 0;
   (void) pvParameters;
 
   xLastWakeTime = xTaskGetTickCount ();
-
   for (;;)
   {
     // FIXME : Pour verifier, la récupération de la valeur des codeurs est faite de manière statique
-    // for(ime = imes; *ime != 0;  ime++)
+    for(ime = imes; *ime != 0;  ime++)
+    {
+      motor = &((*ime)->motor);
+      result = 0;
+      if(getWordFromDE0nano(motor->id + 1, (unsigned short*)&result, motor->blockTime) != EFB_OK)
+      {
+        // S'il y a une erreur d'envoie, plus sensé arrivé
+        debug("FAIL!");
+        continue;
+      }
+      //debug("SUCC!");
+      taskENTER_CRITICAL();
+      {
+        //motor->encoderValue += result;
+        encoderValueTest += result;
+      }
+      taskEXIT_CRITICAL();
+    }
+    // result = 26;
+    // if (getWordFromDE0nano(1, (unsigned short*)&result, 2) == EFB_OK)
     // {
-      // motor = &((*ime)->motor);
-      // result = 0;
-      // if(getWordFromDE0nano(motor->id + 1, (unsigned short*)&result, motor->blockTime) != EFB_OK)
-      // {
-        // // S'il y a une erreur d'envoie, plus sensé arrivé
-        // debug("FAIL!");
-        // continue;
-      // }
-      // //debug("SUCC!");
       // taskENTER_CRITICAL();
       // {
-        // motor->encoderValue += result;
+        // encoderValueTest += result;
+        // motor0.motor.encoderValue += result;
       // }
       // taskEXIT_CRITICAL();
     // }
-    result = 26;
-    if (getWordFromDE0nano(2, (unsigned short*)&result, 2) == EFB_OK)
-    {
-        motor2.motor.encoderValue += result;
-    }
-    //debug("2: encoder value : 0x%l\n", (uint32_t)motor2.motor.encoderValue);
+    //debug("2: encoder value : 0x%l\n", (uint32_t)encoderValueTest);
     vTaskDelayUntil(&xLastWakeTime, 10/portTICK_RATE_MS);
   }
 }
 
-ModuleValue getEncoderValue(MotorData *motor)
+ModuleValue getEncoderValue( MotorData *motor)
 {
-  ModuleValue returnValue = 78;
+  ModuleValue returnValue = 0;
   taskENTER_CRITICAL();
   {
     // On ne garde pas les 4 bits de poids faible (arrondi précision)
-    returnValue = motor->encoderValue & 0xFFFFFFF0;
+    returnValue = encoderValueTest & 0xFFFFFFF0;
   }
   taskEXIT_CRITICAL();
-  debug("encoder value = 0x%l", (uint32_t) returnValue);
+  // debug("encoder value = 0x%l\r\n", (uint32_t) returnValue);
   return returnValue;
 }
 
@@ -103,7 +108,7 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   ModuleValue val = 0;
   if (cmd > 0)
   {
-    val = (37 * cmd - 481) / 2000;
+    val = cmd * 30 / 1640;
     if (val > 63)
     {    
       val = 63;
@@ -111,7 +116,7 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   }
   else if (cmd < 0)
   {
-    val = (-21 * cmd - 169) / 1000;
+    val = cmd * 30 / 1480;
     if (val < -63)
     {
       val = -63;
@@ -121,24 +126,26 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   {
     val = 0;
   }
+  val = val + 64 - motor->id;
   EFBuart2PushByteToBuffer( val | motor->mask );
 }
 
-void resetEncoderValue(MotorData *motor)
+void resetEncoderValue( MotorData *motor)
 {
   taskENTER_CRITICAL();
   {
-    motor->encoderValue = 99;
+    motor->encoderValue = 0;
+    encoderValueTest = 0;
   }
   taskEXIT_CRITICAL();
-  debug("reset\r\n");
+  debug("reset\r\n\4");
 }
 
 // Implémentation d'un moteur parfait. Pour faire des tests triviaux.
 
 void sendNewCommandPerfectMotor(MotorData *motor, ModuleValue cmd);
 
-IME perfectMotor = {
+/*IME perfectMotor = {
   .motor = {
     .id = 0,
     .mask = 0x00,
@@ -148,7 +155,7 @@ IME perfectMotor = {
   .getEncoderValue = getEncoderValue,
   .sendNewCommand = sendNewCommandPerfectMotor,
   .resetEncoderValue = resetEncoderValue
-};
+};*/
 
 void sendNewCommandPerfectMotor(MotorData *motor, ModuleValue cmd)
 {

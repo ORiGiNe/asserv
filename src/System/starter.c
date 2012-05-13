@@ -64,7 +64,7 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
       {
         if (parent->isVerbose)
         {
-          debug("-----------| MOUVEMENT FINI :D |----------\n");
+          debug("\t--| MVT FINI |--\n");
         }
         // On indique que le mouvement est fini
         semaphoreGive(parent->ctl->semReached);

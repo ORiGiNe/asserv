@@ -87,7 +87,7 @@
 /* La communication uart utilise 4 timers ( 2 pour chaque uart).
 Ces timers sont initialisés avant le démarrage du scheduler, il faut donc que la file soit assez longue. */
 #define configTIMER_QUEUE_LENGTH              5
-#define configTIMER_TASK_STACK_DEPTH          ( ( unsigned short ) 500 )
+#define configTIMER_TASK_STACK_DEPTH          ( ( unsigned short ) 800 )
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES 						    0

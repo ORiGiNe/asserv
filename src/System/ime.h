@@ -18,13 +18,14 @@ typedef struct
 typedef struct {
   MotorData motor;
   ModuleValue (*getEncoderValue)(MotorData*);
-  void (*sendNewCommand)(MotorData*, ModuleValue);
-  void (*resetEncoderValue)(MotorData*);
+  void (*sendNewCommand)( MotorData*, ModuleValue);
+  void (*resetEncoderValue)( MotorData*);
 } IME;
 
-IME motor1;
-IME motor2;
-IME perfectMotor;
+ ModuleValue encoderValueTest; 
+ IME motor1;
+//IME motor2;
+//IME perfectMotor;
 
 void vTaskIME(void* pvParameters);
 

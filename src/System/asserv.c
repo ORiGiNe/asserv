@@ -107,19 +107,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
           + (int32_t)kd * (int32_t)derivError
 	   ) / 1000); // terme dérivé
 
-  // debug
-  if (parent->isVerbose)
-  {
-    //debug("\tAsserv -> wanted   : 0x%l\n", (uint32_t)command);
-    debug("\tAsserv -> measure  : 0x%l\n", (uint32_t)measure);
-    // debug("\t newError          : 0x%l\n", (uint32_t)newError);
-    // debug("\t integrale         : 0x%l\n", (uint32_t)asserv->integral);
-    // debug("\t derivee           : 0x%l\n", (uint32_t)derivError);
-    // debug("\tAsserv -> output   : 0x%l\n", (uint32_t)output);
-    // debug("\tAsserv -> vi1      : 0x%l\n", (uint32_t)((kp * newError) / 1000 + (ki * asserv->integral) / 1000 + (kd * derivError) / 1000));
-    // debug("\tAsserv -> vi2      : 0x%l\n", (uint32_t)((kp * newError + ki * asserv->integral + kd * derivError) / 1000));
-    // debug("\t ---- Autre asserv ---- \n");
-  }
+  
   
   /* On ecrete si trop grand avec la derivée maximale */
   if(output > derivThreshold)
@@ -130,7 +118,25 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   {
     output = -derivThreshold;
   }
-
+  
+  // debug
+    if (parent->isVerbose)
+    {
+      /*BACKUP
+      debug("\tAsserv -> wanted   : 0x%l\n", (uint32_t)command);
+      debug("\tAsserv -> measure  : 0x%l\n", (uint32_t)measure);
+      debug("\t newError          : 0x%l\n", (uint32_t)newError);
+      //debug("\t integrale         : 0x%l\n", (uint32_t)asserv->integral);
+      //debug("\t derivee           : 0x%l\n", (uint32_t)derivError);
+      debug("\tAsserv -> output   : 0x%l\n", (uint32_t)output);
+      //debug("\tAsserv -> vi1      : 0x%l\n", (uint32_t)((kp * newError) / 1000 + (ki * asserv->integral) / 1000 + (kd * derivError) / 1000));
+      //debug("\tAsserv -> vi2      : 0x%l\n", (uint32_t)((kp * newError + ki * asserv->integral + kd * derivError) / 1000));
+      debug("\t ---- Autre asserv ---- \n");*/
+      
+      debug("\nW 0x%l\r\n M 0x%l\r\n NE 0x%l\r\n O 0x%l\r\n", (uint32_t)command, (uint32_t)measure, (uint32_t)newError, (uint32_t)output);
+    }
+  
+  
   /* On envoie la commande sur la sortie port */
   setOutput(parent, port, output);
 

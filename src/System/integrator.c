@@ -67,7 +67,10 @@ ErrorCode updateIntegrator(Module* parent, OriginWord port){
   ((Integrator*)parent->fun)->integrale += value;
   // On met à jour la sortie ayant pour port <port>
   setOutput(parent, port, ((Integrator*)parent->fun)->integrale);
-
+  if(parent->isVerbose)
+  {
+    debug("\nint : 0x%l\r\n", (uint32_t)((Integrator*)parent->fun)->integrale);
+  }
   return NO_ERR;
 }
 
