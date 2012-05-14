@@ -83,7 +83,7 @@ void vTaskSI (void* pvParameters)
   ModuleValue deriv = 1500;
   //ModuleValue deriv = 32000;
 
-  vitKp = 300;
+  ModuleValue vitKp = 300;
   ModuleValue vitKi = 0;
   ModuleValue vitKd = 0;
   ModuleValue accel = 1000;
