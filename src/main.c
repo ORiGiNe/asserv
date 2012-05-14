@@ -157,7 +157,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  if (configureModule(ifaceME, (void*)&motor1) != NO_ERR)
+  if (configureModule(ifaceME, (void*)&motor2) != NO_ERR)
   {
    return;
   }
