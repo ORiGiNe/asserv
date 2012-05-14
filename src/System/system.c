@@ -78,7 +78,7 @@ ErrorCode resetSystem(CtlBlock* ctlBlock, portTickType blockTime)
 void vCallback(TimerHandle pxTimer)
 {
   CtlBlock *ctlBlock = (CtlBlock*)timerGetArg(pxTimer);
-  ErrorCode error = NO_ERR;
+  //ErrorCode error = NO_ERR;
 
   // On met à jour le nombre de tic
   ctlBlock->nTic++;
@@ -101,8 +101,8 @@ void vCallback(TimerHandle pxTimer)
 
 ErrorCode waitEndOfSystem(CtlBlock *ctlBlock, portTickType xBlockTime)
 {
-  portTickType xLastWakeTime = taskGetTickCount();
-  portTickType xDiffTime;
+  //portTickType xLastWakeTime = taskGetTickCount();
+  //portTickType xDiffTime;
   /* On attend la fin de la sémaphore */
   if( semaphoreTake( ctlBlock->semReached, xBlockTime ) == pdFALSE )
   {
