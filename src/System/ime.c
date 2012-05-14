@@ -17,7 +17,7 @@ IME motor1 = {
   .sendNewCommand = sendNewCommand,
   .resetEncoderValue = resetEncoderValue
 };
-/*
+
 IME motor2 = {
   .motor = {
     .id = 1,
@@ -29,14 +29,13 @@ IME motor2 = {
   .sendNewCommand = sendNewCommand,
   .resetEncoderValue = resetEncoderValue
 };
-*/
+
 IME *imes[2] = {
   &motor1,
-  //&motor2,
+  &motor2,
   0
 };
 
-ModuleValue encoderValueTest = 0 ;
 void vTaskIME(void* pvParameters)
 {
   portTickType xLastWakeTime;
@@ -49,7 +48,6 @@ void vTaskIME(void* pvParameters)
   xLastWakeTime = xTaskGetTickCount ();
   for (;;)
   {
-    // FIXME : Pour verifier, la récupération de la valeur des codeurs est faite de manière statique
     for(ime = imes; *ime != 0;  ime++)
     {
       motor = &((*ime)->motor);
@@ -64,21 +62,11 @@ void vTaskIME(void* pvParameters)
       taskENTER_CRITICAL();
       {
         //motor->encoderValue += result;
-        encoderValueTest += result;
+        motor->encoderValue += result;
       }
       taskEXIT_CRITICAL();
     }
-    // result = 26;
-    // if (getWordFromDE0nano(1, (unsigned short*)&result, 2) == EFB_OK)
-    // {
-      // taskENTER_CRITICAL();
-      // {
-        // encoderValueTest += result;
-        // motor0.motor.encoderValue += result;
-      // }
-      // taskEXIT_CRITICAL();
-    // }
-    //debug("2: encoder value : 0x%l\n", (uint32_t)encoderValueTest);
+
     vTaskDelayUntil(&xLastWakeTime, 10/portTICK_RATE_MS);
   }
 }
@@ -89,10 +77,9 @@ ModuleValue getEncoderValue( MotorData *motor)
   taskENTER_CRITICAL();
   {
     // On ne garde pas les 4 bits de poids faible (arrondi précision)
-    returnValue = encoderValueTest & 0xFFFFFFF0;
+    returnValue = motor->encoderValue & 0xFFFFFFF0;
   }
   taskEXIT_CRITICAL();
-  // debug("encoder value = 0x%l\r\n", (uint32_t) returnValue);
   return returnValue;
 }
 
@@ -135,7 +122,6 @@ void resetEncoderValue( MotorData *motor)
   taskENTER_CRITICAL();
   {
     motor->encoderValue = 0;
-    encoderValueTest = 0;
   }
   taskEXIT_CRITICAL();
   debug("reset\r\n\4");
@@ -145,7 +131,7 @@ void resetEncoderValue( MotorData *motor)
 
 void sendNewCommandPerfectMotor(MotorData *motor, ModuleValue cmd);
 
-/*IME perfectMotor = {
+IME perfectMotor = {
   .motor = {
     .id = 0,
     .mask = 0x00,
@@ -155,7 +141,7 @@ void sendNewCommandPerfectMotor(MotorData *motor, ModuleValue cmd);
   .getEncoderValue = getEncoderValue,
   .sendNewCommand = sendNewCommandPerfectMotor,
   .resetEncoderValue = resetEncoderValue
-};*/
+};
 
 void sendNewCommandPerfectMotor(MotorData *motor, ModuleValue cmd)
 {

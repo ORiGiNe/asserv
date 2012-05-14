@@ -67,7 +67,6 @@ void vTaskLED (void* pvParameters)
 }
 
 
-static ModuleValue vitKp = 0;
 
 void vTaskSI (void* pvParameters)
 {
@@ -76,7 +75,6 @@ void vTaskSI (void* pvParameters)
   CtlBlock ctlBlock;
   Module *entry, *ifaceME, *asservPos, *asservVit, *starter, *encoderValueDerivator, *motorCommandIntegrator;
   EntryConfig entryConfig;
-  IME ime0 = motor1;
 
   //ModuleValue posKp = 1200;
   ModuleValue posKp = 300;
@@ -159,7 +157,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  if (configureModule(ifaceME, (void*)&ime0) != NO_ERR)
+  if (configureModule(ifaceME, (void*)&motor1) != NO_ERR)
   {
    return;
   }
