@@ -30,7 +30,7 @@ IME motor2 = {
   .resetEncoderValue = resetEncoderValue
 };
 
-IME *imes[2] = {
+IME *imes[3] = {
   &motor1,
   &motor2,
   0
