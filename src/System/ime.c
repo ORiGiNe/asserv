@@ -8,8 +8,8 @@ void resetEncoderValue(MotorData *motor);
 
 IME motor1 = {
   .motor = {
-    .id = 1,
-    .mask = 0x80,
+    .id = 0,
+    .mask = 0x00,
     .blockTime = 2, // 1ms c'est trop court!
     .encoderValue = 0
   },
