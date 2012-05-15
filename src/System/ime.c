@@ -11,7 +11,8 @@ IME motor1 = {
     .id = 0,
     .mask = 0x00,
     .blockTime = 2, // 1ms c'est trop court!
-    .encoderValue = 0
+    .encoderValue = 0,
+    .oldEncoderValue = 0
   },
   .getEncoderValue = getEncoderValue,
   .sendNewCommand = sendNewCommand,
@@ -23,7 +24,8 @@ IME motor2 = {
     .id = 1,
     .mask = 0x80,
     .blockTime = 2,
-    .encoderValue = 0
+    .encoderValue = 0,
+    .oldEncoderValue = 0
   },
   .getEncoderValue = getEncoderValue,
   .sendNewCommand = sendNewCommand,
@@ -44,6 +46,9 @@ void vTaskIME(void* pvParameters)
   //int16_t car à besoin d'etre un signé sur 16 bits!
   int16_t result = 0;
   (void) pvParameters;
+  
+    // reset des codeurs
+  resetDE0nano();
 
   xLastWakeTime = xTaskGetTickCount ();
   for (;;)
@@ -52,13 +57,16 @@ void vTaskIME(void* pvParameters)
     {
       motor = &((*ime)->motor);
       result = 0;
+      
       if(getWordFromDE0nano(motor->id + 1, (unsigned short*)&result, motor->blockTime) != EFB_OK)
       {
         // S'il y a une erreur d'envoie, plus sensé arrivé
-        //debug("FAIL!");
+        debug("FAIL!");
+        result = motor->oldEncoderValue;
         continue;
       }
-      //debug("SUCC!");
+      motor->oldEncoderValue = result;
+       
       taskENTER_CRITICAL();
       {
         motor->encoderValue += result;
@@ -78,6 +86,7 @@ ModuleValue getEncoderValue( MotorData *motor)
     returnValue = motor->encoderValue;//& 0xFFFFFFF0;
   }
   taskEXIT_CRITICAL();
+  // debug("r: 0x%l\r\n", (uint32_t)returnValue);
   return returnValue;
 }
 
@@ -89,11 +98,14 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   //val = val + 64 - motor->id;
   // 1000 0000 & val entre -127 et 127
   
+  debug("c: 0x%l\r\n", (uint32_t)cmd);
+  
   // FIXME: Trouver mieux pour la transformation des tics d'encodeurs vers des valeurs pontH
   ModuleValue val = 0;
   if (cmd > 0)
   {
-    val = cmd * 30 / 1640;
+    // val = (tics /refresh) * pontH * refresh / tics
+    val = cmd * 30 / (1640*5);
     if (val > 63)
     {    
       val = 63;
@@ -101,7 +113,7 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   }
   else if (cmd < 0)
   {
-    val = cmd * 30 / 1480;
+    val = cmd * 30 / (1480*5);
     if (val < -63)
     {
       val = -63;
@@ -112,6 +124,7 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
     val = 0;
   }
   val = val + 64 - motor->id;
+  debug("v: 0x%l\r\n", (uint32_t)val);
   EFBuart2PushByteToBuffer( val | motor->mask );
 }
 

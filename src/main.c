@@ -66,7 +66,7 @@ void vTaskLED (void* pvParameters)
   }
 }
 
-ModuleValue vitKp = 200;
+ModuleValue vitKp = 2500;
 CtlBlock ctlBlock;
 
 void vTaskSI (void* pvParameters)
@@ -88,7 +88,7 @@ void vTaskSI (void* pvParameters)
   ModuleValue accel = 150000;
   //ModuleValue accuracy = 0;
 
-  ModuleValue command = 1000;
+  ModuleValue command = 1640;
 
   entryConfig.nbEntry = 9;
   entryConfig.value[0] = &posKp; // kp
@@ -198,16 +198,13 @@ void vTaskSI (void* pvParameters)
   linkModuleWithInput(ifaceME, 0, encoderValueDerivator, 0);
 
   //linkModuleWithInput(asservVit, 0, ifaceME, 0);
-  linkModuleWithInput(asservVit, 0, ifaceME, 0);
-  // linkModuleWithInput(motorCommandIntegrator, 0, ifaceME, 0);
+  linkModuleWithInput(asservVit, 0, motorCommandIntegrator, 0);
+  linkModuleWithInput(motorCommandIntegrator, 0, ifaceME, 0);
   
   linkModuleWithInput(ifaceME, 0, starter, 0);
   
   
   //resetSystem(&ctlBlock, portMAX_DELAY);
-    
-  // reset des codeurs
-  resetDE0nano();
   
   for (;;)
   {
@@ -239,8 +236,8 @@ int main (void)
 	
 	//EFBoutPort (PORT_LED13, MASK_LED13);
   xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
-  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE *4, NULL, 1, &xTaskSI);
   xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 3, NULL, 1, &xTaskIME);
+  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE *4, NULL, 1, &xTaskSI);
 
   vTaskStartScheduler ();
 
