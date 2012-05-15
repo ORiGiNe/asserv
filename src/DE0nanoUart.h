@@ -20,6 +20,9 @@ extern "C"
 #define PORT_ARDUINOFLOWCONTROL2 PORTH
 #define DDR_ARDUINOFLOWCONTROL2 DDRH
 #define BIT_ARDUINOFLOWCONTROL2 4
+#define PORT_ARDUINORESETDE0NANO PORTE
+#define DDR_ARDUINORESETDE0NANO DDRE
+#define BIT_ARDUINORESETDE0NANO 3
 
 enum
 {
@@ -34,6 +37,7 @@ enum
 
   void DE0nanoUartInit(uint32_t, tEFBboolean);
   tEFBerrCode getWordFromDE0nano(uint8_t flowControlNum, word * wordOut, portTickType xBlockTime);
+  void resetDE0nano();
 
 #endif // EFB_UART_EN1
 

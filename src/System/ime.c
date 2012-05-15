@@ -55,18 +55,16 @@ void vTaskIME(void* pvParameters)
       if(getWordFromDE0nano(motor->id + 1, (unsigned short*)&result, motor->blockTime) != EFB_OK)
       {
         // S'il y a une erreur d'envoie, plus sensé arrivé
-        debug("FAIL!");
+        //debug("FAIL!");
         continue;
       }
       //debug("SUCC!");
       taskENTER_CRITICAL();
       {
-        //motor->encoderValue += result;
         motor->encoderValue += result;
       }
       taskEXIT_CRITICAL();
     }
-
     vTaskDelayUntil(&xLastWakeTime, 10/portTICK_RATE_MS);
   }
 }
@@ -77,7 +75,7 @@ ModuleValue getEncoderValue( MotorData *motor)
   taskENTER_CRITICAL();
   {
     // On ne garde pas les 4 bits de poids faible (arrondi précision)
-    returnValue = motor->encoderValue & 0xFFFFFFF0;
+    returnValue = motor->encoderValue;//& 0xFFFFFFF0;
   }
   taskEXIT_CRITICAL();
   return returnValue;

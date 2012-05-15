@@ -136,7 +136,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
       debug("\nW 0x%l\r\n M 0x%l\r\n NE 0x%l\r\n O 0x%l\r\n", (uint32_t)command, (uint32_t)measure, (uint32_t)newError, (uint32_t)output);
     }
   
-  
+  debug("0x%l\r\n", (uint32_t)measure);
   /* On envoie la commande sur la sortie port */
   setOutput(parent, port, output);
 

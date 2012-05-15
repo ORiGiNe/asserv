@@ -66,32 +66,29 @@ void vTaskLED (void* pvParameters)
   }
 }
 
-
+ModuleValue vitKp = 200;
+CtlBlock ctlBlock;
 
 void vTaskSI (void* pvParameters)
 {
   (void) pvParameters;
   portTickType xLastWakeTime;
-  CtlBlock ctlBlock;
+  //CtlBlock ctlBlock;
   Module *entry, *ifaceME, *asservPos, *asservVit, *starter, *encoderValueDerivator, *motorCommandIntegrator;
   EntryConfig entryConfig;
 
-  //ModuleValue posKp = 1200;
   ModuleValue posKp = 300;
   ModuleValue posKi = 0;
   ModuleValue posKd = 0;
   ModuleValue deriv = 1500;
-  //ModuleValue deriv = 32000;
 
-  ModuleValue vitKp = 300;
+  //ModuleValue vitKp = 100;
   ModuleValue vitKi = 0;
   ModuleValue vitKd = 0;
-  ModuleValue accel = 1000;
-  //ModuleValue accel = 32000;
+  ModuleValue accel = 150000;
   //ModuleValue accuracy = 0;
 
-  //ModuleValue command = 1000;
-  ModuleValue command = 100000;
+  ModuleValue command = 1000;
 
   entryConfig.nbEntry = 9;
   entryConfig.value[0] = &posKp; // kp
@@ -125,12 +122,12 @@ void vTaskSI (void* pvParameters)
    return;
   }
   // Création de l'asserv 1 (Asserv)
-  asservPos = initModule(&ctlBlock, 6, 1, asservType, 1);
+  asservPos = initModule(&ctlBlock, 6, 1, asservType, 0);
   if (asservPos == 0)
   {
    return;
   }
-  asservVit = initModule(&ctlBlock, 6, 1, asservType, 1);
+  asservVit = initModule(&ctlBlock, 6, 1, asservType, 0);
   if (asservVit == 0)
   {
    return;
@@ -140,7 +137,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  motorCommandIntegrator = initModule(&ctlBlock, 1, 1, integratorType, 1);
+  motorCommandIntegrator = initModule(&ctlBlock, 1, 1, integratorType, 0);
   if (motorCommandIntegrator == 0)
   {
    return;
@@ -201,13 +198,17 @@ void vTaskSI (void* pvParameters)
   linkModuleWithInput(ifaceME, 0, encoderValueDerivator, 0);
 
   //linkModuleWithInput(asservVit, 0, ifaceME, 0);
-  linkModuleWithInput(asservVit, 0, motorCommandIntegrator, 0);
-  linkModuleWithInput(motorCommandIntegrator, 0, ifaceME, 0);
+  linkModuleWithInput(asservVit, 0, ifaceME, 0);
+  // linkModuleWithInput(motorCommandIntegrator, 0, ifaceME, 0);
   
   linkModuleWithInput(ifaceME, 0, starter, 0);
   
   
   //resetSystem(&ctlBlock, portMAX_DELAY);
+    
+  // reset des codeurs
+  resetDE0nano();
+  
   for (;;)
   {
     if (startSystem(&ctlBlock) == NO_ERR)

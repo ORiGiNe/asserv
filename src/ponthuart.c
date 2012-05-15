@@ -111,7 +111,7 @@ tEFBerrCode EFBuart2PushByteToBufferImpl (volatile tEFBuartCircularBuffer2 * pCi
 			break;
 	}
   
-  debug("\nDB : 0x%l\r\n", (uint32_t)dataByte);
+  //debug("\nDB : 0x%l\r\n", (uint32_t)dataByte);
 	return retCode;
 } // EFBuart2PushByteToBufferImpl
 
