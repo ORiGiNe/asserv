@@ -182,23 +182,23 @@ void vTaskSI (void* pvParameters)
 
 
 
-  //linkModuleWithInput(entry, 0, asservPos, AsservKp);
-  //linkModuleWithInput(entry, 1, asservPos, AsservKi);
-  //linkModuleWithInput(entry, 2, asservPos, AsservKd);
-  //linkModuleWithInput(entry, 3, asservPos, AsservDeriv);
-  linkModuleWithInput(entry, 8, asservVit, AsservCommand);
-  //linkModuleWithInput(ifaceME, 0, asservPos, AsservMeasure);
+  linkModuleWithInput(entry, 0, asservPos, AsservKp);
+  linkModuleWithInput(entry, 1, asservPos, AsservKi);
+  linkModuleWithInput(entry, 2, asservPos, AsservKd);
+  linkModuleWithInput(entry, 3, asservPos, AsservDeriv);
+  linkModuleWithInput(entry, 8, asservPos, AsservCommand);
+  linkModuleWithInput(ifaceME, 0, asservPos, AsservMeasure);
 
   linkModuleWithInput(entry, 4, asservVit, AsservKp);
   linkModuleWithInput(entry, 5, asservVit, AsservKi);
   linkModuleWithInput(entry, 6, asservVit, AsservKd);
   linkModuleWithInput(entry, 7, asservVit, AsservDeriv);
-  //linkModuleWithInput(asservPos, 0, asservVit, AsservCommand);
+  linkModuleWithInput(asservPos, 0, asservVit, AsservCommand);
   linkModuleWithInput(encoderValueDerivator, 0, asservVit, AsservMeasure);
   linkModuleWithInput(ifaceME, 0, encoderValueDerivator, 0);
 
-  //linkModuleWithInput(asservVit, 0, ifaceME, 0);
   linkModuleWithInput(asservVit, 0, motorCommandIntegrator, 0);
+  // linkModuleWithInput(asservPos, 0, ifaceME, 0);
   linkModuleWithInput(motorCommandIntegrator, 0, ifaceME, 0);
   
   linkModuleWithInput(ifaceME, 0, starter, 0);
