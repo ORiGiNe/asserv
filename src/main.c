@@ -77,18 +77,20 @@ void vTaskSI (void* pvParameters)
   Module *entry, *ifaceME, *asservPos, *asservVit, *starter, *encoderValueDerivator, *motorCommandIntegrator;
   EntryConfig entryConfig;
 
-  ModuleValue posKp = 300;
+  // ASSERVISSEMENT POSITION
+  ModuleValue posKp = 130; // léger dépassement volontaire
   ModuleValue posKi = 0;
-  ModuleValue posKd = 0;
+  ModuleValue posKd = 150;
   ModuleValue deriv = 16000;
 
-  //ModuleValue vitKp = 100;
+  // ASSERVISSEMENT VITESSE
+  // ModuleValue vitKp = 1902;
   ModuleValue vitKi = 0; // 13
   ModuleValue vitKd = 19;
-  ModuleValue accel = 500;
+  ModuleValue accel = 1000;
   //ModuleValue accuracy = 0;
 
-  ModuleValue command = 100000;
+  ModuleValue command = 1000000;
 
   entryConfig.nbEntry = 9;
   entryConfig.value[0] = &posKp; // kp
@@ -122,7 +124,7 @@ void vTaskSI (void* pvParameters)
    return;
   }
   // Création de l'asserv 1 (Asserv)
-  asservPos = initModule(&ctlBlock, 6, 1, asservType, 0);
+  asservPos = initModule(&ctlBlock, 6, 1, asservType, 1);
   if (asservPos == 0)
   {
    return;

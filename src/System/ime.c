@@ -98,8 +98,6 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   //val = val + 64 - motor->id;
   // 1000 0000 & val entre -127 et 127
   
-  debug("c: 0x%l\r\n", (uint32_t)cmd);
-  
   // FIXME: Trouver mieux pour la transformation des tics d'encodeurs vers des valeurs pontH
   ModuleValue val = 0;
   if (cmd > 0)

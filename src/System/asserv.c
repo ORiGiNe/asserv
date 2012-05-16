@@ -133,10 +133,12 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
       //debug("\tAsserv -> vi2      : 0x%l\n", (uint32_t)((kp * newError + ki * asserv->integral + kd * derivError) / 1000));
       debug("\t ---- Autre asserv ---- \n");*/
       
-      debug("\nW 0x%l\r\n M 0x%l\r\n NE 0x%l\r\n O 0x%l\r\n", (uint32_t)command, (uint32_t)measure, (uint32_t)newError, (uint32_t)output);
+      
+      debug("m: 0x%l\r\nc: 0x%l\r\n", (uint32_t)measure, (uint32_t)command);
+      // debug("\nW 0x%l\r\n M 0x%l\r\n NE 0x%l\r\n O 0x%l\r\n", (uint32_t)command, (uint32_t)measure, (uint32_t)newError, (uint32_t)output);
     }
   
-  debug("m: 0x%l\r\n", (uint32_t)measure, (uint32_t)output);
+  
   /* On envoie la commande sur la sortie port */
   setOutput(parent, port, output);
 
