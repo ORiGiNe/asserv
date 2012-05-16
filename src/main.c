@@ -74,36 +74,86 @@ void vTaskSI (void* pvParameters)
   (void) pvParameters;
   portTickType xLastWakeTime;
   //CtlBlock ctlBlock;
-  Module *entry, *ifaceME, *asservPos, *asservVit, *starter, *encoderValueDerivator, *motorCommandIntegrator;
-  EntryConfig entryConfig;
+  Module *entryDist, *asservPosDist, *asservVitDist, *measureDerivatorDist, *imeInIntegratorDist;
+  Module *entryRot, *asservPosRot, *asservVitRot, *measureDerivatorRot, *imeInIntegratorRot;
+  Module *ifaceMERight, *ifaceMELeft, *starter, *operatorIn, *operatorOut;
+  EntryConfig entryConfigDist, entryConfigRot;
 
-  // ASSERVISSEMENT POSITION
-  ModuleValue posKp = 130; // léger dépassement volontaire
-  ModuleValue posKi = 0;
-  ModuleValue posKd = 150;
-  ModuleValue deriv = 16000;
+  // Enregistrement de l'asservissement en distance
+  ModuleValue posKpDist = 130; // léger dépassement volontaire
+  ModuleValue posKiDist = 0;
+  ModuleValue posKdDist = 150;
+  ModuleValue derivDist = 16000;
 
-  // ASSERVISSEMENT VITESSE
-  // ModuleValue vitKp = 1902;
-  ModuleValue vitKi = 0; // 13
-  ModuleValue vitKd = 19;
-  ModuleValue accel = 1000;
-  //ModuleValue accuracy = 0;
+  ModuleValue vitKpDist = 1902;
+  ModuleValue vitKiDist = 0;
+  ModuleValue vitKdDist = 19;
+  ModuleValue accelDist = 1000;
 
-  ModuleValue command = 1000000;
+  ModuleValue commandDist = 1000000;
 
-  entryConfig.nbEntry = 9;
-  entryConfig.value[0] = &posKp; // kp
-  entryConfig.value[1] = &posKi; // ki
-  entryConfig.value[2] = &posKd; // kd
-  entryConfig.value[3] = &deriv; // deriv
-  entryConfig.value[4] = &vitKp; // kp
-  entryConfig.value[5] = &vitKi; // ki
-  entryConfig.value[6] = &vitKd; // kd
-  entryConfig.value[7] = &accel; // accel
-  entryConfig.value[8] = &command; // command
+  entryConfigDist.nbEntry = 9;
+  entryConfigDist.value[0] = &posKpDist; // kp
+  entryConfigDist.value[1] = &posKiDist; // ki
+  entryConfigDist.value[2] = &posKdDist; // kd
+  entryConfigDist.value[3] = &derivDist; // deriv
+  entryConfigDist.value[4] = &vitKpDist; // kp
+  entryConfigDist.value[5] = &vitKiDist; // ki
+  entryConfigDist.value[6] = &vitKdDist; // kd
+  entryConfigDist.value[7] = &accelDist; // accel
+  entryConfigDist.value[8] = &commandDist; // command
+
+
+
+  // Enregistrement de l'asservissement en rotation
+  ModuleValue posKpRot = 130; // léger dépassement volontaire
+  ModuleValue posKiRot = 0;
+  ModuleValue posKdRot = 150;
+  ModuleValue derivRot = 16000;
+
+  ModuleValue vitKpRot = 1902;
+  ModuleValue vitKiRot = 0;
+  ModuleValue vitKdRot = 19;
+  ModuleValue accelRot = 1000;
+
+  ModuleValue commandRot = 1000000;
+
+  entryConfigRot.nbEntry = 9;
+  entryConfigRot.value[0] = &posKpRot; // kp
+  entryConfigRot.value[1] = &posKiRot; // ki
+  entryConfigRot.value[2] = &posKdRot; // kd
+  entryConfigRot.value[3] = &derivRot; // deriv
+  entryConfigRot.value[4] = &vitKpRot; // kp
+  entryConfigRot.value[5] = &vitKiRot; // ki
+  entryConfigRot.value[6] = &vitKdRot; // kd
+  entryConfigRot.value[7] = &accelRot; // accel
+  entryConfigRot.value[8] = &commandRot; // command
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   xLastWakeTime = taskGetTickCount ();
+
+
 
   // Création du Starter
   starter = initModule(&ctlBlock, 1, 0, starterType, 0);
@@ -111,72 +161,164 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  // Création de l'Entry
-  entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, entryType, 0);
-  if (entry == 0)
+  // Création de l'interface systeme (IfaceMERight)
+  ifaceMERight = initModule(&ctlBlock, 1, 2, ifaceMEType, 0);
+  if (ifaceMERight == 0)
   {
    return;
   }
-  // Création de l'interface systeme (IfaceME)
-  ifaceME = initModule(&ctlBlock, 1, 2, ifaceMEType, 0);
-  if (ifaceME == 0)
+  // Création de l'interface systeme (IfaceMELeft)
+  ifaceMELeft = initModule(&ctlBlock, 1, 2, ifaceMEType, 0);
+  if (ifaceMELeft == 0)
   {
    return;
   }
-  // Création de l'asserv 1 (Asserv)
-  asservPos = initModule(&ctlBlock, 6, 1, asservType, 1);
-  if (asservPos == 0)
+  // Création de l'operateur asservs -> IMEs
+  operatorIn = initModule(&ctlBlock, 2, 2, operatorType, 0);
+  if (operatorIn == 0)
   {
    return;
   }
-  asservVit = initModule(&ctlBlock, 6, 1, asservType, 0);
-  if (asservVit == 0)
-  {
-   return;
-  }
-  encoderValueDerivator = initModule(&ctlBlock, 1, 1, derivatorType, 0);
-  if (encoderValueDerivator == 0)
-  {
-   return;
-  }
-  motorCommandIntegrator = initModule(&ctlBlock, 1, 1, integratorType, 0);
-  if (motorCommandIntegrator == 0)
+  // Création de l'operateur IMEs -> asservs
+  operatorOut = initModule(&ctlBlock, 2, 2, operatorType, 0);
+  if (operatorOut == 0)
   {
    return;
   }
 
-  //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
-  //stderrPrintf ((char*)string);
+
+  // Création de l'Entry
+  entryDist = initModule(&ctlBlock, 0, entryConfigDist.nbEntry, entryType, 0);
+  if (entryDist == 0)
+  {
+   return;
+  }
+  asservPosDist = initModule(&ctlBlock, 6, 1, asservType, 1);
+  if (asservPosDist == 0)
+  {
+   return;
+  }
+  asservVitDist = initModule(&ctlBlock, 6, 1, asservType, 0);
+  if (asservVitDist == 0)
+  {
+   return;
+  }
+  measureDerivatorDist = initModule(&ctlBlock, 1, 1, derivatorType, 0);
+  if (measureDerivatorDist == 0)
+  {
+   return;
+  }
+  imeInIntegratorDist = initModule(&ctlBlock, 1, 1, integratorType, 0);
+  if (imeInIntegratorDist == 0)
+  {
+   return;
+  }
+
+
+  // Création de l'Entry
+  entryRot = initModule(&ctlBlock, 0, entryConfigRot.nbEntry, entryType, 0);
+  if (entryRot == 0)
+  {
+   return;
+  }
+  asservPosRot = initModule(&ctlBlock, 6, 1, asservType, 1);
+  if (asservPosRot == 0)
+  {
+   return;
+  }
+  asservVitRot = initModule(&ctlBlock, 6, 1, asservType, 0);
+  if (asservVitRot == 0)
+  {
+   return;
+  }
+  measureDerivatorRot = initModule(&ctlBlock, 1, 1, derivatorType, 0);
+  if (measureDerivatorRot == 0)
+  {
+   return;
+  }
+  imeInIntegratorRot = initModule(&ctlBlock, 1, 1, integratorType, 0);
+  if (imeInIntegratorRot == 0)
+  {
+   return;
+  }
+
+
+
+
+
+
+
   if (createSystem(&ctlBlock, starter , 50) == ERR_TIMER_NOT_DEF)
   {
    return;
   }
 
-  if (configureModule(entry, (void*)&entryConfig) != NO_ERR)
-  {
-   return;
-  }
-  if (configureModule(ifaceME, (void*)&motor2) != NO_ERR)
-  {
-   return;
-  }
-  if (configureModule(asservPos, NULL) != NO_ERR)
-  {
-   return;
-  }
-  if (configureModule(asservVit, NULL) != NO_ERR)
-  {
-   return;
-  }
+
+
+
+
+
   if (configureModule(starter, NULL) != NO_ERR)
   {
    return;
   }
-  if (configureModule(encoderValueDerivator, NULL) != NO_ERR)
+  if (configureModule(ifaceMELeft, (void*)&motor1) != NO_ERR)
   {
    return;
   }
-  if (configureModule(motorCommandIntegrator, NULL) != NO_ERR)
+  if (configureModule(ifaceMERight, (void*)&motor2) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(operatorIn, (void*)funCalcValueForMotor) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(operatorOut, (void*)funCalcValueForAsserv) != NO_ERR)
+  {
+   return;
+  }
+
+
+  if (configureModule(entryDist, (void*)&entryConfigDist) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(asservPosDist, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(asservVitDist, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(measureDerivatorDist, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(imeInIntegratorDist, NULL) != NO_ERR)
+  {
+   return;
+  }
+
+
+  if (configureModule(entryRot, (void*)&entryConfigRot) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(asservPosRot, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(asservVitRot, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(measureDerivatorRot, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(imeInIntegratorRot, NULL) != NO_ERR)
   {
    return;
   }
@@ -184,28 +326,61 @@ void vTaskSI (void* pvParameters)
 
 
 
-  linkModuleWithInput(entry, 0, asservPos, AsservKp);
-  linkModuleWithInput(entry, 1, asservPos, AsservKi);
-  linkModuleWithInput(entry, 2, asservPos, AsservKd);
-  linkModuleWithInput(entry, 3, asservPos, AsservDeriv);
-  linkModuleWithInput(entry, 8, asservPos, AsservCommand);
-  linkModuleWithInput(ifaceME, 0, asservPos, AsservMeasure);
+  // DISTANCE
+  linkModuleWithInput(entryDist, 8, asservPosDist, AsservCommand);
+  linkModuleWithInput(entryDist, 0, asservPosDist, AsservKp);
+  linkModuleWithInput(entryDist, 1, asservPosDist, AsservKi);
+  linkModuleWithInput(entryDist, 2, asservPosDist, AsservKd);
+  linkModuleWithInput(entryDist, 3, asservPosDist, AsservDeriv);
+  linkModuleWithInput(operatorOut, 0, asservPosDist, AsservMeasure);
+  linkModuleWithInput(asservPosDist, 0, asservVitDist, AsservCommand);
 
-  linkModuleWithInput(entry, 4, asservVit, AsservKp);
-  linkModuleWithInput(entry, 5, asservVit, AsservKi);
-  linkModuleWithInput(entry, 6, asservVit, AsservKd);
-  linkModuleWithInput(entry, 7, asservVit, AsservDeriv);
-  linkModuleWithInput(asservPos, 0, asservVit, AsservCommand);
+  linkModuleWithInput(entryDist, 4, asservVitDist, AsservKp);
+  linkModuleWithInput(entryDist, 5, asservVitDist, AsservKi);
+  linkModuleWithInput(entryDist, 6, asservVitDist, AsservKd);
+  linkModuleWithInput(entryDist, 7, asservVitDist, AsservDeriv);
+  linkModuleWithInput(operatorOut, 0, measureDerivatorDist, 0);
+  linkModuleWithInput(measureDerivatorDist, 0, asservVitDist, AsservMeasure);
+  linkModuleWithInput(asservVitDist, 0, imeInIntegratorDist, 0);
 
-  linkModuleWithInput(asservVit, 0, motorCommandIntegrator, 0);
+  linkModuleWithInput(imeInIntegratorDist, 0, operatorIn, 0);
 
-  linkModuleWithInput(ifaceME, 0, encoderValueDerivator, 0);
-  linkModuleWithInput(encoderValueDerivator, 0, asservVit, AsservMeasure);
 
-  // linkModuleWithInput(asservPos, 0, ifaceME, 0);
-  linkModuleWithInput(motorCommandIntegrator, 0, ifaceME, 0);
-  
-  linkModuleWithInput(ifaceME, 0, starter, 0);
+  // ROTATION
+  linkModuleWithInput(entryRot, 8, asservPosRot, AsservCommand);
+  linkModuleWithInput(entryRot, 0, asservPosRot, AsservKp);
+  linkModuleWithInput(entryRot, 1, asservPosRot, AsservKi);
+  linkModuleWithInput(entryRot, 2, asservPosRot, AsservKd);
+  linkModuleWithInput(entryRot, 3, asservPosRot, AsservDeriv);
+  linkModuleWithInput(operatorOut, 0, asservPosRot, AsservMeasure);
+  linkModuleWithInput(asservPosRot, 0, asservVitRot, AsservCommand);
+
+  linkModuleWithInput(entryRot, 4, asservVitRot, AsservKp);
+  linkModuleWithInput(entryRot, 5, asservVitRot, AsservKi);
+  linkModuleWithInput(entryRot, 6, asservVitRot, AsservKd);
+  linkModuleWithInput(entryRot, 7, asservVitRot, AsservDeriv);
+  linkModuleWithInput(operatorOut, 0, measureDerivatorRot, 0);
+  linkModuleWithInput(measureDerivatorRot, 0, asservVitRot, AsservMeasure);
+  linkModuleWithInput(asservVitRot, 0, imeInIntegratorRot, 0);
+
+  linkModuleWithInput(imeInIntegratorRot, 0, operatorIn, 0);
+
+
+
+
+
+
+
+
+
+  linkModuleWithInput(operatorIn, 0, ifaceMELeft, 0);
+  linkModuleWithInput(operatorIn, 1, ifaceMERight, 0);
+
+  linkModuleWithInput(ifaceMELeft, 0, operatorOut, 0);
+  linkModuleWithInput(ifaceMERight, 0, operatorOut, 1);
+
+  linkModuleWithInput(ifaceMERight, 0, starter, 0);
+  linkModuleWithInput(ifaceMELeft, 0, starter, 0);
   
   
   //resetSystem(&ctlBlock, portMAX_DELAY);

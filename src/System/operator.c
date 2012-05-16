@@ -83,3 +83,31 @@ ErrorCode updateOperator(Module* parent, OriginWord port)
   return NO_ERR;
 }
 
+
+ModuleValue funCalcValueForMotor(Module* parent, OriginWord port)
+{
+  switch(port)
+  {
+    case 0:
+      return getInput(parent, 0) + getInput(parent, 1);
+    case 1:
+      return getInput(parent, 0) - getInput(parent, 1);
+    default:
+      break;
+  }
+  return 0;
+}
+
+ModuleValue funCalcValueForAsserv(Module* parent, OriginWord port)
+{
+  switch(port)
+  {
+    case 0:
+      return (getInput(parent, 0) + getInput(parent, 1)) / 2;
+    case 1:
+      return (getInput(parent, 0) - getInput(parent, 1)) / 2;
+    default:
+      break;
+  }
+  return 0;
+}

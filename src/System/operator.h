@@ -12,7 +12,7 @@ extern "C"
 #endif
 
 typedef struct op Operator;
-typedef ModuleValue(*OperatorFunction)(OriginWord,Module*);
+typedef ModuleValue(*OperatorFunction)(Module*, OriginWord);
 
 struct op
 {
@@ -20,6 +20,8 @@ struct op
   OperatorFunction func; //ModuleValue(*func)(OriginWord,ModuleInput*);
 };
 
+ModuleValue funCalcValueForMotor(Module* parent, OriginWord port);
+ModuleValue funCalcValueForAsserv(Module* parent, OriginWord port);
 
 ModuleType operatorType;
 #ifdef __cplusplus
