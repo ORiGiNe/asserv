@@ -61,8 +61,8 @@ void vTaskIME(void* pvParameters)
       if(getWordFromDE0nano(motor->id + 1, (unsigned short*)&result, motor->blockTime) != EFB_OK)
       {
         // S'il y a une erreur d'envoie, plus sensé arrivé
-        debug("FAIL!");
-        result = motor->oldEncoderValue;
+        debug("FAIL!\r\n");
+        //result = motor->oldEncoderValue;
         continue;
       }
       motor->oldEncoderValue = result;

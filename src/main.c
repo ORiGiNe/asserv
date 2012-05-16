@@ -66,7 +66,7 @@ void vTaskLED (void* pvParameters)
   }
 }
 
-ModuleValue vitKp = 2500;
+ModuleValue vitKp = 1902;
 CtlBlock ctlBlock;
 
 void vTaskSI (void* pvParameters)
@@ -80,15 +80,15 @@ void vTaskSI (void* pvParameters)
   ModuleValue posKp = 300;
   ModuleValue posKi = 0;
   ModuleValue posKd = 0;
-  ModuleValue deriv = 1500;
+  ModuleValue deriv = 16000;
 
   //ModuleValue vitKp = 100;
-  ModuleValue vitKi = 0;
-  ModuleValue vitKd = 0;
-  ModuleValue accel = 150000;
+  ModuleValue vitKi = 0; // 13
+  ModuleValue vitKd = 19;
+  ModuleValue accel = 500;
   //ModuleValue accuracy = 0;
 
-  ModuleValue command = 1640;
+  ModuleValue command = 100000;
 
   entryConfig.nbEntry = 9;
   entryConfig.value[0] = &posKp; // kp
