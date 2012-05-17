@@ -5,7 +5,7 @@
 ModuleValue getEncoderValue(MotorData *motor);
 void sendNewCommand(MotorData *motor, ModuleValue cmd);
 void resetEncoderValue(MotorData *motor);
-
+IME perfectMotor;
 IME motor1 = {
   .motor = {
     .id = 0,
@@ -33,8 +33,8 @@ IME motor2 = {
 };
 
 IME *imes[3] = {
+  &motor1,
   &motor2,
-  0,//&motor2,
   0
 };
 
@@ -61,8 +61,7 @@ void vTaskIME(void* pvParameters)
       if(getWordFromDE0nano(motor->id + 1, (unsigned short*)&result, motor->blockTime) != EFB_OK)
       {
         // S'il y a une erreur d'envoie, plus sensé arrivé
-        debug("FAIL!\r\n");
-        //result = motor->oldEncoderValue;
+        // debug("FAIL!\r\n");
         continue;
       }
       motor->oldEncoderValue = result;
@@ -72,7 +71,16 @@ void vTaskIME(void* pvParameters)
         motor->encoderValue += result;
       }
       taskEXIT_CRITICAL();
+      
+         // if(motor->id == 0)
+         // {
+          // debug("m1: 0x%l\r\n", (uint32_t)result);
+         // }else if(motor->id == 1){
+          // debug("m2: 0x%l\r\n", (uint32_t)result);
+         // }
+   
     }
+
     vTaskDelayUntil(&xLastWakeTime, 10/portTICK_RATE_MS);
   }
 }
@@ -98,12 +106,19 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   //val = val + 64 - motor->id;
   // 1000 0000 & val entre -127 et 127
   
+         // if(motor->id == 0)
+         // {
+          // debug("p1: 0x%l\r\n", (uint32_t)cmd);
+         // }else if(motor->id == 1){
+          // debug("p2: 0x%l\r\n", (uint32_t)cmd);
+         // }
   // FIXME: Trouver mieux pour la transformation des tics d'encodeurs vers des valeurs pontH
   ModuleValue val = 0;
+  // debug("snc: 0x%l\r\n", (uint32_t)cmd);
   if (cmd > 0)
   {
-    // val = (tics /refresh) * pontH * refresh / tics
-    val = cmd * 30 / (1640*5);
+    // val = cmd * VITESSE_PONTH / (TICS_CODEURS_REFRESH * TEMPS_REFRESH);
+    val = cmd / 500;// * 30 / (1640*5);
     if (val > 63)
     {    
       val = 63;
@@ -111,7 +126,7 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   }
   else if (cmd < 0)
   {
-    val = cmd * 30 / (1480*5);
+    val = cmd / 500;// * 30 / (1480*5);
     if (val < -63)
     {
       val = -63;
@@ -122,8 +137,9 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
     val = 0;
   }
   val = val + 64 - motor->id;
-  debug("v: 0x%l\r\n", (uint32_t)val);
-  EFBuart2PushByteToBuffer( val | motor->mask );
+  
+  debug("snc: 0x%l:0x%l\r\n", (uint32_t)cmd, (uint32_t)val);
+  EFBuart2PushByteToBuffer(val | motor->mask);
 }
 
 void resetEncoderValue( MotorData *motor)

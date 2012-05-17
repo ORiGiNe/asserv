@@ -229,8 +229,8 @@ void vTaskGaopCommunicationUART (void* pvParameters)
 
 #include "system.h";
 
-extern ModuleValue vitKp;
-extern CtlBlock ctlBlock;
+// extern ModuleValue vitKp;
+// extern CtlBlock ctlBlock;
 
 /* -----------------------------------------------------------------------------
  * vTaskGaopGestionCommandeUART
@@ -349,9 +349,10 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
           EFBuartGaopSendString ((char*)sortie);
           vTaskDelay(1000/portTICK_RATE_MS);
         }*/
-        // EFBuart2PushByteToBuffer(192 + curseur);
-        vitKp += 50;
-        resetSystem(&ctlBlock, portMAX_DELAY);
+        EFBuart2PushByteToBuffer(196);
+        EFBuart2PushByteToBuffer(69);
+        //vitKp += 50;
+        //resetSystem(&ctlBlock, portMAX_DELAY);
       }
       else if (t->commande == UART_CDE_PTH2)
       {

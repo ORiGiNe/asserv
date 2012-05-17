@@ -102,10 +102,12 @@ ErrorCode updateModule(Module* module, OriginWord port)
     module->nTic = module->ctl->nTic;
     // Et on indique que les sorties ne sont pas upToDate
     setOutputsState(module, false);
+    
+    return module->update(module, port);
   }
 
   // On met à jour le module
-  return module->update(module, port);
+  return NO_ERR;
 }
 
 

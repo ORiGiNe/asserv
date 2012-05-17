@@ -6,7 +6,7 @@
 #include "sysInterface.h"
 #include "module.h"
 
-#define STARTER_NB_CONNECTION 1
+#define STARTER_NB_CONNECTION 2
 
 #ifdef __cplusplus
 extern "C"

@@ -68,18 +68,21 @@ ErrorCode updateOperator(Module* parent, OriginWord port)
   uint16_t i;
   ModuleValue result;
   ErrorCode error;
+  
+  // debug("O");
 
   // On met à jour les entrées
   for(i=0; i<parent->nbInputs; i++)
   {
     error = updateInput(parent, i);
+    
     if(error != NO_ERR)
     {
       return error;
     }
+    result = (((Operator*)parent->fun)->func)(parent, i);
+    setOutput(parent, i, result);
   }
-  result = (((Operator*)parent->fun)->func)(port, parent);
-  setOutput(parent, i, result);
   return NO_ERR;
 }
 

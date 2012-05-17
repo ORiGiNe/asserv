@@ -72,14 +72,20 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
   ErrorCode error;
   IME *ime = ((IfaceME*)parent->fun)->ime;
 
+  // debug("I");
   // Faire la mesure ssi la mesure n'est plus valable
   if (((IfaceME*)parent->fun)->measureUpToDate == 0)
   {
+     // debug("id: 0x%l\r\n", (uint32_t)ime->motor.id);
+     
     // On effectue la mesure
     ((IfaceME*)parent->fun)->measure = ime->getEncoderValue(&ime->motor);
     ((IfaceME*)parent->fun)->measureUpToDate = 1;
     parent->ctl->coveredDistance = ((IfaceME*)parent->fun)->measure;
-
+    
+    // On met à jour la sortie
+    setOutput(parent, port, ((IfaceME*)parent->fun)->measure);
+    
     // On met à jour l'entrée
     error = updateInput(parent, 0);
     if (error != NO_ERR)
@@ -95,13 +101,17 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
 
     ((IfaceME*)parent->fun)->measureUpToDate = 0;
     ime->sendNewCommand(&ime->motor, command);
+    
+    if (parent->isVerbose)
+    { 
+      debug("w: 0x%l\r\n", (uint32_t)command);
+    }
   }
   else
   {
     // On met à jour la sortie ayant pour port <port>
     setOutput(parent, port, ((IfaceME*)parent->fun)->measure);
   }
-
   return NO_ERR;
 }
 

@@ -36,8 +36,8 @@ enum
 #if defined (AVR_USART1) && defined (EFB_UART_EN1)
 
   void DE0nanoUartInit(uint32_t, tEFBboolean);
+  void resetDE0nano(void);
   tEFBerrCode getWordFromDE0nano(uint8_t flowControlNum, word * wordOut, portTickType xBlockTime);
-  void resetDE0nano();
 
 #endif // EFB_UART_EN1
 

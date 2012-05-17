@@ -55,12 +55,19 @@ ErrorCode initIntegrator(Module *parent)
 ErrorCode updateIntegrator(Module* parent, OriginWord port){
   ErrorCode error;
   ModuleValue value;
+  
+  // debug("F");
+  
   // On met à jour l'entrée
   error = updateInput(parent, 0);
   if (error != NO_ERR)
   {
     return error;
   }
+  
+  // debug("F : 0x%l\r\n", (uint32_t)getInput(parent, 0));
+  
+  
   // On récupère l'entrée
   value = getInput(parent, 0);
   // On met à jour l'integrale

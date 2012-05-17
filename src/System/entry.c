@@ -78,10 +78,17 @@ ErrorCode configureEntry(Module* parent, void* args)
 
 ErrorCode updateEntry(Module* parent, OriginWord port)
 {
-  // On rafraichi la sortie si elle n'est plus à jour
-  if ( ! outputIsUpToDate(parent, port) )
+  // debug("E");
+  int i;
+  for(i = 0; i < parent->nbOutputs; i++)
   {
-    setOutput(parent, port, *((Entry*)parent->fun)->value[port]);
+    setOutput(parent, i, *((Entry*)parent->fun)->value[i]);
   }
+  
+  // On rafraichi la sortie si elle n'est plus à jour
+  // if ( ! outputIsUpToDate(parent, port) )
+  // {
+    // setOutput(parent, port, *((Entry*)parent->fun)->value[port]);
+  // }
   return NO_ERR;
 }

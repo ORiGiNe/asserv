@@ -40,12 +40,15 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
   (void) port;
   ValHistory *vHist;
   vHist = ((Starter*)parent->fun)->hist;
+  
+  // debug("S");
+  
   for(i=0; i<parent->nbInputs; i++)
   {
     // On sauvegarde les entrées précédentes
     vHist[i].val2 = vHist[i].val1;
     vHist[i].val1 = vHist[i].val0;
-
+   
     // MAJ de ses entrées
     error = updateInput(parent, i);
     if(error != NO_ERR)

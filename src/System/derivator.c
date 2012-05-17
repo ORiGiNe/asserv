@@ -65,7 +65,9 @@ ErrorCode updateDerivator(Module* parent, OriginWord port){
   ErrorCode error;
   ModuleValue value;
   ModuleValue deriv;
-
+  
+  // debug("D");
+  
   // On met à jour l'entrée
   error = updateInput(parent, 0);
   if (error != NO_ERR)
@@ -81,6 +83,8 @@ ErrorCode updateDerivator(Module* parent, OriginWord port){
   // On met à jour la sortie ayant pour port <port>
   setOutput(parent, port, deriv);
 
+  //debug("k: 0x%l:0x%l\r\n", (uint32_t)value, (uint32_t)((Derivator*)parent->fun)->oldValue);
+  
   return NO_ERR;
 }
 

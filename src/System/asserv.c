@@ -61,6 +61,7 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
   ErrorCode error;
   Asserv *asserv = (Asserv*)parent->fun;
 
+   // debug("A");
 
   /* Si la sortie est à jour, pas besoin de refaire le calcul */
   if( outputIsUpToDate(parent, port) )
@@ -135,12 +136,13 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
       
       
       debug("m: 0x%l\r\nc: 0x%l\r\n", (uint32_t)measure, (uint32_t)command);
-      // debug("\nW 0x%l\r\n M 0x%l\r\n NE 0x%l\r\n O 0x%l\r\n", (uint32_t)command, (uint32_t)measure, (uint32_t)newError, (uint32_t)output);
+       // debug("\nW 0x%l\r\n M 0x%l\r\n NE 0x%l\r\n O 0x%l\r\n", (uint32_t)command, (uint32_t)measure, (uint32_t)newError, (uint32_t)output);
     }
   
   
   /* On envoie la commande sur la sortie port */
   setOutput(parent, port, output);
+    // debug("a: 0x%l\r\n", (uint32_t)output);
 
   return NO_ERR;
 }

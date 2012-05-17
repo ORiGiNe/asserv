@@ -66,31 +66,31 @@ void vTaskLED (void* pvParameters)
   }
 }
 
-ModuleValue vitKp = 1902;
-CtlBlock ctlBlock;
+// ModuleValue vitKp = 1902;
+// CtlBlock ctlBlock;
 
 void vTaskSI (void* pvParameters)
 {
   (void) pvParameters;
   portTickType xLastWakeTime;
-  //CtlBlock ctlBlock;
+  CtlBlock ctlBlock;
   Module *entryDist, *asservPosDist, *asservVitDist, *measureDerivatorDist, *imeInIntegratorDist;
   Module *entryRot, *asservPosRot, *asservVitRot, *measureDerivatorRot, *imeInIntegratorRot;
   Module *ifaceMERight, *ifaceMELeft, *starter, *operatorIn, *operatorOut;
   EntryConfig entryConfigDist, entryConfigRot;
 
   // Enregistrement de l'asservissement en distance
-  ModuleValue posKpDist = 130; // léger dépassement volontaire
+  ModuleValue posKpDist = 0;
   ModuleValue posKiDist = 0;
-  ModuleValue posKdDist = 150;
+  ModuleValue posKdDist = 0;
   ModuleValue derivDist = 16000;
 
-  ModuleValue vitKpDist = 1902;
+  ModuleValue vitKpDist = 0;
   ModuleValue vitKiDist = 0;
-  ModuleValue vitKdDist = 19;
-  ModuleValue accelDist = 1000;
+  ModuleValue vitKdDist = 0;
+  ModuleValue accelDist = 500;
 
-  ModuleValue commandDist = 1000000;
+  ModuleValue commandDist = 2000;
 
   entryConfigDist.nbEntry = 9;
   entryConfigDist.value[0] = &posKpDist; // kp
@@ -106,17 +106,17 @@ void vTaskSI (void* pvParameters)
 
 
   // Enregistrement de l'asservissement en rotation
-  ModuleValue posKpRot = 130; // léger dépassement volontaire
+  ModuleValue posKpRot = 1000;
   ModuleValue posKiRot = 0;
-  ModuleValue posKdRot = 150;
-  ModuleValue derivRot = 16000;
+  ModuleValue posKdRot = 0;
+  ModuleValue derivRot = 8000;
 
-  ModuleValue vitKpRot = 1902;
-  ModuleValue vitKiRot = 0;
-  ModuleValue vitKdRot = 19;
+  ModuleValue vitKpRot = 7488;
+  ModuleValue vitKiRot = 10;
+  ModuleValue vitKdRot = 25;
   ModuleValue accelRot = 1000;
 
-  ModuleValue commandRot = 1000000;
+  ModuleValue commandRot = 200; // (200, -300) = max(command)
 
   entryConfigRot.nbEntry = 9;
   entryConfigRot.value[0] = &posKpRot; // kp
@@ -130,26 +130,8 @@ void vTaskSI (void* pvParameters)
   entryConfigRot.value[8] = &commandRot; // command
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
+  
 
   xLastWakeTime = taskGetTickCount ();
 
@@ -186,14 +168,13 @@ void vTaskSI (void* pvParameters)
    return;
   }
 
-
   // Création de l'Entry
   entryDist = initModule(&ctlBlock, 0, entryConfigDist.nbEntry, entryType, 0);
   if (entryDist == 0)
   {
    return;
   }
-  asservPosDist = initModule(&ctlBlock, 6, 1, asservType, 1);
+  asservPosDist = initModule(&ctlBlock, 6, 1, asservType, 0);
   if (asservPosDist == 0)
   {
    return;
@@ -221,12 +202,12 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  asservPosRot = initModule(&ctlBlock, 6, 1, asservType, 1);
+  asservPosRot = initModule(&ctlBlock, 6, 1, asservType, 0);
   if (asservPosRot == 0)
   {
    return;
   }
-  asservVitRot = initModule(&ctlBlock, 6, 1, asservType, 0);
+  asservVitRot = initModule(&ctlBlock, 6, 1, asservType, 1);
   if (asservVitRot == 0)
   {
    return;
@@ -252,9 +233,6 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-
-
-
 
 
 
@@ -324,8 +302,6 @@ void vTaskSI (void* pvParameters)
   }
 
 
-
-
   // DISTANCE
   linkModuleWithInput(entryDist, 8, asservPosDist, AsservCommand);
   linkModuleWithInput(entryDist, 0, asservPosDist, AsservKp);
@@ -347,39 +323,33 @@ void vTaskSI (void* pvParameters)
 
 
   // ROTATION
-  linkModuleWithInput(entryRot, 8, asservPosRot, AsservCommand);
-  linkModuleWithInput(entryRot, 0, asservPosRot, AsservKp);
-  linkModuleWithInput(entryRot, 1, asservPosRot, AsservKi);
-  linkModuleWithInput(entryRot, 2, asservPosRot, AsservKd);
-  linkModuleWithInput(entryRot, 3, asservPosRot, AsservDeriv);
-  linkModuleWithInput(operatorOut, 0, asservPosRot, AsservMeasure);
-  linkModuleWithInput(asservPosRot, 0, asservVitRot, AsservCommand);
+  linkModuleWithInput(entryRot, 8, asservVitRot, AsservCommand);
+  // linkModuleWithInput(entryRot, 0, asservPosRot, AsservKp);
+  // linkModuleWithInput(entryRot, 1, asservPosRot, AsservKi);
+  // linkModuleWithInput(entryRot, 2, asservPosRot, AsservKd);
+  // linkModuleWithInput(entryRot, 3, asservPosRot, AsservDeriv);
+  // linkModuleWithInput(operatorOut, 1, asservPosRot, AsservMeasure);
+  // linkModuleWithInput(asservPosRot, 0, asservVitRot, AsservCommand);
 
   linkModuleWithInput(entryRot, 4, asservVitRot, AsservKp);
   linkModuleWithInput(entryRot, 5, asservVitRot, AsservKi);
   linkModuleWithInput(entryRot, 6, asservVitRot, AsservKd);
   linkModuleWithInput(entryRot, 7, asservVitRot, AsservDeriv);
-  linkModuleWithInput(operatorOut, 0, measureDerivatorRot, 0);
+  linkModuleWithInput(operatorOut, 1, measureDerivatorRot, 0);
   linkModuleWithInput(measureDerivatorRot, 0, asservVitRot, AsservMeasure);
   linkModuleWithInput(asservVitRot, 0, imeInIntegratorRot, 0);
 
-  linkModuleWithInput(imeInIntegratorRot, 0, operatorIn, 0);
+  linkModuleWithInput(imeInIntegratorRot, 0, operatorIn, 1);
 
 
 
-
-
-
-
-
-
-  linkModuleWithInput(operatorIn, 0, ifaceMELeft, 0);
   linkModuleWithInput(operatorIn, 1, ifaceMERight, 0);
+  linkModuleWithInput(operatorIn, 0, ifaceMELeft, 0);
 
-  linkModuleWithInput(ifaceMELeft, 0, operatorOut, 0);
   linkModuleWithInput(ifaceMERight, 0, operatorOut, 1);
+  linkModuleWithInput(ifaceMELeft, 0, operatorOut, 0);
 
-  linkModuleWithInput(ifaceMERight, 0, starter, 0);
+  // linkModuleWithInput(ifaceMERight, 0, starter, 1);
   linkModuleWithInput(ifaceMELeft, 0, starter, 0);
   
   
@@ -416,7 +386,8 @@ int main (void)
 	//EFBoutPort (PORT_LED13, MASK_LED13);
   xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
   xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 3, NULL, 1, &xTaskIME);
-  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE *4, NULL, 1, &xTaskSI);
+  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
+  
 
   vTaskStartScheduler ();
 

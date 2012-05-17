@@ -84,7 +84,7 @@ void vCallback(TimerHandle pxTimer)
   ctlBlock->nTic++;
   if(ctlBlock->reset == true)
   {
-  //  debug("--------------|  Début de reset  |--------------\n");
+  //  debug("--------------|  Debut de reset  |--------------\n");
     resetModule(ctlBlock->starter);
     semaphoreGive(ctlBlock->semReset);
   //  debug("--------------|   Fin de reset   |--------------\n");
@@ -92,10 +92,10 @@ void vCallback(TimerHandle pxTimer)
   else
   {
     /* Lancement de l'update du systeme */
-  //  debug("--------------| Début de update  |--------------\n");
+   // debug("Dupdate\r\n");
   //  debug("\04");
     updateModule(ctlBlock->starter, 0);
-  //  debug("--------------|  Fin de update   |--------------\n");
+   // debug("Fupdate\r\n");
   }
 }
 
