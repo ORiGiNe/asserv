@@ -74,34 +74,61 @@ void vTaskSI (void* pvParameters)
   (void) pvParameters;
   portTickType xLastWakeTime;
   //CtlBlock ctlBlock;
-  Module *entry, *ifaceME, *asservPos, *asservVit, *starter, *encoderValueDerivator, *motorCommandIntegrator;
-  EntryConfig entryConfig;
+  Module *entryLeft, *ifaceMELeft, *asservPosLeft, *asservVitLeft, *measureDerivatorLeft, *commandIntegratorLeft;
+  Module *entryRight, *ifaceMERight, *asservPosRight, *asservVitRight, *measureDerivatorRight, *commandIntegratorRight;
+  Module *starter;
+  EntryConfig entryConfigLeft, entryConfigRight;
 
   // ASSERVISSEMENT POSITION
-  ModuleValue posKp = 130; // léger dépassement volontaire
-  ModuleValue posKi = 0;
-  ModuleValue posKd = 150;
-  ModuleValue deriv = 16000;
+  ModuleValue posKpLeft = 130; // léger dépassement volontaire
+  ModuleValue posKiLeft = 0;
+  ModuleValue posKdLeft = 150;
+  ModuleValue derivLeft = 16000;
 
   // ASSERVISSEMENT VITESSE
-  // ModuleValue vitKp = 1902;
-  ModuleValue vitKi = 0; // 13
-  ModuleValue vitKd = 19;
-  ModuleValue accel = 1000;
-  //ModuleValue accuracy = 0;
+  ModuleValue vitKpLeft = 1902;
+  ModuleValue vitKiLeft = 0;
+  ModuleValue vitKdLeft = 19;
+  ModuleValue accelLeft = 1000;
 
-  ModuleValue command = 1000000;
+  ModuleValue commandLeft = 1000000;
 
-  entryConfig.nbEntry = 9;
-  entryConfig.value[0] = &posKp; // kp
-  entryConfig.value[1] = &posKi; // ki
-  entryConfig.value[2] = &posKd; // kd
-  entryConfig.value[3] = &deriv; // deriv
-  entryConfig.value[4] = &vitKp; // kp
-  entryConfig.value[5] = &vitKi; // ki
-  entryConfig.value[6] = &vitKd; // kd
-  entryConfig.value[7] = &accel; // accel
-  entryConfig.value[8] = &command; // command
+  entryConfigLeft.nbEntry = 9;
+  entryConfigLeft.value[0] = &posKpLeft; // kp
+  entryConfigLeft.value[1] = &posKiLeft; // ki
+  entryConfigLeft.value[2] = &posKdLeft; // kd
+  entryConfigLeft.value[3] = &derivLeft; // deriv
+  entryConfigLeft.value[4] = &vitKpLeft; // kp
+  entryConfigLeft.value[5] = &vitKiLeft; // ki
+  entryConfigLeft.value[6] = &vitKdLeft; // kd
+  entryConfigLeft.value[7] = &accelLeft; // accel
+  entryConfigLeft.value[8] = &commandLeft; // command
+
+
+  // ASSERVISSEMENT POSITION
+  ModuleValue posKpRight = 130; // léger dépassement volontaire
+  ModuleValue posKiRight = 0;
+  ModuleValue posKdRight = 150;
+  ModuleValue derivRight = 16000;
+
+  // ASSERVISSEMENT VITESSE
+  ModuleValue vitKpRight = 1902;
+  ModuleValue vitKiRight = 0;
+  ModuleValue vitKdRight = 19;
+  ModuleValue accelRight = 1000;
+
+  ModuleValue commandRight = 1000000;
+
+  entryConfigRight.nbEntry = 9;
+  entryConfigRight.value[0] = &posKpRight; // kp
+  entryConfigRight.value[1] = &posKiRight; // ki
+  entryConfigRight.value[2] = &posKdRight; // kd
+  entryConfigRight.value[3] = &derivRight; // deriv
+  entryConfigRight.value[4] = &vitKpRight; // kp
+  entryConfigRight.value[5] = &vitKiRight; // ki
+  entryConfigRight.value[6] = &vitKdRight; // kd
+  entryConfigRight.value[7] = &accelRight; // accel
+  entryConfigRight.value[8] = &commandRight; // command
 
   xLastWakeTime = taskGetTickCount ();
 
@@ -112,71 +139,137 @@ void vTaskSI (void* pvParameters)
    return;
   }
   // Création de l'Entry
-  entry = initModule(&ctlBlock, 0, entryConfig.nbEntry, entryType, 0);
-  if (entry == 0)
+  entryLeft = initModule(&ctlBlock, 0, entryConfigLeft.nbEntry, entryType, 0);
+  if (entryLeft == 0)
   {
    return;
   }
   // Création de l'interface systeme (IfaceME)
-  ifaceME = initModule(&ctlBlock, 1, 2, ifaceMEType, 0);
-  if (ifaceME == 0)
+  ifaceMELeft = initModule(&ctlBlock, 1, 2, ifaceMEType, 0);
+  if (ifaceMELeft == 0)
   {
    return;
   }
   // Création de l'asserv 1 (Asserv)
-  asservPos = initModule(&ctlBlock, 6, 1, asservType, 1);
-  if (asservPos == 0)
+  asservPosLeft = initModule(&ctlBlock, 6, 1, asservType, 1);
+  if (asservPosLeft == 0)
   {
    return;
   }
-  asservVit = initModule(&ctlBlock, 6, 1, asservType, 0);
-  if (asservVit == 0)
+  asservVitLeft = initModule(&ctlBlock, 6, 1, asservType, 0);
+  if (asservVitLeft == 0)
   {
    return;
   }
-  encoderValueDerivator = initModule(&ctlBlock, 1, 1, derivatorType, 0);
-  if (encoderValueDerivator == 0)
+  measureDerivatorLeft = initModule(&ctlBlock, 1, 1, derivatorType, 0);
+  if (measureDerivatorLeft == 0)
   {
    return;
   }
-  motorCommandIntegrator = initModule(&ctlBlock, 1, 1, integratorType, 0);
-  if (motorCommandIntegrator == 0)
+  commandIntegratorLeft = initModule(&ctlBlock, 1, 1, integratorType, 0);
+  if (commandIntegratorLeft == 0)
   {
    return;
   }
 
-  //usprintf(string, "%l\r\n", (uint32_t)(uint16_t)ifaceME);
-  //stderrPrintf ((char*)string);
+
+  // Création de l'Entry
+  entryRight = initModule(&ctlBlock, 0, entryConfigRight.nbEntry, entryType, 0);
+  if (entryRight == 0)
+  {
+   return;
+  }
+  // Création de l'interface systeme (IfaceME)
+  ifaceMERight = initModule(&ctlBlock, 1, 2, ifaceMEType, 0);
+  if (ifaceMERight == 0)
+  {
+   return;
+  }
+  // Création de l'asserv 1 (Asserv)
+  asservPosRight = initModule(&ctlBlock, 6, 1, asservType, 1);
+  if (asservPosRight == 0)
+  {
+   return;
+  }
+  asservVitRight = initModule(&ctlBlock, 6, 1, asservType, 0);
+  if (asservVitRight == 0)
+  {
+   return;
+  }
+  measureDerivatorRight = initModule(&ctlBlock, 1, 1, derivatorType, 0);
+  if (measureDerivatorRight == 0)
+  {
+   return;
+  }
+  commandIntegratorRight = initModule(&ctlBlock, 1, 1, integratorType, 0);
+  if (commandIntegratorRight == 0)
+  {
+   return;
+  }
+
+
+
   if (createSystem(&ctlBlock, starter , 50) == ERR_TIMER_NOT_DEF)
   {
    return;
   }
 
-  if (configureModule(entry, (void*)&entryConfig) != NO_ERR)
-  {
-   return;
-  }
-  if (configureModule(ifaceME, (void*)&motor2) != NO_ERR)
-  {
-   return;
-  }
-  if (configureModule(asservPos, NULL) != NO_ERR)
-  {
-   return;
-  }
-  if (configureModule(asservVit, NULL) != NO_ERR)
-  {
-   return;
-  }
+
+
+
+
   if (configureModule(starter, NULL) != NO_ERR)
   {
    return;
   }
-  if (configureModule(encoderValueDerivator, NULL) != NO_ERR)
+
+
+  if (configureModule(entryLeft, (void*)&entryConfigLeft) != NO_ERR)
   {
    return;
   }
-  if (configureModule(motorCommandIntegrator, NULL) != NO_ERR)
+  if (configureModule(ifaceMELeft, (void*)imes[0]) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(asservPosLeft, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(asservVitLeft, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(measureDerivatorLeft, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(commandIntegratorLeft, NULL) != NO_ERR)
+  {
+   return;
+  }
+
+  if (configureModule(entryRight, (void*)&entryConfigRight) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(ifaceMERight, (void*)imes[1]) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(asservPosRight, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(asservVitRight, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(measureDerivatorRight, NULL) != NO_ERR)
+  {
+   return;
+  }
+  if (configureModule(commandIntegratorRight, NULL) != NO_ERR)
   {
    return;
   }
@@ -184,28 +277,50 @@ void vTaskSI (void* pvParameters)
 
 
 
-  linkModuleWithInput(entry, 0, asservPos, AsservKp);
-  linkModuleWithInput(entry, 1, asservPos, AsservKi);
-  linkModuleWithInput(entry, 2, asservPos, AsservKd);
-  linkModuleWithInput(entry, 3, asservPos, AsservDeriv);
-  linkModuleWithInput(entry, 8, asservPos, AsservCommand);
-  linkModuleWithInput(ifaceME, 0, asservPos, AsservMeasure);
 
-  linkModuleWithInput(entry, 4, asservVit, AsservKp);
-  linkModuleWithInput(entry, 5, asservVit, AsservKi);
-  linkModuleWithInput(entry, 6, asservVit, AsservKd);
-  linkModuleWithInput(entry, 7, asservVit, AsservDeriv);
-  linkModuleWithInput(asservPos, 0, asservVit, AsservCommand);
+  linkModuleWithInput(entryLeft, 8, asservPosLeft, AsservCommand);
+  linkModuleWithInput(entryLeft, 0, asservPosLeft, AsservKp);
+  linkModuleWithInput(entryLeft, 1, asservPosLeft, AsservKi);
+  linkModuleWithInput(entryLeft, 2, asservPosLeft, AsservKd);
+  linkModuleWithInput(entryLeft, 3, asservPosLeft, AsservDeriv);
+  linkModuleWithInput(ifaceMELeft, 0, asservPosLeft, AsservMeasure);
 
-  linkModuleWithInput(asservVit, 0, motorCommandIntegrator, 0);
+  linkModuleWithInput(asservPosLeft, 0, asservVitLeft, AsservCommand);
+  linkModuleWithInput(entryLeft, 4, asservVitLeft, AsservKp);
+  linkModuleWithInput(entryLeft, 5, asservVitLeft, AsservKi);
+  linkModuleWithInput(entryLeft, 6, asservVitLeft, AsservKd);
+  linkModuleWithInput(entryLeft, 7, asservVitLeft, AsservDeriv);
+  linkModuleWithInput(asservVitLeft, 0, commandIntegratorLeft, 0);
+  linkModuleWithInput(ifaceMELeft, 0, measureDerivatorLeft, 0);
+  linkModuleWithInput(measureDerivatorLeft, 0, asservVitLeft, AsservMeasure);
 
-  linkModuleWithInput(ifaceME, 0, encoderValueDerivator, 0);
-  linkModuleWithInput(encoderValueDerivator, 0, asservVit, AsservMeasure);
-
-  // linkModuleWithInput(asservPos, 0, ifaceME, 0);
-  linkModuleWithInput(motorCommandIntegrator, 0, ifaceME, 0);
+  linkModuleWithInput(commandIntegratorLeft, 0, ifaceMELeft, 0);
   
-  linkModuleWithInput(ifaceME, 0, starter, 0);
+
+  linkModuleWithInput(entryRight, 8, asservPosRight, AsservCommand);
+  linkModuleWithInput(entryRight, 0, asservPosRight, AsservKp);
+  linkModuleWithInput(entryRight, 1, asservPosRight, AsservKi);
+  linkModuleWithInput(entryRight, 2, asservPosRight, AsservKd);
+  linkModuleWithInput(entryRight, 3, asservPosRight, AsservDeriv);
+  linkModuleWithInput(ifaceMERight, 0, asservPosRight, AsservMeasure);
+
+  linkModuleWithInput(asservPosRight, 0, asservVitRight, AsservCommand);
+  linkModuleWithInput(entryRight, 4, asservVitRight, AsservKp);
+  linkModuleWithInput(entryRight, 5, asservVitRight, AsservKi);
+  linkModuleWithInput(entryRight, 6, asservVitRight, AsservKd);
+  linkModuleWithInput(entryRight, 7, asservVitRight, AsservDeriv);
+  linkModuleWithInput(asservVitRight, 0, commandIntegratorRight, 0);
+  linkModuleWithInput(ifaceMERight, 0, measureDerivatorRight, 0);
+  linkModuleWithInput(measureDerivatorRight, 0, asservVitRight, AsservMeasure);
+
+  linkModuleWithInput(commandIntegratorRight, 0, ifaceMERight, 0);
+  
+
+
+
+
+  linkModuleWithInput(ifaceMELeft, 0, starter, 0);
+  linkModuleWithInput(ifaceMERight, 0, starter, 0);
   
   
   //resetSystem(&ctlBlock, portMAX_DELAY);

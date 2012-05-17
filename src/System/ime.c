@@ -33,8 +33,8 @@ IME motor2 = {
 };
 
 IME *imes[3] = {
-  &motor2,
-  0,//&motor2,
+  &perfectMotor,
+  &perfectMotor,
   0
 };
 
