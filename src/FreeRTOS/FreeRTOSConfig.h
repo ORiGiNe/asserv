@@ -76,7 +76,7 @@
 #define configTICK_RATE_HZ								    ( ( portTickType ) 1000 )
 #define configMAX_PRIORITIES							    ( ( unsigned portBASE_TYPE ) 5 )
 #define configMINIMAL_STACK_SIZE						  150U //Ne pas modifier, Quantité nécessaire pour une tâche qui ne fait rien.
-#define configTOTAL_HEAP_SIZE							    ( (size_t ) ( 5000 ) )
+#define configTOTAL_HEAP_SIZE							    ( (size_t ) ( 6000 ) )
 #define configMAX_TASK_NAME_LEN						    ( 8 )
 #define configUSE_TRACE_FACILITY					    0
 #define configUSE_16_BIT_TICKS                1
@@ -87,7 +87,7 @@
 /* La communication uart utilise 4 timers ( 2 pour chaque uart).
 Ces timers sont initialisés avant le démarrage du scheduler, il faut donc que la file soit assez longue. */
 #define configTIMER_QUEUE_LENGTH              5
-#define configTIMER_TASK_STACK_DEPTH          ( ( unsigned short ) 800 )
+#define configTIMER_TASK_STACK_DEPTH          ( ( unsigned short ) 1500 )
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES 						    0

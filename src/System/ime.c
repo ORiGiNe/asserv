@@ -32,9 +32,10 @@ IME motor2 = {
   .resetEncoderValue = resetEncoderValue
 };
 
+IME perfectMotor;
 IME *imes[3] = {
-  &perfectMotor,
-  &perfectMotor,
+  &motor1,
+  &motor2,
   0
 };
 
@@ -61,7 +62,7 @@ void vTaskIME(void* pvParameters)
       if(getWordFromDE0nano(motor->id + 1, (unsigned short*)&result, motor->blockTime) != EFB_OK)
       {
         // S'il y a une erreur d'envoie, plus sensé arrivé
-        debug("FAIL!\r\n");
+        //debug("FAIL!\r\n");
         //result = motor->oldEncoderValue;
         continue;
       }
@@ -72,6 +73,7 @@ void vTaskIME(void* pvParameters)
         motor->encoderValue += result;
       }
       taskEXIT_CRITICAL();
+      // debug("m: 0x%l\r\n", (uint32_t) motor->encoderValue);
     }
     vTaskDelayUntil(&xLastWakeTime, 10/portTICK_RATE_MS);
   }
@@ -103,7 +105,9 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   if (cmd > 0)
   {
     // val = (tics /refresh) * pontH * refresh / tics
-    val = cmd * 30 / (1640*5);
+    
+    // BORNES COMMANDE : -63000 -> 63000
+    val = cmd / 1000;//* 30 / (1640*5);
     if (val > 63)
     {    
       val = 63;
@@ -111,7 +115,7 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   }
   else if (cmd < 0)
   {
-    val = cmd * 30 / (1480*5);
+    val = cmd / 1000;// * 30 / (1480*5);
     if (val < -63)
     {
       val = -63;

@@ -66,32 +66,32 @@ void vTaskLED (void* pvParameters)
   }
 }
 
-ModuleValue vitKp = 1902;
-CtlBlock ctlBlock;
+// ModuleValue vitKp = 1902;
+// CtlBlock ctlBlock;
 
 void vTaskSI (void* pvParameters)
 {
   (void) pvParameters;
   portTickType xLastWakeTime;
-  //CtlBlock ctlBlock;
+  CtlBlock ctlBlock;
   Module *entryLeft, *ifaceMELeft, *asservPosLeft, *asservVitLeft, *measureDerivatorLeft, *commandIntegratorLeft;
   Module *entryRight, *ifaceMERight, *asservPosRight, *asservVitRight, *measureDerivatorRight, *commandIntegratorRight;
   Module *starter;
   EntryConfig entryConfigLeft, entryConfigRight;
 
   // ASSERVISSEMENT POSITION
-  ModuleValue posKpLeft = 130; // léger dépassement volontaire
+  ModuleValue posKpLeft = 50;
   ModuleValue posKiLeft = 0;
-  ModuleValue posKdLeft = 150;
-  ModuleValue derivLeft = 16000;
+  ModuleValue posKdLeft = 20;
+  ModuleValue derivLeft = 15000;
 
   // ASSERVISSEMENT VITESSE
-  ModuleValue vitKpLeft = 1902;
+  ModuleValue vitKpLeft = 2000;
   ModuleValue vitKiLeft = 0;
-  ModuleValue vitKdLeft = 19;
-  ModuleValue accelLeft = 1000;
+  ModuleValue vitKdLeft = 20;
+  ModuleValue accelLeft = 1500;
 
-  ModuleValue commandLeft = 1000000;
+  ModuleValue commandLeft = 96000;
 
   entryConfigLeft.nbEntry = 9;
   entryConfigLeft.value[0] = &posKpLeft; // kp
@@ -133,7 +133,7 @@ void vTaskSI (void* pvParameters)
   xLastWakeTime = taskGetTickCount ();
 
   // Création du Starter
-  starter = initModule(&ctlBlock, 1, 0, starterType, 0);
+  starter = initModule(&ctlBlock, 2, 0, starterType, 0);
   if (starter == 0)
   {
    return;
@@ -186,7 +186,7 @@ void vTaskSI (void* pvParameters)
    return;
   }
   // Création de l'asserv 1 (Asserv)
-  asservPosRight = initModule(&ctlBlock, 6, 1, asservType, 1);
+  asservPosRight = initModule(&ctlBlock, 6, 1, asservType, 0);
   if (asservPosRight == 0)
   {
    return;
@@ -316,11 +316,8 @@ void vTaskSI (void* pvParameters)
   linkModuleWithInput(commandIntegratorRight, 0, ifaceMERight, 0);
   
 
-
-
-
   linkModuleWithInput(ifaceMELeft, 0, starter, 0);
-  linkModuleWithInput(ifaceMERight, 0, starter, 0);
+  linkModuleWithInput(ifaceMERight, 0, starter, 1);
   
   
   //resetSystem(&ctlBlock, portMAX_DELAY);
@@ -354,7 +351,7 @@ int main (void)
   DE0nanoUartInit (38400, pdFALSE);
 	
 	//EFBoutPort (PORT_LED13, MASK_LED13);
-  xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
+  xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 50, NULL, 1, &xTaskLED);
   xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 3, NULL, 1, &xTaskIME);
   xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE *4, NULL, 1, &xTaskSI);
 

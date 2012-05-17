@@ -23,7 +23,7 @@ typedef struct {
   void (*resetEncoderValue)( MotorData*);
 } IME;
 
-IME *imes[];
+IME *imes[3];
 void vTaskIME(void* pvParameters);
 
 #ifdef __cplusplus

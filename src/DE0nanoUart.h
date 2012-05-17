@@ -37,7 +37,7 @@ enum
 
   void DE0nanoUartInit(uint32_t, tEFBboolean);
   tEFBerrCode getWordFromDE0nano(uint8_t flowControlNum, word * wordOut, portTickType xBlockTime);
-  void resetDE0nano();
+  void resetDE0nano(void);
 
 #endif // EFB_UART_EN1
 

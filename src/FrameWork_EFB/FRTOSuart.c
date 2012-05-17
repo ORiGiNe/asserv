@@ -344,14 +344,14 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
         for(i = 0; i < 256; i++)
         {
           EFBuart2PushByteToBuffer(i);
-          //debug("Test : %i", (uint32_t)i);
+          // debug("Test : %i", (uint32_t)i);
           usprintf (sortie,  "Test : %l\r\n", (uint32_t)i);
           EFBuartGaopSendString ((char*)sortie);
           vTaskDelay(1000/portTICK_RATE_MS);
         }*/
-        // EFBuart2PushByteToBuffer(192 + curseur);
-        vitKp += 50;
-        resetSystem(&ctlBlock, portMAX_DELAY);
+        EFBuart2PushByteToBuffer(192);
+        // vitKp += 50;
+        // resetSystem(&ctlBlock, portMAX_DELAY);
       }
       else if (t->commande == UART_CDE_PTH2)
       {
