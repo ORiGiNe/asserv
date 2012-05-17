@@ -91,7 +91,7 @@ void vTaskSI (void* pvParameters)
   ModuleValue vitKdLeft = 20;
   ModuleValue accelLeft = 1500;
 
-  ModuleValue commandLeft = 96000;
+  ModuleValue commandLeft = 96000*17/10;
 
   entryConfigLeft.nbEntry = 9;
   entryConfigLeft.value[0] = &posKpLeft; // kp
@@ -106,18 +106,18 @@ void vTaskSI (void* pvParameters)
 
 
   // ASSERVISSEMENT POSITION
-  ModuleValue posKpRight = 130; // léger dépassement volontaire
+  ModuleValue posKpRight = 60; 
   ModuleValue posKiRight = 0;
-  ModuleValue posKdRight = 150;
-  ModuleValue derivRight = 16000;
+  ModuleValue posKdRight = 20;
+  ModuleValue derivRight = 15000;
 
   // ASSERVISSEMENT VITESSE
-  ModuleValue vitKpRight = 1902;
+  ModuleValue vitKpRight = 1900;
   ModuleValue vitKiRight = 0;
-  ModuleValue vitKdRight = 19;
-  ModuleValue accelRight = 1000;
+  ModuleValue vitKdRight = 25;
+  ModuleValue accelRight = 1500;
 
-  ModuleValue commandRight = 1000000;
+  ModuleValue commandRight = -96000*17/10;
 
   entryConfigRight.nbEntry = 9;
   entryConfigRight.value[0] = &posKpRight; // kp
@@ -151,7 +151,7 @@ void vTaskSI (void* pvParameters)
    return;
   }
   // Création de l'asserv 1 (Asserv)
-  asservPosLeft = initModule(&ctlBlock, 6, 1, asservType, 1);
+  asservPosLeft = initModule(&ctlBlock, 6, 1, asservType, 0);
   if (asservPosLeft == 0)
   {
    return;
@@ -191,7 +191,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  asservVitRight = initModule(&ctlBlock, 6, 1, asservType, 0);
+  asservVitRight = initModule(&ctlBlock, 6, 1, asservType, 1);
   if (asservVitRight == 0)
   {
    return;
