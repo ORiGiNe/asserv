@@ -48,12 +48,13 @@ extern "C"
  */
 #include "errorCode.h"
 #include "efbUart.h"
-#include "FRTOSuart.h"
-#include "FRTOSuartTrames.h"
+#include "GAOPTrames.h"
+#include "GAOPuart.h"
 #include "stringUtils.h"
 #include "efbFreeRTOSwrappers.h"
 #include "DE0nanoUart.h"
 #include "ponthuart.h"
+#include "topLevel.h"
 
 /* -----------------------------------------------------------------------------
  */

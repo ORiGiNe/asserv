@@ -9,7 +9,6 @@
 #endif
 
 xTaskHandle xTaskLED;
-xTaskHandle xTaskSI;
 xTaskHandle xTaskIME;
 
 #define PORT_LED13 PORTB
@@ -64,7 +63,7 @@ int main (void)
 	//EFBoutPort (PORT_LED13, MASK_LED13);
   xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
   xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 3, NULL, 1, &xTaskIME);
-  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
+  //xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
   
 
   vTaskStartScheduler ();
