@@ -115,10 +115,10 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   // FIXME: Trouver mieux pour la transformation des tics d'encodeurs vers des valeurs pontH
   ModuleValue val = 0;
   // debug("snc: 0x%l\r\n", (uint32_t)cmd);
+  // COMMANDES : -63000 -> 63000
   if (cmd > 0)
   {
-    // val = cmd * VITESSE_PONTH / (TICS_CODEURS_REFRESH * TEMPS_REFRESH);
-    val = cmd / 500;// * 30 / (1640*5);
+    val = cmd / 1000;
     if (val > 63)
     {    
       val = 63;
@@ -126,7 +126,7 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   }
   else if (cmd < 0)
   {
-    val = cmd / 500;// * 30 / (1480*5);
+    val = cmd / 1000;
     if (val < -63)
     {
       val = -63;

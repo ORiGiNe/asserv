@@ -58,16 +58,16 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
 
     // On récupère l'entrée
     vHist[i].val0 = getInput(parent, i);
-
+#define MASK_ACCURACY 8191
     // Si suffisament de tours ont eu lieu
     if(vHist[i].val1 != 0x7FFFFFFF && vHist[i].val2 != 0x7FFFFFFF)
     {
-      // Si les valeurs n'ont pas évoluées
-      if(vHist[i].val0 == vHist[i].val1 && vHist[i].val1 == vHist[i].val2)
+      // Si les valeurs n'ont pas beaucoup évoluées
+      if(vHist[i].val0 & MASK_ACCURACY == vHist[i].val1 & MASK_ACCURACY && vHist[i].val1 & MASK_ACCURACY == vHist[i].val2 & MASK_ACCURACY)
       {
         if (parent->isVerbose)
         {
-          debug("\t--| MVT FINI |--\n");
+          debug("MVF\r\n");
         }
         // On indique que le mouvement est fini
         semaphoreGive(parent->ctl->semReached);

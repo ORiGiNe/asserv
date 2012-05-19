@@ -80,17 +80,17 @@ void vTaskSI (void* pvParameters)
   EntryConfig entryConfigDist, entryConfigRot;
 
   // Enregistrement de l'asservissement en distance
-  ModuleValue posKpDist = 0;
+  ModuleValue posKpDist = 50;
   ModuleValue posKiDist = 0;
-  ModuleValue posKdDist = 0;
-  ModuleValue derivDist = 16000;
+  ModuleValue posKdDist = 5;
+  ModuleValue derivDist = 12800;
 
-  ModuleValue vitKpDist = 0;
+  ModuleValue vitKpDist = 1000;
   ModuleValue vitKiDist = 0;
-  ModuleValue vitKdDist = 0;
-  ModuleValue accelDist = 500;
+  ModuleValue vitKdDist = 15;
+  ModuleValue accelDist = 2000;
 
-  ModuleValue commandDist = 2000;
+  ModuleValue commandDist = 96000 * 3; // 3 tours de roue
 
   entryConfigDist.nbEntry = 9;
   entryConfigDist.value[0] = &posKpDist; // kp
@@ -106,18 +106,18 @@ void vTaskSI (void* pvParameters)
 
 
   // Enregistrement de l'asservissement en rotation
-  ModuleValue posKpRot = 1000;
-  ModuleValue posKiRot = 0;
-  ModuleValue posKdRot = 0;
-  ModuleValue derivRot = 8000;
+  ModuleValue posKpRot = 50;
+  ModuleValue posKiRot = 3;
+  ModuleValue posKdRot = 15;
+  ModuleValue derivRot = 12000; // MAX 12500
 
-  ModuleValue vitKpRot = 7488;
-  ModuleValue vitKiRot = 10;
-  ModuleValue vitKdRot = 25;
-  ModuleValue accelRot = 1000;
+  ModuleValue vitKpRot = 1000;
+  ModuleValue vitKiRot = 0;
+  ModuleValue vitKdRot = 20;
+  ModuleValue accelRot = 2000;
 
-  ModuleValue commandRot = 200; // (200, -300) = max(command)
-
+  ModuleValue commandRot = 0;
+  
   entryConfigRot.nbEntry = 9;
   entryConfigRot.value[0] = &posKpRot; // kp
   entryConfigRot.value[1] = &posKiRot; // ki
@@ -138,7 +138,7 @@ void vTaskSI (void* pvParameters)
 
 
   // Création du Starter
-  starter = initModule(&ctlBlock, 1, 0, starterType, 0);
+  starter = initModule(&ctlBlock, 1, 0, starterType, 1);
   if (starter == 0)
   {
    return;
@@ -323,13 +323,13 @@ void vTaskSI (void* pvParameters)
 
 
   // ROTATION
-  linkModuleWithInput(entryRot, 8, asservVitRot, AsservCommand);
-  // linkModuleWithInput(entryRot, 0, asservPosRot, AsservKp);
-  // linkModuleWithInput(entryRot, 1, asservPosRot, AsservKi);
-  // linkModuleWithInput(entryRot, 2, asservPosRot, AsservKd);
-  // linkModuleWithInput(entryRot, 3, asservPosRot, AsservDeriv);
-  // linkModuleWithInput(operatorOut, 1, asservPosRot, AsservMeasure);
-  // linkModuleWithInput(asservPosRot, 0, asservVitRot, AsservCommand);
+  linkModuleWithInput(entryRot, 8, asservPosRot, AsservCommand);
+  linkModuleWithInput(entryRot, 0, asservPosRot, AsservKp);
+  linkModuleWithInput(entryRot, 1, asservPosRot, AsservKi);
+  linkModuleWithInput(entryRot, 2, asservPosRot, AsservKd);
+  linkModuleWithInput(entryRot, 3, asservPosRot, AsservDeriv);
+  linkModuleWithInput(operatorOut, 1, asservPosRot, AsservMeasure);
+  linkModuleWithInput(asservPosRot, 0, asservVitRot, AsservCommand);
 
   linkModuleWithInput(entryRot, 4, asservVitRot, AsservKp);
   linkModuleWithInput(entryRot, 5, asservVitRot, AsservKi);
@@ -359,9 +359,19 @@ void vTaskSI (void* pvParameters)
   {
     if (startSystem(&ctlBlock) == NO_ERR)
     {
-      if(waitEndOfSystem(&ctlBlock, 10000) == NO_ERR)
+      if(waitEndOfSystem(&ctlBlock, portMAX_DELAY) == NO_ERR)
       {
-        //resetSystem(&ctlBlock, portMAX_DELAY);
+        resetSystem(&ctlBlock, portMAX_DELAY);
+        commandDist = 0; // on fait demi tour
+        commandRot = 9600 * 17; // on fait demi tour
+        startSystem(&ctlBlock);
+        if(waitEndOfSystem(&ctlBlock, portMAX_DELAY) == NO_ERR)
+        {
+          resetSystem(&ctlBlock, portMAX_DELAY);
+          commandDist = 96000 * 3; // on revient
+          commandRot = 0;
+          startSystem(&ctlBlock);
+        }
         //command += 500;
       }
     }
