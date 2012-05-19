@@ -63,11 +63,12 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
     if(vHist[i].val1 != 0x7FFFFFFF && vHist[i].val2 != 0x7FFFFFFF)
     {
       // Si les valeurs n'ont pas évoluées
-      if(vHist[i].val0 == vHist[i].val1 && vHist[i].val1 == vHist[i].val2)
+      if(vHist[i].val0 - vHist[i].val1 < ACCURACY && vHist[i].val0 - vHist[i].val1 > -ACCURACY
+      && vHist[i].val1 - vHist[i].val2 < ACCURACY && vHist[i].val1 - vHist[i].val2 > -ACCURACY)
       {
         if (parent->isVerbose)
         {
-          debug("\t--| MVT FINI |--\n");
+          debug("MVTF\r\n");
         }
         // On indique que le mouvement est fini
         semaphoreGive(parent->ctl->semReached);

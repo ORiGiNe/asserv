@@ -2,7 +2,7 @@
  * Module UART pour la comm avec le fpga DE0-nano
  * -----------------------------------------------------------------------------
  */
-#include "delay.h"
+#include "util/delay.h"
 #include "DE0nanoUart.h"
 
 #define UART1_RECEIVE_INTERRUPT USART1_RX_vect

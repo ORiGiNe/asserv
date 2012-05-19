@@ -74,8 +74,7 @@ struct ctlBlock
   TimerBlock timer;
   Module* starter;
 
-  // Variables servant à controler le systeme
-  volatile OriginBool stop;
+  // Variable servant à controler le systeme
   volatile OriginBool reset;
 
   // Variables servant à avoir des infos sur le systeme

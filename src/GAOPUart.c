@@ -1,4 +1,5 @@
-#include "FRTOSuart.h"
+#include "GAOPUart.h"
+#include "topLevel.h"
 
 xTaskHandle xTaskGaopUartComm;
 xTaskHandle xTaskGaopUartProt;
@@ -40,8 +41,8 @@ void uartGaopInitialisation (void)
   gaopTimeOut = xTimerCreate ((signed char*) "GAOP_TO", GAOP_TIMEOUT_PERIOD, pdFALSE, NULL, vCallbackGaopTimeOut);
 
   /* Creer les taches */
-  xTaskCreate (vTaskGaopCommunicationUART, (signed char*) "GAOP0", configMINIMAL_STACK_SIZE * 3, NULL, UART_GAOP_PRIORITY, &xTaskGaopUartProt);
-  xTaskCreate (vTaskGaopGestionCommandeUART, (signed char*) "GAOP1", configMINIMAL_STACK_SIZE * 4, NULL, UART0_COMM_PRIORITY, &xTaskGaopUartComm);
+  xTaskCreate (vTaskGaopCommunicationUART, (signed char*) "GAOP0", configMINIMAL_STACK_SIZE * 5, NULL, UART_GAOP_PRIORITY, &xTaskGaopUartProt);
+  xTaskCreate (vTaskGaopGestionCommandeUART, (signed char*) "GAOP1", configMINIMAL_STACK_SIZE * 5, NULL, UART0_COMM_PRIORITY, &xTaskGaopUartComm);
 }
 
 /* -----------------------------------------------------------------------------
@@ -122,6 +123,8 @@ tEFBerrCode EFBuartGaopSendString_p (const char * string_p)
   return retCode;
 } // EFBuartGaopSendString_p
 
+#endif // EFB_UART_ENPGM
+
 /* -----------------------------------------------------------------------------
  * uartGaopSendPacket
  * -----------------------------------------------------------------------------
@@ -129,12 +132,46 @@ tEFBerrCode EFBuartGaopSendString_p (const char * string_p)
 tEFBerrCode uartGaopSendPacket (GAOPtrame t)
 {
     // + 1 pour l'octet 0
-    char string[GAOP_MAX_TRAME_SIZE + 1];
+    /*char string[GAOP_MAX_TRAME_SIZE + 1];
     toString(t, string);
-    return EFBuartGaopSendString(string);
-} // uartGaopSendPacket
+    return EFBuartGaopSendString(string);*/
+  tEFBerrCode retCode = EFB_OK;
+  tEFBerrCase badCall, badArgs, uartBusy, setIn retCode;
 
-#endif // EFB_UART_ENPGM
+  EFBcall (EFBwrappedSemaphoreTake (UART_gaopTxMutex, TIMEOUT_MUTEX_UARTgaop), uartBusy);
+
+  EFBuart0PushByteToBuffer(GAOP_BEGIN);
+  EFBuart0PushByteToBuffer(t->seq);
+  EFBuart0PushByteToBuffer(t->size);
+  EFBuart0PushByteToBuffer(t->ODID);
+  for (int i = 0; i < t->size; i++)
+  {
+      EFBuart0PushByteToBuffer(t->data[i]);
+  }
+  EFBuart0PushByteToBuffer(computeGAOPChecksum (t));
+  EFBuart0PushByteToBuffer(GAOP_END);
+  
+  xSemaphoreGive(UART_gaopTxMutex);
+
+  EFBerrorSwitch
+  {
+    case badArgs:
+      retCode = EFBERR_BADARGS;
+      break;
+
+    case uartBusy:
+      retCode = EFBERR_UART0_BUSY;
+      break;
+
+    case badCall:
+      xSemaphoreGive(UART_gaopTxMutex);
+      break;
+
+    default:
+      break;
+  }
+  return retCode;
+} // uartGaopSendPacket
 
 /* -----------------------------------------------------------------------------
  * vTaskGaopCommunicationUART
@@ -164,7 +201,7 @@ void vTaskGaopCommunicationUART (void* pvParameters)
             statusUartgaop = UART_GAOP_BEGIN;
             if (isSeqDefined == EFB_TRUE)
             {
-                GAOPnack (t->seq, t);
+                GAOPnack (0x25, t);
                 uartGaopSendPacket (t);
             }
             isSeqDefined = EFB_FALSE;
@@ -193,7 +230,7 @@ void vTaskGaopCommunicationUART (void* pvParameters)
             break;
 
           case UART_GAOP_SIZE:
-            t->size = octeteRecu;
+            t->size = octetRecu;
             if (statusUartgaop != UART_GAOP_TIMEOUT) //Au cas où le timeout s'est déclenché à l'instant.
             {
               statusUartgaop = UART_GAOP_ODID;
@@ -201,15 +238,22 @@ void vTaskGaopCommunicationUART (void* pvParameters)
             break;
             
           case UART_GAOP_ODID:
-            t->ODID = octeteRecu;
+            t->ODID = octetRecu;
             if (statusUartgaop != UART_GAOP_TIMEOUT) //Au cas où le timeout s'est déclenché à l'instant.
             {
-              statusUartgaop = UART_GAOP_DATA;
+              if (t->size == 0)
+              {
+                statusUartgaop = UART_GAOP_CHECKSUM;
+              }
+              else
+              {
+                statusUartgaop = UART_GAOP_DATA;
+              }
             }
             break;
 
-          case UART_GAOP_DATA
-            t->ddata[(int)dataOffset++] = octetRecu;
+          case UART_GAOP_DATA:
+            t->data[(int)dataOffset++] = octetRecu;
             if (dataOffset >= t->size)
             {
               dataOffset = 0;
@@ -224,15 +268,15 @@ void vTaskGaopCommunicationUART (void* pvParameters)
             t->checksum = octetRecu;
             if (statusUartgaop != UART_GAOP_TIMEOUT)
             {
-              statusUartgaop = UART_GAOP_QUEUE;
+              statusUartgaop = UART_GAOP_END;
             }
             break;
 
           case UART_GAOP_END:
-            if (octetRecu == UART_GAOP_END)
+            xTimerStop (gaopTimeOut, 10 MS);
+            if (octetRecu == GAOP_END)
             {
-              xTimerStop (gaopTimeOut, 10 MS);
-              if (t->checksum == calculChecksum(t))
+              if (t->checksum == computeGAOPChecksum(t))
               {
                 statusUartgaop = UART_GAOP_FINISHED;
                 xQueueSend (gaopRxTrameQueue, &t, portMAX_DELAY);
@@ -241,7 +285,7 @@ void vTaskGaopCommunicationUART (void* pvParameters)
               else
               {
                 // On reutilise t.
-                GAOPnack (t->seq, t);
+                GAOPnack (0x24, t);
                 uartGaopSendPacket (t);
                 freeGAOPTrame (t);
               }
@@ -249,7 +293,7 @@ void vTaskGaopCommunicationUART (void* pvParameters)
             else
             {
               // On reutilise t.
-              GAOPnack (t->seq, t);
+              GAOPnack (0x23, t);
               uartGaopSendPacket (t);
               freeGAOPTrame (t);
             }
@@ -264,10 +308,6 @@ void vTaskGaopCommunicationUART (void* pvParameters)
     }
   }
 }
-
-#include "system.h";
-
-
 
 /* -----------------------------------------------------------------------------
  * vTaskGaopGestionCommandeUART
@@ -421,7 +461,41 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
       }*/
       if (t->ODID == ODID_TEST)
       {
-        EFBuartGaopSendString ("TEST\r\n");i        
+        EFBuartGaopSendString ("TEST\r\n");
+        sendAck = EFB_TRUE;
+      }
+      else if (t->ODID == ODID_ASSERV)
+      {
+        //uint16_t* commande = t->data;
+        if(t->data[1] == 0x42)//*commande == 0x42)
+        {
+          // FIXME!! UGLY!!
+          //uint16_t* pos = t->data + 2;
+          uint16_t* rot = t->data + 8;
+          // 3097 = 96000 / 31 (31 = 9.8 * 3.14)
+          ModuleValue posV = ((uint32_t) t->data[3]) * 3097L;
+          ModuleValue rotV = ((uint32_t) t->data[9]) * 3097L;
+          debug("posV: 0x%l\r\n", (uint32_t)posV);
+          Traj tr1 = {posV, 16000, 500};
+          Traj tr2 = {rotV, 8000, 1000};
+          debug("A\r\n");
+          setNewOrder(tr1, tr2, 10 MS);
+        }
+        else if(t->data[1] == 0x36)
+        {
+          ModuleValue dist = getDistance() / 3097;
+          ModuleValue rot = getRotation() / 3097;
+          // On utilie t;
+          t->size = 4;
+          uint8_t* uglyPointeurYOUHOU = &dist;
+          /*t->data[0] = uglyPointeurYOUHOU[2];
+          t->data[1] = uglyPointeurYOUHOU[3];
+          uglyPointeurYOUHOU = &rot;
+          t->data[2] = uglyPointeurYOUHOU[2];
+          t->data[3] = uglyPointeurYOUHOU[3];*/
+          //uartGaopSendPacket (t);
+          debug("dist: 0x%l\r\n", (uint32_t)dist);
+        }
         sendAck = EFB_TRUE;
       }
       else
@@ -429,9 +503,9 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
           sendAck = EFB_FALSE;
       }
 
-      if (sendACK == EFB_FALSE)
+      if (sendAck == EFB_FALSE)
       {
-        GAOPnack (t->seq, t);
+        GAOPnack (0x21, t);
         uartGaopSendPacket (t);
       }
       else

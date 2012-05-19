@@ -16,7 +16,7 @@ namespace ConsoleApplication1
         static void Main(string[] args)
         {
             ConsoleKeyInfo cki;
-            byte[] str = { 0xAB, 0, 0x64, 0x64, 0x64, 0x64, 0, 0xCD };
+            byte[] str = { 0x55, 0, 0, 0, 0, 0xAA };
             Thread readThread = new Thread(Read);
             Thread floodThread = new Thread(Flood);
             //Thread sapinDeNoelThread = new Thread(SapinDeNoel);
@@ -132,10 +132,10 @@ namespace ConsoleApplication1
                 */
                 else
                 {
-                    str[1] = Convert.ToByte(cki.KeyChar);
-                    str[6] = str[1];
+                    str[3] = Convert.ToByte(cki.KeyChar);
+                    str[4] = (int)((byte)str[0] ^ (byte)str[3]);
                     //Console.WriteLine(ascii.GetChars(str, 0, 8));
-                    _serialPort.Write(str, 0, 8);
+                    _serialPort.Write(str, 0, 6);
                 }
             }
         }

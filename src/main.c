@@ -1,7 +1,5 @@
 #include "main.h"
-
 #include "topLevel.h"
-
 
 #ifdef GCC_MEGA_AVR
 	/* EEPROM routines used only with the WinAVR compiler. */
@@ -10,6 +8,7 @@
 
 xTaskHandle xTaskLED;
 xTaskHandle xTaskIME;
+xTaskHandle xTaskSI;
 
 #define PORT_LED13 PORTB
 #define DDR_LED13 DDRB
@@ -19,7 +18,7 @@ xTaskHandle xTaskIME;
 
 
 
-void vTaskLED (void* pvParameters );
+void vTaskLED (void* pvParameters);
 void portConfigure(void);
 
 /* -----------------------------------------------------------------------------
@@ -61,9 +60,9 @@ int main (void)
   DE0nanoUartInit (38400, pdFALSE);
 	
 	//EFBoutPort (PORT_LED13, MASK_LED13);
-  xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 40, NULL, 1, &xTaskLED);
-  xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 3, NULL, 1, &xTaskIME);
-  //xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
+ // xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 30, NULL, 1, &xTaskLED);
+  xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 2, NULL, 1, &xTaskIME);
+  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
   
 
   vTaskStartScheduler ();
@@ -71,7 +70,7 @@ int main (void)
   return 0;
 }
 
-void onfigure(void)
+void portConfigure(void)
 {
 	// LED 13 (correspond au pin B5) en out.
   EFBsetBit (DDR_LED13, BIT_LED13);

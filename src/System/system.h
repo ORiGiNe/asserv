@@ -15,16 +15,12 @@ extern "C"
 #endif
 
 
-ErrorCode createSystem(CtlBlock*, Module*, 
-                         OriginWord);
-
+ErrorCode createSystem(CtlBlock*, Module*, OriginWord);
 ErrorCode startSystem(CtlBlock*);
 
 ErrorCode resetSystem(CtlBlock* ctlBlock, portTickType blockTime);
 
 ErrorCode waitEndOfSystem(CtlBlock*, portTickType blockTime);
-
-ErrorCode forceStopOfSystem(CtlBlock*);
 
 #ifdef __cplusplus
 }

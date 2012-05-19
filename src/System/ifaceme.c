@@ -93,12 +93,8 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
       return error;
     }
     command = getInput(parent, 0);
+    
     // On envoie la commande au système
-    if(parent->ctl->stop == true)
-    {
-      return ERR_URGENT_STOP;
-    }
-
     ((IfaceME*)parent->fun)->measureUpToDate = 0;
     ime->sendNewCommand(&ime->motor, command);
     

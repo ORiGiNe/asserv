@@ -62,7 +62,7 @@ void uartGaopInitialisation (void);
 
 tEFBerrCode EFBuartGaopSendString (const char * string);
 tEFBerrCode EFBuartGaopSendString_p (const char * string_p);
-tEFBerrCode uartGaopsendPacket (GAOPtrame t);
+tEFBerrCode uartGaopSendPacket (GAOPtrame t);
 void vTaskGaopCommunicationUART (void* pvParameters);
 void vTaskGaopGestionCommandeUART (void* pvParameters);
 

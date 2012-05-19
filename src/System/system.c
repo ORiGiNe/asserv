@@ -18,20 +18,24 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
     refreshPeriod,
     (void *)ctlBlock, vCallback //ctlBlock->timer.moduleCallback
   );
+  
   ctlBlock->timer.isActive = false;
+  
+  
+   
 
   if (ctlBlock->timer.handle == 0)
   {
     return ERR_TIMER_NOT_DEF;
   }
 
+
   /* On indique le module dont l'update lance l'ensemble du schéma block */
   ctlBlock->starter = starter;
-  ctlBlock->stop = false;
   ctlBlock->reset = false;
   ctlBlock->nTic = 0;
   ctlBlock->lastError = NO_ERR;
-
+  
   /* Création du sémaphore */
   semaphoreCreate(ctlBlock->semReset);
   semaphoreCreate(ctlBlock->semReached);
@@ -44,7 +48,7 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
 //    return ERR_SEM_NOT_DEF;
   //}
   return NO_ERR;
-
+ debug("U");
 }
 
 ErrorCode startSystem(CtlBlock* ctlBlock)
@@ -77,6 +81,8 @@ ErrorCode resetSystem(CtlBlock* ctlBlock, portTickType blockTime)
 
 void vCallback(TimerHandle pxTimer)
 {
+ debug("Z");
+
   CtlBlock *ctlBlock = (CtlBlock*)timerGetArg(pxTimer);
   //ErrorCode error = NO_ERR;
 
@@ -84,6 +90,8 @@ void vCallback(TimerHandle pxTimer)
   ctlBlock->nTic++;
   if(ctlBlock->reset == true)
   {
+   debug("T");
+
   //  debug("--------------|  Debut de reset  |--------------\n");
     resetModule(ctlBlock->starter);
     semaphoreGive(ctlBlock->semReset);
@@ -110,13 +118,5 @@ ErrorCode waitEndOfSystem(CtlBlock *ctlBlock, portTickType xBlockTime)
     return ERR_SEM_NOT_TAKEN;
   }
   //debug("---------| NO_ERR |---------\n");
-  return NO_ERR;
-}
-
-// Attend xBlockTime secondes apres avoir essayé de finir proprement
-// le launcher avant de l'arreter de force (et arreter le mvmt)
-ErrorCode forceStopOfSystem(CtlBlock* ctlBlock)
-{
-  ctlBlock->stop = true;
   return NO_ERR;
 }

@@ -20,12 +20,10 @@ byte computeGAOPChecksum (GAOPtrame t)
   csum ^= t->seq;
   csum ^= t->size;
   csum ^= t->ODID;
-  csum ^= t->command;
   for (int i = 0; i < t->size; i++)
   {
     csum ^= t->data[i];
   }
-
   return csum;
 }
 
@@ -37,23 +35,9 @@ void toString(GAOPtrame t, char* string)
     string[3] = t->ODID;
     for (int i = 0; i < t->size; i++)
     {
-        string[4 + i] = data[i];
+        string[4 + i] = t->data[i];
     }
     string[4 + t->size] = computeGAOPChecksum (t);
     string[4 + t->size + 1] = GAOP_END;
     string[4 + t->size + 2] = 0;
-}
-
-void GAOPnack (byte seq, GAOPtrame t)
-{    
-    t->seq = seq;
-    t->size = 0;
-    t->ODID = 0xFD;
-}
-
-void GAOPack (byte seq, GAOPtrame t)
-{
-    t->seq = seq;
-    t->size = 0;
-    t->ODID = 0xFE;
 }

@@ -150,6 +150,6 @@ ErrorCode updateAsserv(Module* parent, OriginWord port)
 void resetAsserv(Module* parent)
 {
   Asserv *asserv = (Asserv*)parent->fun;
-  asserv->oldError = 0;
+  //asserv->oldError = 0;
   asserv->integral = 0;
 }

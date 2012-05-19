@@ -65,6 +65,7 @@ ErrorCode configureOperator(Module* parent, void* args)
  */
 ErrorCode updateOperator(Module* parent, OriginWord port)
 {
+  (void) port;
   uint16_t i;
   ModuleValue result;
   ErrorCode error;
@@ -74,14 +75,18 @@ ErrorCode updateOperator(Module* parent, OriginWord port)
   // On met à jour les entrées
   for(i=0; i<parent->nbInputs; i++)
   {
-    error = updateInput(parent, i);
-    
+    error = updateInput(parent, i); 
     if(error != NO_ERR)
     {
       return error;
     }
-    result = (((Operator*)parent->fun)->func)(parent, i);
-    setOutput(parent, i, result);
+  }
+  
+  result = (((Operator*)parent->fun)->func)(parent, port);
+  setOutput(parent, port, result);
+  if(parent->isVerbose)
+  {
+    debug("opr: %l\r\n", (uint32_t)result);
   }
   return NO_ERR;
 }
@@ -89,6 +94,7 @@ ErrorCode updateOperator(Module* parent, OriginWord port)
 
 ModuleValue funCalcValueForMotor(Module* parent, OriginWord port)
 {
+   // debug("oii: %l %l\r\n", (uint32_t)getInput(parent, 0), (uint32_t)getInput(parent, 1));
   switch(port)
   {
     case 0:
