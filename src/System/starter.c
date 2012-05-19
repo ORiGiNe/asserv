@@ -58,13 +58,15 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
 
     // On récupère l'entrée
     vHist[i].val0 = getInput(parent, i);
-#define MASK_ACCURACY 8191
+#define MASK_ACCURACY 2047
     // Si suffisament de tours ont eu lieu
     if(vHist[i].val1 != 0x7FFFFFFF && vHist[i].val2 != 0x7FFFFFFF)
     {
       // Si les valeurs n'ont pas beaucoup évoluées
+      debug("coucou %l %l\r\n", vHist[i].val1, vHist[i].val2);
       if(vHist[i].val0 & MASK_ACCURACY == vHist[i].val1 & MASK_ACCURACY && vHist[i].val1 & MASK_ACCURACY == vHist[i].val2 & MASK_ACCURACY)
       {
+      debug("coucou2 %l %l %l\r\n", vHist[i].val0,vHist[i].val1 ,vHist[i].val2);
         if (parent->isVerbose)
         {
           debug("MVF\r\n");

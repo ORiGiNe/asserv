@@ -32,6 +32,8 @@ xTaskHandle xTaskIME;
 #define MASK_LED13 0x80
 #define BIT_LED13 7
 
+#define TOUR_DE_ROUE 96500
+
 
 
 
@@ -90,7 +92,7 @@ void vTaskSI (void* pvParameters)
   ModuleValue vitKdDist = 15;
   ModuleValue accelDist = 2000;
 
-  ModuleValue commandDist = 96000 * 3; // 3 tours de roue
+  ModuleValue commandDist = 0; // 3 tours de roue
 
   entryConfigDist.nbEntry = 9;
   entryConfigDist.value[0] = &posKpDist; // kp
@@ -106,18 +108,18 @@ void vTaskSI (void* pvParameters)
 
 
   // Enregistrement de l'asservissement en rotation
-  ModuleValue posKpRot = 50;
-  ModuleValue posKiRot = 3;
+  ModuleValue posKpRot = 30;
+  ModuleValue posKiRot = 0;
   ModuleValue posKdRot = 15;
-  ModuleValue derivRot = 12000; // MAX 12500
+  ModuleValue derivRot = 10000; // MAX 12500
 
-  ModuleValue vitKpRot = 1000;
-  ModuleValue vitKiRot = 0;
-  ModuleValue vitKdRot = 20;
+  ModuleValue vitKpRot = 700;
+  ModuleValue vitKiRot = 5;
+  ModuleValue vitKdRot = 15;
   ModuleValue accelRot = 2000;
 
-  ModuleValue commandRot = 0;
-  
+  ModuleValue commandRot = -1*TOUR_DE_ROUE *155/100; // Demi tour
+
   entryConfigRot.nbEntry = 9;
   entryConfigRot.value[0] = &posKpRot; // kp
   entryConfigRot.value[1] = &posKiRot; // ki
@@ -202,7 +204,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  asservPosRot = initModule(&ctlBlock, 6, 1, asservType, 0);
+  asservPosRot = initModule(&ctlBlock, 6, 1, asservType, 1);
   if (asservPosRot == 0)
   {
    return;
