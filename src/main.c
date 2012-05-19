@@ -61,7 +61,7 @@ int main (void)
 	
 	//EFBoutPort (PORT_LED13, MASK_LED13);
  // xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE + 30, NULL, 1, &xTaskLED);
-  xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 2, NULL, 1, &xTaskIME);
+ // xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 2, NULL, 1, &xTaskIME);
   xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
   
 

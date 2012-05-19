@@ -47,8 +47,8 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
   //{
 //    return ERR_SEM_NOT_DEF;
   //}
-  return NO_ERR;
  debug("U");
+  return NO_ERR;
 }
 
 ErrorCode startSystem(CtlBlock* ctlBlock)

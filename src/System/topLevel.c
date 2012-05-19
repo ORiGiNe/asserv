@@ -86,7 +86,6 @@ void vTaskSI (void* pvParameters)
 
   xLastWakeTime = taskGetTickCount ();
 
- debug("A");
   // Création du Starter
   starter = initModule(&ctlBlock, 1, 0, starterType, 0);
   if (starter == 0)
@@ -154,14 +153,12 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
- debug("B");
   // Création de l'Entry
   entryRot = initModule(&ctlBlock, 0, entryConfigRot.nbEntry, entryType, 0);
   if (entryRot == 0)
   {
    return;
   }
-   debug("C");
   asservPosRot = initModule(&ctlBlock, 6, 1, asservType, 0);
   if (asservPosRot == 0)
   {
@@ -172,14 +169,11 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-   debug("D");
   measureDerivatorRot = initModule(&ctlBlock, 1, 1, derivatorType, 0);
   if (measureDerivatorRot == 0)
   {
-   debug("F");
    return;
   }
-   debug("E");
   imeInIntegratorRot = initModule(&ctlBlock, 1, 1, integratorType, 0);
   if (imeInIntegratorRot == 0)
   {
@@ -195,12 +189,12 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-   debug("G");
+   
    // debug("oii: %l %l\r\n", (uint32_t)getInput(parent, 0), (uint32_t)getInput(parent, 1));
 
 // debug("cp\r\n");
 
-  
+
   if (configureModule(starter, NULL) != NO_ERR)
   {
    return;
@@ -225,10 +219,12 @@ void vTaskSI (void* pvParameters)
   {
     return;
   }
+     debug("E");
   if (configureModule(toggleSwitchLeft, (void*)&toggleSwitchConfig) != NO_ERR)
   {
     return;
   }
+   debug("E");
 
 
   if (configureModule(entryDist, (void*)&entryConfigDist) != NO_ERR)
@@ -272,6 +268,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
+   debug("E");
 
 
   // DISTANCE
@@ -326,6 +323,7 @@ void vTaskSI (void* pvParameters)
   // linkModuleWithInput(ifaceMERight, 0, starter, 1);
   linkModuleWithInput(ifaceMELeft, 0, starter, 0);
   
+   debug("E");
 
   //resetSystem(&ctlBlock, portMAX_DELAY);
   for (;;)
