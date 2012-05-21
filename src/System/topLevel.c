@@ -380,7 +380,7 @@ ErrorCode moveRotate(ModuleValue angle, ModuleValue vit)
   return NO_ERR;
 }
 
-ErrorCode moveCircle(ModuleValue radius, ModuleValue angle, ModuleValue vit)
+ErrorCode moveCurvilinear(ModuleValue radius, ModuleValue angle, ModuleValue vit)
 {
   ErrorCode err = resetSystem(&ctlBlock, portMAX_DELAY);
   if(err != NO_ERR)
@@ -389,7 +389,8 @@ ErrorCode moveCircle(ModuleValue radius, ModuleValue angle, ModuleValue vit)
   }
   taskENTER_CRITICAL();
   {
-    // TODO
+    trajDist.pos = WHEEL_GAP * angle; // FIXME A FAIRE PASSER EN TIC
+    trajRot.pos = radius * angle; // A FAIRE PASSER EN TIC
   }
   taskEXIT_CRITICAL();
   startSystem(&ctlBlock);
