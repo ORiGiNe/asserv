@@ -34,7 +34,7 @@ IME motor2 = {
   .resetEncoderValue = resetEncoderValue
 };
 
-IME *imes[3] = {
+IME *imes[NB_MOTORS + 1] = {
   &motor1,
   &motor2,
   0

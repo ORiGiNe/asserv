@@ -344,17 +344,73 @@ void vTaskSI (void* pvParameters)
 
 }
 
-ErrorCode setNewOrder(Traj dist, Traj rot, portTickType xBlockTime)
+
+ErrorCode moveForward(ModuleValue dist, ModuleValue vit)
 {
-    ErrorCode err = resetSystem(&ctlBlock, xBlockTime);
-    taskENTER_CRITICAL();
-    {
-        trajDist.pos = dist.pos;
-        trajRot.pos = rot.pos;
-    }
-    taskEXIT_CRITICAL();
-    startSystem(&ctlBlock);
+  ErrorCode err = resetSystem(&ctlBlock, portMAX_DELAY);
+  if(err != NO_ERR)
+  {
     return err;
+  }
+  taskENTER_CRITICAL();
+  {
+    trajRot.pos = (dist * TIC_IN_WHEEL) / WHEEL_PERIMETER;
+    trajRot.vit = ((vit * TIC_IN_WHEEL) / WHEEL_PERIMETER) / TIMER_IN_SEC;
+  }
+  taskEXIT_CRITICAL();
+  startSystem(&ctlBlock);
+  return NO_ERR;
+}
+
+// angle : valeur en °; vit : vitesse angulaire
+ErrorCode moveRotate(ModuleValue angle, ModuleValue vit)
+{
+  ErrorCode err = resetSystem(&ctlBlock, portMAX_DELAY);
+  if(err != NO_ERR)
+  {
+    return err;
+  }
+  taskENTER_CRITICAL();
+  {
+    trajRot.pos = (angle * TIC_IN_WHEEL) / ANGLE_IN_WHEEL;
+    trajRot.vit = ((vit * TIC_IN_WHEEL) / ANGLE_IN_WHEEL) / TIMER_IN_SEC;
+  }
+  taskEXIT_CRITICAL();
+  startSystem(&ctlBlock);
+  return NO_ERR;
+}
+
+ErrorCode moveCircle(ModuleValue radius, ModuleValue angle, ModuleValue vit)
+{
+  ErrorCode err = resetSystem(&ctlBlock, portMAX_DELAY);
+  if(err != NO_ERR)
+  {
+    return err;
+  }
+  taskENTER_CRITICAL();
+  {
+    // TODO
+  }
+  taskEXIT_CRITICAL();
+  startSystem(&ctlBlock);
+  return NO_ERR;
+}
+
+ErrorCode setNewOrder(Traj dist, Traj rot)
+{
+  ErrorCode err = resetSystem(&ctlBlock, portMAX_DELAY);
+  if(err != NO_ERR)
+  {
+    return err;
+  }
+  taskENTER_CRITICAL();
+  {
+      trajDist.pos = dist.pos;
+      trajRot.pos = rot.pos;
+  }
+  taskEXIT_CRITICAL();
+  startSystem(&ctlBlock);
+  return NO_ERR;
 }
 
 ModuleValue getDistance(void)
@@ -362,7 +418,7 @@ ModuleValue getDistance(void)
     ModuleValue dist;
      taskENTER_CRITICAL();
     {
-        dist = ctlBlock.coveredDistance;
+        dist = ctlBlock.coveredDist; // FIXME
     }
     taskEXIT_CRITICAL();
     return dist;
@@ -373,8 +429,7 @@ ModuleValue getRotation(void)
     ModuleValue rot;
     taskENTER_CRITICAL();
     {
-      // TODO FIXME A corriger! Ne correspond pas   
-      rot = ctlBlock.coveredDistance;
+      rot = ctlBlock.coveredAngle; // FIXME
     }
     taskEXIT_CRITICAL();
     return rot;
