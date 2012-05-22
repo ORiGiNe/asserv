@@ -5,7 +5,7 @@ endif
 
 ifeq ($(strip $(SystemDrive)),)
 	platform=Linux
-	DIRAVR=/usr/lib
+	DIRAVR=/usr # Anciennement /usr/lib
 	DEPDIR=.dep
 
 else
