@@ -1,0 +1,8 @@
+*.o
+*.lst
+arduino-robot.*
+*.map
+*.elf
+*.rar
+*.bkp
+*.a
