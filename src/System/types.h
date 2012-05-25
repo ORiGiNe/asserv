@@ -18,6 +18,13 @@ typedef int8_t		 OriginSByte;
 typedef int16_t		 OriginSWord;
 typedef int32_t		 OriginSDWord;
 
+
+typedef struct module       Module;
+typedef struct moduleInput  ModuleInput;
+typedef struct moduleOutput ModuleOutput;
+typedef OriginSDWord         ModuleValue;
+
+
 #ifdef __cplusplus
 }
 #endif

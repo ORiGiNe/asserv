@@ -31,7 +31,15 @@ typedef struct {
 #define BIT_HBRIDGE_ON 5
 
 void vTaskSI (void* pvParameters);
-ErrorCode setNewOrder(Traj dist, Traj Rot, portTickType xBlockTime);
+
+
+
+
+ErrorCode moveForward(ModuleValue dist, ModuleValue vit);
+ErrorCode moveRotate(ModuleValue angle, ModuleValue vit);
+ErrorCode moveCurvilinear(ModuleValue radius, ModuleValue angle, ModuleValue vit);
+
+ErrorCode setNewOrder(Traj dist, Traj Rot);
 ModuleValue getDistance(void);
 ModuleValue getRotation(void);
 

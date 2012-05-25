@@ -479,7 +479,7 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
           Traj tr1 = {posV, 16000, 500};
           Traj tr2 = {rotV, 8000, 1000};
           debug("A\r\n");
-          setNewOrder(tr1, tr2, 10 MS);
+          setNewOrder(tr1, tr2);
         }
         else if(t->data[1] == 0x36)
         {

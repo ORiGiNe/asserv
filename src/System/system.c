@@ -1,6 +1,6 @@
 #include "system.h"
 #include "sysInterface.h"
-
+#include "ime.h"
 
 void vCallback(TimerHandle);
 
@@ -20,7 +20,7 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
   );
   
   ctlBlock->timer.isActive = false;
-  
+  ctlBlock->imeGroup = imeGroup;
   
    
 

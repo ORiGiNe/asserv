@@ -1,4 +1,5 @@
 #include "topLevel.h"
+#include "userInterface.h"
 
 volatile Traj trajDist = 
 {
@@ -199,11 +200,11 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  if (configureModule(ifaceMELeft, (void*)&imes[0]) != NO_ERR)
+  if (configureModule(ifaceMELeft, (void*)&imeGroup[0]) != NO_ERR)
   {
    return;
   }
-  if (configureModule(ifaceMERight, (void*)&imes[1]) != NO_ERR)
+  if (configureModule(ifaceMERight, (void*)&imeGroup[1]) != NO_ERR)
   {
    return;
   }
@@ -419,7 +420,7 @@ ModuleValue getDistance(void)
     ModuleValue dist;
      taskENTER_CRITICAL();
     {
-        dist = ctlBlock.coveredDist; // FIXME
+    //    dist = ctlBlock.coveredDist; // FIXME
     }
     taskEXIT_CRITICAL();
     return dist;
@@ -430,7 +431,7 @@ ModuleValue getRotation(void)
     ModuleValue rot;
     taskENTER_CRITICAL();
     {
-      rot = ctlBlock.coveredAngle; // FIXME
+    //  rot = ctlBlock.coveredAngle; // FIXME
     }
     taskEXIT_CRITICAL();
     return rot;
