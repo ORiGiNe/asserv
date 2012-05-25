@@ -37,7 +37,7 @@ extern "C"
 typedef struct
 {
   OriginWord nbEntry;
-  volatile ModuleValue *value[NB_MAX_ENTRIES];
+  ModuleValue *value[NB_MAX_ENTRIES];
 } EntryConfig;
 
 

@@ -1,12 +1,12 @@
 #include "topLevel.h"
 
-volatile Traj trajDist = 
+Traj trajDist = 
 {
     .pos = 0,
     .vit = 12800,
     .acc = 2000
 };
-volatile Traj trajRot = 
+Traj trajRot = 
 {
     .pos = 0,
     .vit = 12000,
