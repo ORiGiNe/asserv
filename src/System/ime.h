@@ -3,6 +3,9 @@
 
 #include "modules_group.h"
 
+
+#define NB_MOTORS 2
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -13,7 +16,8 @@ typedef struct
   const OriginByte mask;
   const OriginWord blockTime; 
   volatile ModuleValue encoderValue;
-  ModuleValue oldEncoderValue;
+  int16_t oldResult;
+  uint8_t nbFail;
 } MotorData;
 
 typedef struct {
@@ -23,9 +27,7 @@ typedef struct {
   void (*resetEncoderValue)( MotorData*);
 } IME;
 
-IME motor1;
-IME motor2;
-IME perfectMotor;
+IME * imes[NB_MOTORS + 1];
 
 void vTaskIME(void* pvParameters);
 

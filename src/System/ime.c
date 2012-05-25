@@ -12,7 +12,8 @@ IME motor1 = {
     .mask = 0x00,
     .blockTime = 2, // 1ms c'est trop court!
     .encoderValue = 0,
-    .oldEncoderValue = 0
+    .oldResult = 0,
+    .nbFail = 0
   },
   .getEncoderValue = getEncoderValue,
   .sendNewCommand = sendNewCommand,
@@ -25,14 +26,15 @@ IME motor2 = {
     .mask = 0x80,
     .blockTime = 2,
     .encoderValue = 0,
-    .oldEncoderValue = 0
+    .oldResult = 0,
+    .nbFail = 0
   },
   .getEncoderValue = getEncoderValue,
   .sendNewCommand = sendNewCommand,
   .resetEncoderValue = resetEncoderValue
 };
 
-IME *imes[3] = {
+IME *imes[NB_MOTORS + 1] = {
   &motor1,
   &motor2,
   0
@@ -47,6 +49,8 @@ void vTaskIME(void* pvParameters)
   int16_t result = 0;
   (void) pvParameters;
   
+  
+  
     // reset des codeurs
   resetDE0nano();
 
@@ -60,25 +64,23 @@ void vTaskIME(void* pvParameters)
       
       if(getWordFromDE0nano(motor->id + 1, (unsigned short*)&result, motor->blockTime) != EFB_OK)
       {
-        // S'il y a une erreur d'envoie, plus sensé arrivé
-        // debug("FAIL!\r\n");
-        continue;
+        motor->nbFail++;
+        result = motor->oldResult;
       }
-      motor->oldEncoderValue = result;
-       
+      else
+      {
+        if (motor->nbFail > 0)
+        {
+          result -= motor->nbFail * motor->oldResult;
+          motor->nbFail = 0;
+        }
+        motor->oldResult = result;
+      }
       taskENTER_CRITICAL();
       {
         motor->encoderValue += result;
       }
       taskEXIT_CRITICAL();
-      
-         // if(motor->id == 0)
-         // {
-          // debug("m1: 0x%l\r\n", (uint32_t)result);
-         // }else if(motor->id == 1){
-          // debug("m2: 0x%l\r\n", (uint32_t)result);
-         // }
-   
     }
 
     vTaskDelayUntil(&xLastWakeTime, 10/portTICK_RATE_MS);
@@ -138,7 +140,7 @@ void sendNewCommand(MotorData *motor, ModuleValue cmd)
   }
   val = val + 64 - motor->id;
   
-  debug("snc: 0x%l:0x%l\r\n", (uint32_t)cmd, (uint32_t)val);
+  //debug("snc: 0x%l:0x%l\r\n", (uint32_t)cmd, (uint32_t)val);
   EFBuart2PushByteToBuffer(val | motor->mask);
 }
 
@@ -149,7 +151,7 @@ void resetEncoderValue( MotorData *motor)
     motor->encoderValue = 0;
   }
   taskEXIT_CRITICAL();
-  debug("reset\r\n\4");
+  //debug("reset\r\n\4");
 }
 
 // Implémentation d'un moteur parfait. Pour faire des tests triviaux.
