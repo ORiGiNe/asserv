@@ -1,10 +1,8 @@
 #ifndef SYSTEM_IME_H
 #define SYSTEM_IME_H
 
-#include "modules_group.h"
-
-
-#define NB_MOTORS 2
+#include "System/types.h"
+#define NB_MAX_MOTORS 2
 
 #ifdef __cplusplus
 extern "C"
@@ -27,7 +25,7 @@ typedef struct {
   void (*resetEncoderValue)( MotorData*);
 } IME;
 
-IME * imes[NB_MOTORS + 1];
+IME * imeGroup[NB_MAX_MOTORS];
 
 void vTaskIME(void* pvParameters);
 

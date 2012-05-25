@@ -1,17 +1,14 @@
 #ifndef ASSERV_MODULES_GROUP_H
 #define ASSERV_MODULES_GROUP_H
 
-#include "types.h"
+#include "System/types.h"
 #include "sysInterface.h"
+#include "ime.h"
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-typedef struct module       Module;
-typedef struct moduleInput  ModuleInput;
-typedef struct moduleOutput ModuleOutput;
-typedef OriginSDWord         ModuleValue;
 
 typedef struct timerBlock TimerBlock;
 typedef struct ctlBlock CtlBlock;
@@ -82,7 +79,10 @@ struct ctlBlock
   SysSemaphore semReset;
   OriginWord nTic;
   volatile ErrorCode lastError;
+  volatile MotorData** imeGroup;
   volatile ModuleValue coveredDistance;
+  //volatile ModuleValue coveredDist;
+  //volatile ModuleValue coveredAngle;
 };
 
 

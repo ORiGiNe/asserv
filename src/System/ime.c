@@ -34,16 +34,17 @@ IME motor2 = {
   .resetEncoderValue = resetEncoderValue
 };
 
-IME *imes[NB_MOTORS + 1] = {
+IME *imeGroup[NB_MAX_MOTORS] = {
   &motor1,
   &motor2,
-  0
 };
+
 
 void vTaskIME(void* pvParameters)
 {
   portTickType xLastWakeTime;
   IME** ime;
+  OriginByte id;
   MotorData* motor;
   //int16_t car à besoin d'etre un signé sur 16 bits!
   int16_t result = 0;
@@ -57,8 +58,9 @@ void vTaskIME(void* pvParameters)
   xLastWakeTime = xTaskGetTickCount ();
   for (;;)
   {
-    for(ime = imes; *ime != 0;  ime++)
+    for(id = 0; id < NB_MAX_MOTORS; id++)
     {
+      ime = imeGroup[id];
       motor = &((*ime)->motor);
       result = 0;
       
