@@ -61,7 +61,6 @@ int main (void)
   //Init du watchdog timer: reset toutes les 120ms s'il n'y a pas d'appel à wdt_reset().
   wdt_enable (WDTO_120MS);
 
-  uartGaopInitialisation();
   uartHBridgeInit(9600); // init pontH
   DE0nanoUartInit (38400, pdFALSE);
 	
@@ -69,8 +68,10 @@ int main (void)
 
   xTaskCreate (vTaskLED, (signed char*) "LED", configMINIMAL_STACK_SIZE, NULL, 1, &xTaskLED); // GUI : Pas besoin de plus de stack.
   xTaskCreate (vTaskIME, (signed char*) "IME", configMINIMAL_STACK_SIZE * 2, NULL, 1, &xTaskIME); // GUI : x2 ca marche bien.
-  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 6, NULL, 1, &xTaskSI);
-  
+  xTaskCreate (vTaskSI, (signed char*) "SI", configMINIMAL_STACK_SIZE * 4, NULL, 1, &xTaskSI);
+
+  uartGaopInitialisation();
+
   vTaskStartScheduler ();
 
   return 0;

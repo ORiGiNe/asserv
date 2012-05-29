@@ -103,7 +103,7 @@ void vTaskSI (void* pvParameters)
    return;
   }
   // Création de l'interface systeme (IfaceMERight)
-  ifaceMERight = initModule(&ctlBlock, 1, 2, ifaceMEType, 1);
+  ifaceMERight = initModule(&ctlBlock, 1, 2, ifaceMEType, 0);
   if (ifaceMERight == 0)
   {
    return;
@@ -115,7 +115,7 @@ void vTaskSI (void* pvParameters)
    return;
   }
   // Création de l'operateur asservs -> IMEs
-  operatorIn = initModule(&ctlBlock, 2, 2, operatorType, 1);
+  operatorIn = initModule(&ctlBlock, 2, 2, operatorType, 0);
   if (operatorIn == 0)
   {
    return;

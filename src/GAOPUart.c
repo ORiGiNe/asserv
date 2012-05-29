@@ -41,8 +41,8 @@ void uartGaopInitialisation (void)
   gaopTimeOut = xTimerCreate ((signed char*) "GAOP_TO", GAOP_TIMEOUT_PERIOD, pdFALSE, NULL, vCallbackGaopTimeOut);
 
   /* Creer les taches */
-  //xTaskCreate (vTaskGaopCommunicationUART, (signed char*) "GAOP0", configMINIMAL_STACK_SIZE * 5, NULL, UART_GAOP_PRIORITY, &xTaskGaopUartProt);
-  //xTaskCreate (vTaskGaopGestionCommandeUART, (signed char*) "GAOP1", configMINIMAL_STACK_SIZE * 5, NULL, UART0_COMM_PRIORITY, &xTaskGaopUartComm);
+  xTaskCreate (vTaskGaopCommunicationUART, (signed char*) "GAOP0", configMINIMAL_STACK_SIZE * 3, NULL, UART_GAOP_PRIORITY, &xTaskGaopUartProt);
+  xTaskCreate (vTaskGaopGestionCommandeUART, (signed char*) "GAOP1", configMINIMAL_STACK_SIZE * 3, NULL, UART0_COMM_PRIORITY, &xTaskGaopUartComm);
 }
 
 /* -----------------------------------------------------------------------------
@@ -325,140 +325,7 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
   {
     if (xQueueReceive (gaopRxTrameQueue, &t, portMAX_DELAY))
     {
-      /*
-      if (t->commande == UART_CDE_TEST)
-      {
-        EFBuartGaopSendString ("TEST\r\n");
-        freeTrame (t);
-      }
-      else if (t->commande == UART_CDE_DEO)
-      {
-        EFBuartGaopSendString ("de0-nano : \n");
-        word wordOut = 0x1438;
-        unsigned char sortie[20];
-        uint8_t ilod = 0;
-        
-        for(uint8_t i = 0; i < 100; i++)
-        {
-          tEFBerrCode retCode = getWordFromDE0nano(1, &wordOut, 10);
-          usprintf (sortie,  "Code : 0x%l\r\nILOD : 0x%l\r\n", (uint32_t)retCode, (uint32_t)ilod);
-          EFBuartGaopSendString ((char*)sortie);
-          if (retCode == EFB_OK)
-          {
-            usprintf (sortie,  "WordOut : 0x%l\r\n", (uint32_t)wordOut);
-            EFBuartGaopSendString ((char*)sortie);
-          }
-          else
-          {
-            EFBuartGaopSendString ("FAIL\r\n");
-            ilod++;
-          }
-        }
-        freeTrame (t);
-        *//*EFBuartGaopSendString ("de0-nano : ");
-        word wordOut = 0x1539;
-        unsigned char sortie[20];
-        tEFBerrCode retCode = getWordFromDE0nano(1, &wordOut, 10);
-        usprintf (sortie,  "0x%l\r\n", (uint32_t)retCode);
-        EFBuartGaopSendString ((char*)sortie);
-        
-        while (retCode != EFB_OK)
-        {
-          EFBuartGaopSendString ("FAIL\r\n");
-          retCode = getWordFromDE0nano(1, &wordOut, 10);
-        }
-        usprintf (sortie,  "0x%l\r\n", (uint32_t)wordOut);
-        EFBuartGaopSendString ((char*)sortie);
-        
-        freeTrame (t);*//*
-      }
-      else if (t->commande == UART_CDE_DEO_1)
-      {
-        EFBuartGaopSendString ("de0-nano : \n");
-        word wordOut = 0x1438;
-        unsigned char sortie[20];
-        tEFBerrCode retCode = getWordFromDE0nano(1, &wordOut, 2);
-        usprintf (sortie,  "1: Code : 0x%l\r\n", (uint32_t)retCode);
-        EFBuartGaopSendString ((char*)sortie);
-        if (retCode == EFB_OK)
-        {
-          usprintf (sortie,  "WordOut : 0x%l\r\n", (uint32_t)wordOut);
-          EFBuartGaopSendString ((char*)sortie);
-        }
-        else
-        {
-          EFBuartGaopSendString ("FAIL\r\n");
-        }
-        freeTrame (t);
-      }
-      else if (t->commande == UART_CDE_DEO_2)
-      {
-        EFBuartGaopSendString ("de0-nano : \n");
-        word wordOut = 0x1438;
-        unsigned char sortie[20];
-        tEFBerrCode retCode = getWordFromDE0nano(2, &wordOut, 2);
-        usprintf (sortie,  "2: Code : 0x%l\r\n", (uint32_t)retCode);
-        EFBuartGaopSendString ((char*)sortie);
-        if (retCode == EFB_OK)
-        {
-          usprintf (sortie,  "WordOut : 0x%l\r\n", (uint32_t)wordOut);
-          EFBuartGaopSendString ((char*)sortie);
-        }
-        else
-        {
-          EFBuartGaopSendString ("FAIL\r\n");
-        }
-        freeTrame (t);
-      }
-      else if (t->commande == UART_CDE_PTH)
-      {
-        //sendCommandToHBridge (CommandHBridge command, byte data, portTickType xBlockTime)
-        //sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 30, 10);
-
-        //EFBuart2PushByteToBuffer(128);
-        //EFBuart2PushByteToBuffer(1);
-        *//*int i = 0;
-        unsigned char sortie[20];
-        for(i = 0; i < 256; i++)
-        {
-          EFBuart2PushByteToBuffer(i);
-          //debug("Test : %i", (uint32_t)i);
-          usprintf (sortie,  "Test : %l\r\n", (uint32_t)i);
-          EFBuartGaopSendString ((char*)sortie);
-          vTaskDelay(1000/portTICK_RATE_MS);
-        }*//*
-        EFBuart2PushByteToBuffer(196);
-        EFBuart2PushByteToBuffer(69);
-        //vitKp += 50;
-        //resetSystem(&ctlBlock, portMAX_DELAY);
-      }
-      else if (t->commande == UART_CDE_PTH2)
-      {
-        // sendCommandToHBridge (DRIVE_BACKWARD_MOTOR_1, 30, 10);
-        EFBuart2PushByteToBuffer(0b01000000);
-        EFBuart2PushByteToBuffer(0b10111111);
-        curseur = 0;
-        EFBuartGaopSendString ("PTH2\r\n");
-      }
-      else if (t->commande == UART_CDE_PTH3)
-      {
-        //sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 32, 10);
-        EFBuart2PushByteToBuffer(130);
-        EFBuart2PushByteToBuffer(0);
-        EFBuart2PushByteToBuffer(64);
-        EFBuart2PushByteToBuffer(66);
-        EFBuartGaopSendString ("PTH3\r\n");
-      }
-      else if (t->commande == UART_CDE_PTH4)
-      {
-        sendCommandToHBridge (DRIVE_FORWARD_MOTOR_1, 0, 10);
-        EFBuartGaopSendString ("PTH4\r\n");
-      }
-      else if (t->commande == UART_CDE_PTH5)
-      {
-        EFBuart2PushByteToBuffer(0xAA);
-        EFBuartGaopSendString ("PTH5\r\n");
-      }*/
+      debug("vtC");
       if (t->ODID == ODID_TEST)
       {
         EFBuartGaopSendString ("TEST\r\n");
@@ -488,11 +355,11 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
           // On utilie t;
           t->size = 4;
          // uint8_t* uglyPointeurYOUHOU = &dist;
-          /*t->data[0] = uglyPointeurYOUHOU[2];
-          t->data[1] = uglyPointeurYOUHOU[3];
-          uglyPointeurYOUHOU = &rot;
-          t->data[2] = uglyPointeurYOUHOU[2];
-          t->data[3] = uglyPointeurYOUHOU[3];*/
+          // t->data[0] = uglyPointeurYOUHOU[2];
+          // t->data[1] = uglyPointeurYOUHOU[3];
+          // uglyPointeurYOUHOU = &rot;
+          // t->data[2] = uglyPointeurYOUHOU[2];
+          // t->data[3] = uglyPointeurYOUHOU[3];
           //uartGaopSendPacket (t);
           debug("dist: 0x%l\r\n", (uint32_t)dist);
         }

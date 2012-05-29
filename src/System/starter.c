@@ -66,10 +66,9 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
       if(vHist[i].val0 - vHist[i].val1 < ACCURACY && vHist[i].val0 - vHist[i].val1 > -ACCURACY
       && vHist[i].val1 - vHist[i].val2 < ACCURACY && vHist[i].val1 - vHist[i].val2 > -ACCURACY)
       {
-      debug("starter %l %l %l\r\n", vHist[i].val0,vHist[i].val1 ,vHist[i].val2);
         if (parent->isVerbose)
         {
-          debug("MVTF\r\n");
+          debug("MVTF %l %l %l\r\n", vHist[i].val0,vHist[i].val1 ,vHist[i].val2);
         }
         // On indique que le mouvement est fini
         semaphoreGive(parent->ctl->semReached);

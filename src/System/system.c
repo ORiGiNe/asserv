@@ -84,8 +84,6 @@ ErrorCode resetSystem(CtlBlock* ctlBlock, portTickType blockTime)
 
 void vSystemCallback(TimerHandle pxTimer)
 {
- debug("Z");
-
   CtlBlock *ctlBlock = (CtlBlock*)timerGetArg(pxTimer);
   //ErrorCode error = NO_ERR;
 
