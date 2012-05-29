@@ -17,16 +17,16 @@ extern "C"
 
 #define GAOPnack(sequ, t) \
 { \
-    t->seq = sequ; \
-    t->size = 0; \
-    t->ODID = 0xFD; \
+    (t)->seq = (sequ); \
+    (t)->size = 0; \
+    (t)->ODID = 0xFD; \
 } //OxFD
 
 #define GAOPack(sequ, t) \
 { \
-    t->seq = sequ; \
-    t->size = 0; \
-    t->ODID = 0xFE; \
+    (t)->seq = (sequ); \
+    (t)->size = 0; \
+    (t)->ODID = 0xFE; \
 } // 0xFE
 
 typedef struct GAOPtrame
