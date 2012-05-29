@@ -2,30 +2,33 @@
 #include "sysInterface.h"
 #include "ime.h"
 
-void vCallback(TimerHandle);
+void vSystemCallback(TimerHandle);
 
 ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter, 
                          OriginWord refreshPeriod)
 {
+
   signed char timerName[6] = "CTL_%";
   static unsigned char id = 'a';
 
   /* Création et init du timer */
   timerName[4] = id++;
   ctlBlock->timer.refreshPeriod = refreshPeriod;
+
   ctlBlock->timer.handle = timerCreate (
     (const signed char*)timerName,
     refreshPeriod,
-    (void *)ctlBlock, vCallback //ctlBlock->timer.moduleCallback
-  );
+    (void *)ctlBlock,
+    vSystemCallback //ctlBlock->timer.moduleCallback
+  ); 
   
   ctlBlock->timer.isActive = false;
-  ctlBlock->imeGroup = imeGroup;
+  // ctlBlock->imeGroup = imeGroup;
   
    
-
   if (ctlBlock->timer.handle == 0)
   {
+    debug("w\n");
     return ERR_TIMER_NOT_DEF;
   }
 
@@ -79,7 +82,7 @@ ErrorCode resetSystem(CtlBlock* ctlBlock, portTickType blockTime)
 }
 
 
-void vCallback(TimerHandle pxTimer)
+void vSystemCallback(TimerHandle pxTimer)
 {
  debug("Z");
 

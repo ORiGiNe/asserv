@@ -51,7 +51,6 @@ void vTaskIME(void* pvParameters)
   //int16_t car à besoin d'etre un signé sur 16 bits!
   int16_t result = 0;
   (void) pvParameters;
-  debug("\04 vTaskIME : init\n");
   
   // reset des codeurs
   resetDE0nano();
@@ -84,7 +83,6 @@ void vTaskIME(void* pvParameters)
         motor->encoderValue += result;
       }
       taskEXIT_CRITICAL();
-      debug("r: 0x%l\n", (uint32_t)result);
     }
     vTaskDelayUntil(&xLastWakeTime, 10/portTICK_RATE_MS);
   }

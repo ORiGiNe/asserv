@@ -41,8 +41,8 @@ void uartGaopInitialisation (void)
   gaopTimeOut = xTimerCreate ((signed char*) "GAOP_TO", GAOP_TIMEOUT_PERIOD, pdFALSE, NULL, vCallbackGaopTimeOut);
 
   /* Creer les taches */
-  xTaskCreate (vTaskGaopCommunicationUART, (signed char*) "GAOP0", configMINIMAL_STACK_SIZE * 5, NULL, UART_GAOP_PRIORITY, &xTaskGaopUartProt);
-  xTaskCreate (vTaskGaopGestionCommandeUART, (signed char*) "GAOP1", configMINIMAL_STACK_SIZE * 5, NULL, UART0_COMM_PRIORITY, &xTaskGaopUartComm);
+  //xTaskCreate (vTaskGaopCommunicationUART, (signed char*) "GAOP0", configMINIMAL_STACK_SIZE * 5, NULL, UART_GAOP_PRIORITY, &xTaskGaopUartProt);
+  //xTaskCreate (vTaskGaopGestionCommandeUART, (signed char*) "GAOP1", configMINIMAL_STACK_SIZE * 5, NULL, UART0_COMM_PRIORITY, &xTaskGaopUartComm);
 }
 
 /* -----------------------------------------------------------------------------

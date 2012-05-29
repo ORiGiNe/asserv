@@ -1,24 +1,32 @@
 #include "topLevel.h"
 #include "userInterface.h"
 
-volatile Traj trajDist = 
+Traj trajDist = 
 {
     .pos = 0,
     .vit = 12800,
     .acc = 2000
 };
-volatile Traj trajRot = 
+Traj trajRot = 
 {
     .pos = 0,
     .vit = 12000,
     .acc = 2000
 };
 
+void pauseDebug(char* debugTxt)
+{
+  for(;;) {
+    debug(debugTxt);
+    vTaskDelay(500/portTICK_RATE_MS);
+  }
+}
+
 CtlBlock ctlBlock;
 
 void vTaskSI (void* pvParameters)
 {
-  
+  debug("A");
   (void) pvParameters;
   portTickType xLastWakeTime;
   Module *entryDist, *asservPosDist, *asservVitDist, *measureDerivatorDist, *imeInIntegratorDist;
@@ -84,6 +92,7 @@ void vTaskSI (void* pvParameters)
   toggleSwitchConfig.mask = _BV (BIT_HBRIDGE_ON);
   toggleSwitchConfig.off = TOGGLE_ON;
   
+  debug("B");
 
   xLastWakeTime = taskGetTickCount ();
 
@@ -181,30 +190,25 @@ void vTaskSI (void* pvParameters)
    return;
   }
 
+  debug("C");
 
-
-
-
- debug("H");
   if (createSystem(&ctlBlock, starter , 50) == ERR_TIMER_NOT_DEF)
   {
-   return;
+    pauseDebug("Fcs");
   }
-   
-   // debug("oii: %l %l\r\n", (uint32_t)getInput(parent, 0), (uint32_t)getInput(parent, 1));
-
-// debug("cp\r\n");
-
+  
+  debug("D");
 
   if (configureModule(starter, NULL) != NO_ERR)
   {
    return;
-  }
-  if (configureModule(ifaceMELeft, (void*)&imeGroup[0]) != NO_ERR)
+  } 
+  
+  if (configureModule(ifaceMELeft, (void*)imeGroup[0]) != NO_ERR)
   {
    return;
   }
-  if (configureModule(ifaceMERight, (void*)&imeGroup[1]) != NO_ERR)
+  if (configureModule(ifaceMERight, (void*)imeGroup[1]) != NO_ERR)
   {
    return;
   }
@@ -216,18 +220,19 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
+
   if (configureModule(toggleSwitchRight, (void*)&toggleSwitchConfig) != NO_ERR)
   {
     return;
   }
-     debug("E");
+     
   if (configureModule(toggleSwitchLeft, (void*)&toggleSwitchConfig) != NO_ERR)
   {
     return;
   }
    debug("E");
 
-
+   
   if (configureModule(entryDist, (void*)&entryConfigDist) != NO_ERR)
   {
    return;
@@ -269,7 +274,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-   debug("E");
+   debug("F");
 
 
   // DISTANCE
@@ -324,7 +329,7 @@ void vTaskSI (void* pvParameters)
   // linkModuleWithInput(ifaceMERight, 0, starter, 1);
   linkModuleWithInput(ifaceMELeft, 0, starter, 0);
   
-   debug("E");
+   debug("G");
 
   //resetSystem(&ctlBlock, portMAX_DELAY);
   for (;;)
@@ -341,8 +346,10 @@ void vTaskSI (void* pvParameters)
     // Cette fonction permet à la tache d'être périodique.
     // La tache est bloquée pendant (500ms - son temps d'execution).
      vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
-  }
-
+  } 
+  /***************************************************************
+  pauseDebug("fin");
+  *//////////////////////////////////////////////////////////////////////
 }
 
 

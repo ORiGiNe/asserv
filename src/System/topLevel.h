@@ -33,8 +33,6 @@ typedef struct {
 void vTaskSI (void* pvParameters);
 
 
-
-
 ErrorCode moveForward(ModuleValue dist, ModuleValue vit);
 ErrorCode moveRotate(ModuleValue angle, ModuleValue vit);
 ErrorCode moveCurvilinear(ModuleValue radius, ModuleValue angle, ModuleValue vit);
