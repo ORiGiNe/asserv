@@ -35,9 +35,10 @@ IME motor2 = {
   .resetEncoderValue = resetEncoderValue
 };
 
-IME *imeGroup[NB_MAX_MOTORS] = {
+IME *imeGroup[NB_MAX_MOTORS + 1] = {
   &motor1,
   &motor2,
+  0
 };
 
 
@@ -50,7 +51,7 @@ void vTaskIME(void* pvParameters)
   //int16_t car à besoin d'etre un signé sur 16 bits!
   int16_t result = 0;
   (void) pvParameters;
-  debug("vTaskIME : init\n");
+  debug("\04 vTaskIME : init\n");
   
   // reset des codeurs
   resetDE0nano();
@@ -58,34 +59,33 @@ void vTaskIME(void* pvParameters)
   xLastWakeTime = xTaskGetTickCount ();
   for (;;)
   {
-    for(id = 0; id < NB_MAX_MOTORS; id++)
+    for(ime = imeGroup; *ime != 0; ime++)
     {
-      ime = imeGroup[id];
       motor = &((*ime)->motor);
       result = 0;
-      if(getWordFromDE0nano(motor->id, (unsigned short*)&result, motor->blockTime) != EFB_OK)
+      if(getWordFromDE0nano(motor->id + 1, (unsigned short*)&result, motor->blockTime) != EFB_OK)
       {
-        debug("vTaskIME : FAIL getWordFromDE0nano(0x%l) !\n", (uint32_t)id);
         motor->nbFail++;
+        // On approxime result par la valeur précédente, pour lisser le signal
         result = motor->oldResult;
       }
       else
       {
-        debug("vTaskIME : SUCCESS getWordFromDE0nano(0x%l) !\n", (uint32_t)id);
-/*         if (motor->nbFail > 0)
+        if (motor->nbFail > 0)
         {
+          // La valeur recupérée est la valeur total depuis le dernier success, il faut supprimer la totalité de ce qu'on a anticipé lors des fails.
           result -= motor->nbFail * motor->oldResult; // FIXME : ca depasse si fail multiple.
           motor->nbFail = 0;
         }
-        motor->oldResult = result; */
+        motor->oldResult = result; 
       }
       taskENTER_CRITICAL();
       {
         motor->encoderValue += result;
       }
       taskEXIT_CRITICAL();
+      debug("r: 0x%l\n", (uint32_t)result);
     }
-    debug("vTaskIME : result = 0x%l\n", (uint32_t)result);
     vTaskDelayUntil(&xLastWakeTime, 10/portTICK_RATE_MS);
   }
 }

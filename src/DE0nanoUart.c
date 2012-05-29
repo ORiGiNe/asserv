@@ -129,11 +129,11 @@ tEFBerrCode getWordFromDE0nano(uint8_t flowControlNum, word * wordOut, portTickT
   activateRxInterrupt();
 
   // On pulse la pin flow control.
-  if (flowControlNum == 0)
+  if (flowControlNum == 1)
   {
     pulseFlowControl (PORT_ARDUINOFLOWCONTROL1, BIT_ARDUINOFLOWCONTROL1);
   }
-  else if (flowControlNum == 1)
+  else if (flowControlNum == 2)
   {
     pulseFlowControl (PORT_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2);
   }
