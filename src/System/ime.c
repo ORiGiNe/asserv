@@ -50,9 +50,9 @@ void vTaskIME(void* pvParameters)
   //int16_t car à besoin d'etre un signé sur 16 bits!
   int16_t result = 0;
   (void) pvParameters;
+  debug("vTaskIME : init\n");
   
-  
-    // reset des codeurs
+  // reset des codeurs
   resetDE0nano();
 
   xLastWakeTime = xTaskGetTickCount ();
@@ -63,20 +63,21 @@ void vTaskIME(void* pvParameters)
       ime = imeGroup[id];
       motor = &((*ime)->motor);
       result = 0;
-      
-      if(getWordFromDE0nano(motor->id + 1, (unsigned short*)&result, motor->blockTime) != EFB_OK)
+      if(getWordFromDE0nano(motor->id, (unsigned short*)&result, motor->blockTime) != EFB_OK)
       {
+        debug("vTaskIME : FAIL getWordFromDE0nano(0x%l) !\n", (uint32_t)id);
         motor->nbFail++;
         result = motor->oldResult;
       }
       else
       {
-        if (motor->nbFail > 0)
+        debug("vTaskIME : SUCCESS getWordFromDE0nano(0x%l) !\n", (uint32_t)id);
+/*         if (motor->nbFail > 0)
         {
-          result -= motor->nbFail * motor->oldResult;
+          result -= motor->nbFail * motor->oldResult; // FIXME : ca depasse si fail multiple.
           motor->nbFail = 0;
         }
-        motor->oldResult = result;
+        motor->oldResult = result; */
       }
       taskENTER_CRITICAL();
       {
@@ -84,7 +85,7 @@ void vTaskIME(void* pvParameters)
       }
       taskEXIT_CRITICAL();
     }
-
+    debug("vTaskIME : result = 0x%l\n", (uint32_t)result);
     vTaskDelayUntil(&xLastWakeTime, 10/portTICK_RATE_MS);
   }
 }

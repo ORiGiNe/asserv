@@ -129,11 +129,11 @@ tEFBerrCode getWordFromDE0nano(uint8_t flowControlNum, word * wordOut, portTickT
   activateRxInterrupt();
 
   // On pulse la pin flow control.
-  if (flowControlNum == 1)
+  if (flowControlNum == 0)
   {
     pulseFlowControl (PORT_ARDUINOFLOWCONTROL1, BIT_ARDUINOFLOWCONTROL1);
   }
-  else if (flowControlNum == 2)
+  else if (flowControlNum == 1)
   {
     pulseFlowControl (PORT_ARDUINOFLOWCONTROL2, BIT_ARDUINOFLOWCONTROL2);
   }
@@ -215,7 +215,7 @@ SIGNAL (UART1_RECEIVE_INTERRUPT)
     }
     else if (gDe0NanoCommStep == UART_WAITFORSECONDBYTE)
     {
-      //response += ((word) lData) * 0xff;
+      //response += ((word) lData) * 0xff; // Ca c'est faux. Le décalage est à vérifier. En dessous ca marche.
       response += ((word) lData) << 8; // FIXME !
       gDe0NanoCommStep = UART_SUCCESS;
       xSemaphoreGiveFromISR (de0NanoCommSynchro, &xHigherPriorityTaskWoken);
