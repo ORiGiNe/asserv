@@ -176,7 +176,6 @@ void resetDE0nano()
  */
 SIGNAL (UART1_RECEIVE_INTERRUPT)
 {
-  byte lTmpHead = 0;
   byte lData = 0;
   byte lStatus = 0;
   byte lLastRxErrors = 0;

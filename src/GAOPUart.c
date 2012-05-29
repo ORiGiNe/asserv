@@ -316,8 +316,8 @@ void vTaskGaopCommunicationUART (void* pvParameters)
 void vTaskGaopGestionCommandeUART (void* pvParameters)
 {
   GAOPtrame t;
-  static tEFBerrCode errCode;
-  int curseur = 0;
+  // static tEFBerrCode errCode;
+  // int curseur = 0;
   tEFBboolean sendAck = EFB_FALSE;
   (void) pvParameters;
 
@@ -471,7 +471,7 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
         {
           // FIXME!! UGLY!!
           //uint16_t* pos = t->data + 2;
-          uint16_t* rot = t->data + 8;
+          //uint16_t* rot = t->data + 8;
           // 3097 = 96000 / 31 (31 = 9.8 * 3.14)
           ModuleValue posV = ((uint32_t) t->data[3]) * 3097L;
           ModuleValue rotV = ((uint32_t) t->data[9]) * 3097L;
@@ -484,10 +484,10 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
         else if(t->data[1] == 0x36)
         {
           ModuleValue dist = getDistance() / 3097;
-          ModuleValue rot = getRotation() / 3097;
+          // ModuleValue rot = getRotation() / 3097;
           // On utilie t;
           t->size = 4;
-          uint8_t* uglyPointeurYOUHOU = &dist;
+         // uint8_t* uglyPointeurYOUHOU = &dist;
           /*t->data[0] = uglyPointeurYOUHOU[2];
           t->data[1] = uglyPointeurYOUHOU[3];
           uglyPointeurYOUHOU = &rot;

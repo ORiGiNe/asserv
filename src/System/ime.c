@@ -1,6 +1,6 @@
 #include "ime.h"
-#include "ponthuart.h"
 #include "DE0nanoUart.h"
+#include "ponthuart.h"
 
 ModuleValue getEncoderValue(MotorData *motor);
 void sendNewCommand(MotorData *motor, ModuleValue cmd);
@@ -50,7 +50,6 @@ void vTaskIME(void* pvParameters)
   //int16_t car à besoin d'etre un signé sur 16 bits!
   int16_t result = 0;
   (void) pvParameters;
-  
   
   
     // reset des codeurs

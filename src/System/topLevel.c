@@ -392,6 +392,7 @@ ErrorCode moveCurvilinear(ModuleValue radius, ModuleValue angle, ModuleValue vit
   {
     trajDist.pos = WHEEL_GAP * angle; // FIXME A FAIRE PASSER EN TIC
     trajRot.pos = radius * angle; // A FAIRE PASSER EN TIC
+    // FIXME : vitesse ?
   }
   taskEXIT_CRITICAL();
   startSystem(&ctlBlock);
@@ -420,7 +421,8 @@ ModuleValue getDistance(void)
     ModuleValue dist;
      taskENTER_CRITICAL();
     {
-    //    dist = ctlBlock.coveredDist; // FIXME
+       //dist = ctlBlock.coveredDist; // FIXME
+       dist = 0; // H4CK
     }
     taskEXIT_CRITICAL();
     return dist;
@@ -431,7 +433,8 @@ ModuleValue getRotation(void)
     ModuleValue rot;
     taskENTER_CRITICAL();
     {
-    //  rot = ctlBlock.coveredAngle; // FIXME
+       //rot = ctlBlock.coveredAngle; // FIXME
+       rot = 0; // H4CK
     }
     taskEXIT_CRITICAL();
     return rot;
