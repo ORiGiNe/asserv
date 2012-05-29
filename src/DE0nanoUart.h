@@ -13,7 +13,6 @@ extern "C"
 
 #include "main.h"
 
-// 
 #define PORT_ARDUINOFLOWCONTROL1 PORTH
 #define DDR_ARDUINOFLOWCONTROL1 DDRH
 #define BIT_ARDUINOFLOWCONTROL1 3

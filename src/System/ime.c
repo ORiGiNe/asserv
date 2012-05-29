@@ -6,6 +6,7 @@ ModuleValue getEncoderValue(MotorData *motor);
 void sendNewCommand(MotorData *motor, ModuleValue cmd);
 void resetEncoderValue(MotorData *motor);
 IME perfectMotor;
+
 IME motor1 = {
   .motor = {
     .id = 0,
