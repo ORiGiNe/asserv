@@ -436,7 +436,3 @@ ModuleValue getRotation(void)
     taskEXIT_CRITICAL();
     return rot;
 }
-
-
-
-
