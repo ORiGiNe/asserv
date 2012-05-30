@@ -1,4 +1,4 @@
-#include "ToggleSwitch.h"
+#include "toggleSwitch.h"
 #include "sysInterface.h"
 
 /**

@@ -1,5 +1,5 @@
 /**
- * \file ToggleSwitch.h
+ * \file toggleSwitch.h
  * \brief Implémentation du module d'interrupteur.
  * \author Izzy
  * \date 18 mai 2012
