@@ -5,12 +5,12 @@ Traj trajDist =
 {
     .pos = 0,
     .vit = 12800,
-    .acc = 1500
+    .acc = 200
 };
 Traj trajRot = 
 {
     .pos = 0,
-    .vit = 12000,
+    .vit = 10000,
     .acc = 2000
 };
 
@@ -34,7 +34,7 @@ void vTaskSI (void* pvParameters)
   EntryConfig entryConfigDist, entryConfigRot;
 
   // Enregistrement de l'asservissement en distance
-  ModuleValue posKpDist = 50;
+  ModuleValue posKpDist = 30;
   ModuleValue posKiDist = 0;
   ModuleValue posKdDist = 5;
   // ModuleValue derivDist = 16000;
@@ -60,14 +60,14 @@ void vTaskSI (void* pvParameters)
 
 
   // Enregistrement de l'asservissement en rotation
-  ModuleValue posKpRot = 50;
+  ModuleValue posKpRot = 30;
   ModuleValue posKiRot = 3;
   ModuleValue posKdRot = 15;
 //  ModuleValue derivRot = 8000;
 
-  ModuleValue vitKpRot = 1000;
+  ModuleValue vitKpRot = 700;
   ModuleValue vitKiRot = 0;
-  ModuleValue vitKdRot = 20;
+  ModuleValue vitKdRot = 15;
 //  ModuleValue accelRot = 1000;
 
 //  ModuleValue commandRot = 200; // (200, -300) = max(command)
@@ -140,12 +140,12 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  asservPosDist = initModule(&ctlBlock, 6, 1, asservType, 0);
+  asservPosDist = initModule(&ctlBlock, 6, 1, asservType, 1);
   if (asservPosDist == 0)
   {
    return;
   }
-  asservVitDist = initModule(&ctlBlock, 6, 1, asservType, 0);
+  asservVitDist = initModule(&ctlBlock, 6, 1, asservType, 1);
   if (asservVitDist == 0)
   {
    return;

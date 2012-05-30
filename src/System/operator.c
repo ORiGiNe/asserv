@@ -70,8 +70,6 @@ ErrorCode updateOperator(Module* parent, OriginWord port)
   ModuleValue result;
   ErrorCode error;
   
-  // debug("O");
-
   // On met à jour les entrées
   for(i=0; i<parent->nbInputs; i++)
   {
@@ -81,12 +79,15 @@ ErrorCode updateOperator(Module* parent, OriginWord port)
       return error;
     }
   }
-  
-  result = (((Operator*)parent->fun)->func)(parent, port);
-  setOutput(parent, port, result);
+   
+  for(i=0; i<parent->nbOutputs; i++)
+  {
+    result = (((Operator*)parent->fun)->func)(parent, i);
+    setOutput(parent, i, result);
+  }
   if(parent->isVerbose)
   {
-    debug("opr: %l\r\n", (uint32_t)result);
+    debug("opr: %l\tp: %l\r\n", (uint32_t)result, (uint32_t)port);
   }
   return NO_ERR;
 }
@@ -94,7 +95,7 @@ ErrorCode updateOperator(Module* parent, OriginWord port)
 
 ModuleValue funCalcValueForMotor(Module* parent, OriginWord port)
 {
-   // debug("oii: %l %l\r\n", (uint32_t)getInput(parent, 0), (uint32_t)getInput(parent, 1));
+  // debug("oii: %l %l\r\n", (uint32_t)getInput(parent, 0), (uint32_t)getInput(parent, 1));
   switch(port)
   {
     case 0:

@@ -100,7 +100,7 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     
     if (parent->isVerbose)
     { 
-      debug("w: 0x%l\r\n", (uint32_t)command);
+      debug("ifm: 0x%l\r\n", (uint32_t)command);
     }
   }
   else
