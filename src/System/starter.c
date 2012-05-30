@@ -40,10 +40,8 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
   (void) port;
   ValHistory *vHist;
   vHist = ((Starter*)parent->fun)->hist;
-  
-  // debug("S");
-  
-  for(i=0; i<parent->nbInputs; i++)
+    
+  for(i=0; i < parent->nbInputs; i++)
   {
     // On sauvegarde les entrées précédentes
     vHist[i].val2 = vHist[i].val1;
@@ -58,7 +56,6 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
 
     // On récupère l'entrée
     vHist[i].val0 = getInput(parent, i);
-#define MASK_ACCURACY 2047
     // Si suffisament de tours ont eu lieu
     if(vHist[i].val1 != 0x7FFFFFFF && vHist[i].val2 != 0x7FFFFFFF)
     {

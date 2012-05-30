@@ -5,12 +5,12 @@ Traj trajDist =
 {
     .pos = 0,
     .vit = 12800,
-    .acc = 2000
+    .acc = 200
 };
 Traj trajRot = 
 {
     .pos = 0,
-    .vit = 12000,
+    .vit = 10000,
     .acc = 2000
 };
 
@@ -26,7 +26,6 @@ CtlBlock ctlBlock;
 
 void vTaskSI (void* pvParameters)
 {
-  debug("A");
   (void) pvParameters;
   portTickType xLastWakeTime;
   Module *entryDist, *asservPosDist, *asservVitDist, *measureDerivatorDist, *imeInIntegratorDist;
@@ -35,7 +34,7 @@ void vTaskSI (void* pvParameters)
   EntryConfig entryConfigDist, entryConfigRot;
 
   // Enregistrement de l'asservissement en distance
-  ModuleValue posKpDist = 50;
+  ModuleValue posKpDist = 20;
   ModuleValue posKiDist = 0;
   ModuleValue posKdDist = 5;
   // ModuleValue derivDist = 16000;
@@ -61,14 +60,14 @@ void vTaskSI (void* pvParameters)
 
 
   // Enregistrement de l'asservissement en rotation
-  ModuleValue posKpRot = 50;
+  ModuleValue posKpRot = 40;
   ModuleValue posKiRot = 3;
   ModuleValue posKdRot = 15;
 //  ModuleValue derivRot = 8000;
 
-  ModuleValue vitKpRot = 1000;
+  ModuleValue vitKpRot = 700;
   ModuleValue vitKiRot = 0;
-  ModuleValue vitKdRot = 20;
+  ModuleValue vitKdRot = 15;
 //  ModuleValue accelRot = 1000;
 
 //  ModuleValue commandRot = 200; // (200, -300) = max(command)
@@ -87,13 +86,11 @@ void vTaskSI (void* pvParameters)
   // On ajoute un interupteur à notre shéma bloc 
   // qui empéche l'asserv de s'effectuer quand le pontH n'est pas alimenté
   EFBclearBit (DDR_HBRIDGE_ON, BIT_HBRIDGE_ON);
-  ToggleSwitchConfig toggleSwitchConfig;
+  /*ToggleSwitchConfig toggleSwitchConfig;
   toggleSwitchConfig.value = (uint8_t*) &(PORT_HBRIDGE_ON);
   toggleSwitchConfig.mask = _BV (BIT_HBRIDGE_ON);
-  toggleSwitchConfig.off = TOGGLE_ON;
+  toggleSwitchConfig.off = TOGGLE_ON;*/
   
-  debug("B");
-
   xLastWakeTime = taskGetTickCount ();
 
   // Création du Starter
@@ -126,7 +123,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  toggleSwitchRight = initModule(&ctlBlock, 1, 1, toggleSwitchType, 0);
+  /*toggleSwitchRight = initModule(&ctlBlock, 1, 1, toggleSwitchType, 0);
   if (toggleSwitchRight == 0)
   {
    return;
@@ -136,14 +133,14 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-
+*/
   // Création de l'Entry
   entryDist = initModule(&ctlBlock, 0, entryConfigDist.nbEntry, entryType, 0);
   if (entryDist == 0)
   {
    return;
   }
-  asservPosDist = initModule(&ctlBlock, 6, 1, asservType, 0);
+  asservPosDist = initModule(&ctlBlock, 6, 1, asservType, 1);
   if (asservPosDist == 0)
   {
    return;
@@ -190,15 +187,11 @@ void vTaskSI (void* pvParameters)
    return;
   }
 
-  debug("C");
-
   if (createSystem(&ctlBlock, starter , 50) == ERR_TIMER_NOT_DEF)
   {
     pauseDebug("Fcs");
   }
   
-  debug("D");
-
   if (configureModule(starter, NULL) != NO_ERR)
   {
    return;
@@ -220,7 +213,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-
+/* 
   if (configureModule(toggleSwitchRight, (void*)&toggleSwitchConfig) != NO_ERR)
   {
     return;
@@ -230,8 +223,7 @@ void vTaskSI (void* pvParameters)
   {
     return;
   }
-   debug("E");
-
+*/
    
   if (configureModule(entryDist, (void*)&entryConfigDist) != NO_ERR)
   {
@@ -274,8 +266,6 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-   debug("F");
-
 
   // DISTANCE
   linkModuleWithInput(entryDist, 8, asservPosDist, AsservCommand);
@@ -328,8 +318,6 @@ void vTaskSI (void* pvParameters)
 
   // linkModuleWithInput(ifaceMERight, 0, starter, 1);
   linkModuleWithInput(ifaceMELeft, 0, starter, 0);
-  
-   debug("G");
 
   //resetSystem(&ctlBlock, portMAX_DELAY);
   for (;;)
@@ -347,9 +335,6 @@ void vTaskSI (void* pvParameters)
     // La tache est bloquée pendant (500ms - son temps d'execution).
      vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
   } 
-  /***************************************************************
-  pauseDebug("fin");
-  *//////////////////////////////////////////////////////////////////////
 }
 
 
