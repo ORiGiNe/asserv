@@ -94,7 +94,7 @@ void vTaskSI (void* pvParameters)
   xLastWakeTime = taskGetTickCount ();
 
   // Création du Starter
-  starter = initModule(&ctlBlock, 1, 0, starterType, 0);
+  starter = initModule(&ctlBlock, 2, 0, starterType, 0);
   if (starter == 0)
   {
    return;
@@ -318,6 +318,7 @@ void vTaskSI (void* pvParameters)
 
   // linkModuleWithInput(ifaceMERight, 0, starter, 1);
   linkModuleWithInput(ifaceMELeft, 0, starter, 0);
+  linkModuleWithInput(ifaceMERight, 0, starter, 1);
 
   //resetSystem(&ctlBlock, portMAX_DELAY);
   for (;;)
