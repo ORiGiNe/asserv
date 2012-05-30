@@ -15,15 +15,10 @@ extern "C"
 #include "System/sysInterface.h"
 #include "System/defines.h"
 
-#define UART0_BAUD_RATE 38400     // baud rate
-
+#define UART0_BAUD_RATE 115200     // baud rate
 #define TRANSMIT_NINTH_BIT 0
-
 #define RX_TRAME_QUEUE_LENGTH 2
-
 #define GAOP_TIMEOUT_PERIOD 30 MS
-
-
 
 // Ancienne version
 #define UART_CDE_TEST 0x74 // 0x74='t'

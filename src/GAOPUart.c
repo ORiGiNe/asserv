@@ -325,7 +325,6 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
   {
     if (xQueueReceive (gaopRxTrameQueue, &t, portMAX_DELAY))
     {
-      debug("vtC");
       if (t->ODID == ODID_TEST)
       {
         EFBuartGaopSendString ("TEST\r\n");
@@ -342,10 +341,9 @@ void vTaskGaopGestionCommandeUART (void* pvParameters)
           // 3097 = 96000 / 31 (31 = 9.8 * 3.14)
           ModuleValue posV = ((uint32_t) t->data[3]) * 3097L;
           ModuleValue rotV = ((uint32_t) t->data[9]) * 3097L;
-          debug("posV: 0x%l\r\n", (uint32_t)posV);
+
           Traj tr1 = {posV, 16000, 500};
           Traj tr2 = {rotV, 8000, 1000};
-          debug("A\r\n");
           setNewOrder(tr1, tr2);
         }
         else if(t->data[1] == 0x36)
