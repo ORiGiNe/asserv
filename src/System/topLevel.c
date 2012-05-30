@@ -34,7 +34,7 @@ void vTaskSI (void* pvParameters)
   EntryConfig entryConfigDist, entryConfigRot;
 
   // Enregistrement de l'asservissement en distance
-  ModuleValue posKpDist = 30;
+  ModuleValue posKpDist = 20;
   ModuleValue posKiDist = 0;
   ModuleValue posKdDist = 5;
   // ModuleValue derivDist = 16000;
@@ -60,7 +60,7 @@ void vTaskSI (void* pvParameters)
 
 
   // Enregistrement de l'asservissement en rotation
-  ModuleValue posKpRot = 30;
+  ModuleValue posKpRot = 40;
   ModuleValue posKiRot = 3;
   ModuleValue posKdRot = 15;
 //  ModuleValue derivRot = 8000;
@@ -145,7 +145,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  asservVitDist = initModule(&ctlBlock, 6, 1, asservType, 1);
+  asservVitDist = initModule(&ctlBlock, 6, 1, asservType, 0);
   if (asservVitDist == 0)
   {
    return;
