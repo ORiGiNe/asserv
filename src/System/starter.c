@@ -40,32 +40,47 @@ ErrorCode updateStarter(Module* parent, OriginWord port)
   (void) port;
   ValHistory *vHist;
   vHist = ((Starter*)parent->fun)->hist;
-    
-  for(i=0; i < parent->nbInputs; i++)
+  ModuleValue errorValue;
+  uint8_t countFinMove = 0;
+  
+  for(i=0; i < parent->nbInputs; i+=2)
   {
     // On sauvegarde les entrées précédentes
-    vHist[i].val2 = vHist[i].val1;
-    vHist[i].val1 = vHist[i].val0;
+    vHist[i/2].val2 = vHist[i/2].val1;
+    vHist[i/2].val1 = vHist[i/2].val0;
    
     // MAJ de ses entrées
     error = updateInput(parent, i);
+    error = updateInput(parent, i+1);
     if(error != NO_ERR)
     {
       return error;
     }
-
     // On récupère l'entrée
-    vHist[i].val0 = getInput(parent, i);
+    vHist[i/2].val0 = getInput(parent, i);
+    errorValue = getInput(parent, i+1) - vHist[i/2].val0;
+    
+    if (parent->isVerbose)
+      debug("E: 0x%l\r\n", errorValue);//,vHist[i/2].val1 ,vHist[i/2].val2);  0x%l 0x%l
+          
     // Si suffisament de tours ont eu lieu
-    if(vHist[i].val1 != 0x7FFFFFFF && vHist[i].val2 != 0x7FFFFFFF)
+    if(vHist[i/2].val1 != 0x7FFFFFFF && vHist[i/2].val2 != 0x7FFFFFFF)
     {
       // Si les valeurs n'ont pas évoluées
-      if(vHist[i].val0 - vHist[i].val1 < ACCURACY && vHist[i].val0 - vHist[i].val1 > -ACCURACY
-      && vHist[i].val1 - vHist[i].val2 < ACCURACY && vHist[i].val1 - vHist[i].val2 > -ACCURACY)
+      if(vHist[i/2].val0 - vHist[i/2].val1 < ACCURACY_MOVE && vHist[i/2].val0 - vHist[i/2].val1 > -ACCURACY_MOVE
+      && vHist[i/2].val1 - vHist[i/2].val2 < ACCURACY_MOVE && vHist[i/2].val1 - vHist[i/2].val2 > -ACCURACY_MOVE)
       {
-        if (parent->isVerbose)
+        if(errorValue < ACCURACY_ERROR && errorValue > -ACCURACY_ERROR)
         {
-          debug("MVTF %l %l %l\r\n", vHist[i].val0,vHist[i].val1 ,vHist[i].val2);
+          debug("\tMVTFV %u\n", countFinMove);
+          // On compte le nombre de mouvements fini. Si 2 => tout est fini !
+          countFinMove++;
+          if(countFinMove == NB_MAX_MOTORS)
+          {
+            if (parent->isVerbose)
+              debug("\t\tMVTFE\n");
+            parent->ctl->reset = 1;
+          }
         }
         // On indique que le mouvement est fini
         semaphoreGive(parent->ctl->semReached);
@@ -80,12 +95,12 @@ void resetStarter(Module* parent)
 {
   OriginByte i;
   Starter *starter = (Starter*)parent->fun;
-
+debug("RS\n");
   // On initialise l'historique
   for(i=0; i < STARTER_NB_CONNECTION; i++)
   {
-    starter->hist[i].val0 = 0x7FFFFFFF;
-    starter->hist[i].val1 = 0x7FFFFFFF;
-    starter->hist[i].val2 = 0x7FFFFFFF;
+    starter->hist[i/2].val0 = 0x7FFFFFFF;
+    starter->hist[i/2].val1 = 0x7FFFFFFF;
+    starter->hist[i/2].val2 = 0x7FFFFFFF;
   }
 }

@@ -25,7 +25,7 @@ typedef struct {
   void (*resetEncoderValue)( MotorData*);
 } IME;
 
-IME * imeGroup[NB_MAX_MOTORS + 1];
+IME *imeGroup[NB_MAX_MOTORS + 1];
 
 void vTaskIME(void* pvParameters);
 

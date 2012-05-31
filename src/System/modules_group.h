@@ -79,8 +79,8 @@ struct ctlBlock
   SysSemaphore semReset;
   OriginWord nTic;
   volatile ErrorCode lastError;
-  volatile MotorData** imeGroup;
-  volatile ModuleValue coveredDistance;
+  IME **imeGroup; // Aloue la place du tableau
+  //volatile ModuleValue coveredDistance;
   //volatile ModuleValue coveredDist;
   //volatile ModuleValue coveredAngle;
 };

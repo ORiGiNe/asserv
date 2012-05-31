@@ -34,9 +34,9 @@ void vTaskSI (void* pvParameters)
   EntryConfig entryConfigDist, entryConfigRot;
 
   // Enregistrement de l'asservissement en distance
-  ModuleValue posKpDist = 20;
+  ModuleValue posKpDist = 22;
   ModuleValue posKiDist = 0;
-  ModuleValue posKdDist = 5;
+  ModuleValue posKdDist = 30;
   // ModuleValue derivDist = 16000;
 
   ModuleValue vitKpDist = 1000;
@@ -60,14 +60,14 @@ void vTaskSI (void* pvParameters)
 
 
   // Enregistrement de l'asservissement en rotation
-  ModuleValue posKpRot = 40;
-  ModuleValue posKiRot = 3;
-  ModuleValue posKdRot = 15;
+  ModuleValue posKpRot = 30;
+  ModuleValue posKiRot = 0;
+  ModuleValue posKdRot = 25;
 //  ModuleValue derivRot = 8000;
 
-  ModuleValue vitKpRot = 700;
+  ModuleValue vitKpRot = 800;
   ModuleValue vitKiRot = 0;
-  ModuleValue vitKdRot = 15;
+  ModuleValue vitKdRot = 20;
 //  ModuleValue accelRot = 1000;
 
 //  ModuleValue commandRot = 200; // (200, -300) = max(command)
@@ -94,7 +94,7 @@ void vTaskSI (void* pvParameters)
   xLastWakeTime = taskGetTickCount ();
 
   // Création du Starter
-  starter = initModule(&ctlBlock, 2, 0, starterType, 0);
+  starter = initModule(&ctlBlock, 4, 0, starterType, 1);
   if (starter == 0)
   {
    return;
@@ -140,7 +140,7 @@ void vTaskSI (void* pvParameters)
   {
    return;
   }
-  asservPosDist = initModule(&ctlBlock, 6, 1, asservType, 1);
+  asservPosDist = initModule(&ctlBlock, 6, 1, asservType, 0);
   if (asservPosDist == 0)
   {
    return;
@@ -187,7 +187,7 @@ void vTaskSI (void* pvParameters)
    return;
   }
 
-  if (createSystem(&ctlBlock, starter , 50) == ERR_TIMER_NOT_DEF)
+  if (createSystem(&ctlBlock, starter , imeGroup, 50) == ERR_TIMER_NOT_DEF)
   {
     pauseDebug("Fcs");
   }
@@ -316,14 +316,18 @@ void vTaskSI (void* pvParameters)
   linkModuleWithInput(ifaceMERight, 0, operatorOut, 1);
   linkModuleWithInput(ifaceMELeft, 0, operatorOut, 0);
 
-  // linkModuleWithInput(ifaceMERight, 0, starter, 1);
-  linkModuleWithInput(ifaceMELeft, 0, starter, 0);
-  linkModuleWithInput(ifaceMERight, 0, starter, 1);
+  linkModuleWithInput(operatorOut, 0, starter, 0);
+  linkModuleWithInput(operatorOut, 1, starter, 2);
+  
+  linkModuleWithInput(entryDist, 8, starter, 1);
+  linkModuleWithInput(entryRot, 8, starter, 3);
+  
 
-  //resetSystem(&ctlBlock, portMAX_DELAY);
+  startSystem(&ctlBlock);
+  resetSystem(&ctlBlock, portMAX_DELAY);
   for (;;)
   {
-    if (startSystem(&ctlBlock) == NO_ERR)
+    /* if (startSystem(&ctlBlock) == NO_ERR)
     {
 
       if(waitEndOfSystem(&ctlBlock, 10000) == NO_ERR)
@@ -331,7 +335,7 @@ void vTaskSI (void* pvParameters)
         //resetSystem(&ctlBlock, portMAX_DELAY);
         //command += 500;
       }
-    }
+    } */
     // Cette fonction permet à la tache d'être périodique.
     // La tache est bloquée pendant (500ms - son temps d'execution).
      vTaskDelayUntil(&xLastWakeTime, 500/portTICK_RATE_MS);
@@ -409,25 +413,23 @@ ErrorCode setNewOrder(Traj dist, Traj rot)
   return NO_ERR;
 }
 
-ModuleValue getDistance(void)
+ModuleValue getDistance(void) // TODO
 {
     ModuleValue dist;
      taskENTER_CRITICAL();
     {
-       //dist = ctlBlock.coveredDist; // FIXME
-       dist = 0; // H4CK
+       dist = (ctlBlock.imeGroup[0]->motor.encoderValue + ctlBlock.imeGroup[1]->motor.encoderValue)/2;
     }
     taskEXIT_CRITICAL();
     return dist;
 }
 
-ModuleValue getRotation(void)
+ModuleValue getRotation(void) // TODO
 {
     ModuleValue rot;
     taskENTER_CRITICAL();
     {
-       //rot = ctlBlock.coveredAngle; // FIXME
-       rot = 0; // H4CK
+       rot = (ctlBlock.imeGroup[0]->motor.encoderValue - ctlBlock.imeGroup[1]->motor.encoderValue)/2;
     }
     taskEXIT_CRITICAL();
     return rot;

@@ -13,7 +13,7 @@ extern xSemaphoreHandle UART_gaopRxSemaphore;
 
 // UART1 transmission protection.
 static xSemaphoreHandle UART_gaopTxMutex;
-#define TIMEOUT_MUTEX_UARTgaop 10
+#define TIMEOUT_MUTEX_UARTgaop 0
 
 //Timer de timeout
 static xTimerHandle gaopTimeOut;

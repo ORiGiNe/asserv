@@ -67,7 +67,7 @@ ErrorCode updateOperator(Module* parent, OriginWord port)
 {
   (void) port;
   uint16_t i;
-  ModuleValue result;
+  ModuleValue result = 0;
   ErrorCode error;
   
   // On met à jour les entrées

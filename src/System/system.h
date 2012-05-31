@@ -2,6 +2,7 @@
 #define ASSERV_LAUNCHER_H
 
 #include "types.h"
+#include "ime.h"
 #include "defines.h"
 
 #include "sysInterface.h"
@@ -15,7 +16,7 @@ extern "C"
 #endif
 
 
-ErrorCode createSystem(CtlBlock*, Module*, OriginWord);
+ErrorCode createSystem(CtlBlock*, Module*, IME** imes, OriginWord);
 ErrorCode startSystem(CtlBlock*);
 
 ErrorCode resetSystem(CtlBlock* ctlBlock, portTickType blockTime);

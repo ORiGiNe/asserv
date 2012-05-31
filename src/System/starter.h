@@ -7,7 +7,8 @@
 #include "module.h"
 
 #define STARTER_NB_CONNECTION 2
-#define ACCURACY 500
+#define ACCURACY_MOVE 20
+#define ACCURACY_ERROR 200
 
 #ifdef __cplusplus
 extern "C"

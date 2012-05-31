@@ -58,7 +58,6 @@ ErrorCode configureIfaceME(Module *parent, void* args)
   IfaceME *ifaceme = (IfaceME*)parent->fun;
   IME* ime = (IME*)args;
 
-  parent->ctl->coveredDistance = 0;
 
  // ime->resetEncoderValue(&ime->motor); TODO Pour test, à rajouter !
   ifaceme->ime = ime;
@@ -81,7 +80,6 @@ ErrorCode updateIfaceME(Module* parent, OriginWord port){
     // On effectue la mesure
     ((IfaceME*)parent->fun)->measure = ime->getEncoderValue(&ime->motor);
     ((IfaceME*)parent->fun)->measureUpToDate = 1;
-    parent->ctl->coveredDistance = ((IfaceME*)parent->fun)->measure;
     
     // On met à jour la sortie
     setOutput(parent, port, ((IfaceME*)parent->fun)->measure);

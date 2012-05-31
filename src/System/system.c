@@ -1,10 +1,10 @@
 #include "system.h"
 #include "sysInterface.h"
-#include "ime.h"
 
 void vSystemCallback(TimerHandle);
 
-ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter, 
+ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
+                         IME **imes,
                          OriginWord refreshPeriod)
 {
 
@@ -23,7 +23,7 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
   ); 
   
   ctlBlock->timer.isActive = false;
-  // ctlBlock->imeGroup = imeGroup;
+  ctlBlock->imeGroup = imes;
   
    
   if (ctlBlock->timer.handle == 0)
@@ -50,7 +50,7 @@ ErrorCode createSystem(CtlBlock *ctlBlock, Module* starter,
   //{
 //    return ERR_SEM_NOT_DEF;
   //}
- debug("U");
+  debug("CreateSys\n");
   return NO_ERR;
 }
 
@@ -86,12 +86,12 @@ void vSystemCallback(TimerHandle pxTimer)
 {
   CtlBlock *ctlBlock = (CtlBlock*)timerGetArg(pxTimer);
   //ErrorCode error = NO_ERR;
-
+debug("W");
   // On met à jour le nombre de tic
   ctlBlock->nTic++;
   if(ctlBlock->reset == true)
   {
-   debug("T");
+   debug("R\n");
 
   //  debug("--------------|  Debut de reset  |--------------\n");
     resetModule(ctlBlock->starter);
@@ -100,6 +100,7 @@ void vSystemCallback(TimerHandle pxTimer)
   }
   else
   {
+debug("U\n");
     /* Lancement de l'update du systeme */
    // debug("Dupdate\r\n");
   //  debug("\04");
